@@ -64,7 +64,7 @@ div.content {
     padding: 10px;
   }
   div.content {
-    width: calc(100vw - 220px);
+    width: calc(100vw - 200px);
   }
 }
 @media (width >= 1280px) {
@@ -74,7 +74,7 @@ div.content {
     background: var(--my-bg-color);
   }
   div.content {
-    max-width: 1000px;
+    min-width: 1000px;
   }
 }
 
