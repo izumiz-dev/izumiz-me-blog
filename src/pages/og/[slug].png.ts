@@ -1,6 +1,6 @@
 import type { APIContext } from 'astro';
 import { getOgImage } from '../../components/OgImage';
-import { getAllPosts, getPostBySlug } from '@lib/notion/client';
+import { getAllPosts, getPostBySlug } from '../../lib/notion/client';
 
 export async function getStaticPaths() {
   const posts = await getAllPosts();
