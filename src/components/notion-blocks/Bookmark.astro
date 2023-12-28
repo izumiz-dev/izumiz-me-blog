@@ -1,38 +1,38 @@
 ---
-import createMetascraper from 'metascraper'
-import metascraperDescription from 'metascraper-description'
-import metascraperImage from 'metascraper-image'
-import metascraperTitle from 'metascraper-title'
-import { isAmazonURL } from '../../lib/blog-helpers.ts'
-import * as interfaces from '../../lib/interfaces.ts'
+import createMetascraper from 'metascraper';
+import metascraperDescription from 'metascraper-description';
+import metascraperImage from 'metascraper-image';
+import metascraperTitle from 'metascraper-title';
+import { isAmazonURL } from '../../lib/blog-helpers.ts';
+import * as interfaces from '../../lib/interfaces.ts';
 
 export interface Props {
-  block: interfaces.Block
-  urlMap: { [key: string]: string }
+  block: interfaces.Block;
+  urlMap: { [key: string]: string };
 }
 
-const { block, urlMap } = Astro.props
+const { block, urlMap } = Astro.props;
 
-const urlString = (block.Bookmark || block.LinkPreview || block.Embed).Url
+const urlString = (block.Bookmark || block.LinkPreview || block.Embed).Url;
 
-let url: URL
-let metadata: Record<string, string>
+let url: URL;
+let metadata: Record<string, string>;
 try {
-  url = new URL(urlString)
+  url = new URL(urlString);
 
   if (!isAmazonURL(url)) {
     const metascraper = createMetascraper([
       metascraperDescription(),
       metascraperImage(),
       metascraperTitle(),
-    ])
-    const html = urlMap[url.toString()]
+    ]);
+    const html = urlMap[url.toString()];
     if (html) {
-      metadata = await metascraper({ html, url })
+      metadata = await metascraper({ html, url });
     }
   }
 } catch (err) {
-  console.log(err)
+  console.log(err);
 }
 ---
 

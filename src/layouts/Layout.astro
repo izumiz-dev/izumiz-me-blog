@@ -1,55 +1,55 @@
 ---
-import { PUBLIC_GA_TRACKING_ID, ENABLE_LIGHTBOX } from '../server-constants.ts'
-import { getDatabase } from '../lib/notion/client.ts'
-import { getNavLink, getStaticFilePath, filePath } from '../lib/blog-helpers.ts'
-import '../styles/syntax-coloring.css'
-import GoogleAnalytics from '../components/GoogleAnalytics.astro'
-import SearchModal from '../components/SearchModal.astro'
-import SearchButton from '../components/SearchButton.astro'
+import { PUBLIC_GA_TRACKING_ID, ENABLE_LIGHTBOX } from '../server-constants.ts';
+import { getDatabase } from '@lib/notion/client.ts';
+import { getNavLink, getStaticFilePath, filePath } from '@lib/blog-helpers.ts';
+import '@styles/syntax-coloring.css';
+import GoogleAnalytics from '@components/GoogleAnalytics.astro';
+import SearchModal from '@components/SearchModal.astro';
+import SearchButton from '@components/SearchButton.astro';
 
 export interface Props {
-  title: string
-  description: string
-  path: string
-  ogImage: string
+  title: string;
+  description: string;
+  path: string;
+  ogImage: string;
 }
 
-const { title = '', description = '', path = '/', ogImage = '' } = Astro.props
+const { title = '', description = '', path = '/', ogImage = '' } = Astro.props;
 
-const database = await getDatabase()
+const database = await getDatabase();
 
-const siteTitle = title ? `${title} - ${database.Title}` : database.Title
-const siteDescription = description ? description : database.Description
-const siteURL = new URL(getNavLink(path), Astro.site).toString()
+const siteTitle = title ? `${title} - ${database.Title}` : database.Title;
+const siteDescription = description ? description : database.Description;
+const siteURL = new URL(getNavLink(path), Astro.site).toString();
 const siteOGImage = new URL(
   getStaticFilePath('/default-og-image.png'),
   Astro.site
-)
+);
 
-let coverImageURL: string
+let coverImageURL: string;
 if (database.Cover) {
   if (database.Cover.Type === 'external') {
-    coverImageURL = database.Cover.Url
+    coverImageURL = database.Cover.Url;
   } else if (database.Cover.Type === 'file') {
     try {
-      coverImageURL = filePath(new URL(database.Cover.Url))
+      coverImageURL = filePath(new URL(database.Cover.Url));
     } catch (err) {
-      console.log('Invalid DB cover image URL')
+      console.log('Invalid DB cover image URL');
     }
   }
 }
 
-let customIconURL: string
+let customIconURL: string;
 if (database.Icon && database.Icon.Type === 'file') {
   try {
-    customIconURL = filePath(new URL(database.Icon.Url))
+    customIconURL = filePath(new URL(database.Icon.Url));
   } catch (err) {
-    console.log('Invalid DB custom icon URL')
+    console.log('Invalid DB custom icon URL');
   }
 }
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" prefix="og: https://ogp.me/ns#">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -310,14 +310,28 @@ if (database.Icon && database.Icon.Type === 'file') {
     min-height: 100vh;
     background: var(--bg);
     color: var(--fg);
-    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-      Helvetica, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
-      'Hiragino Sans GB', メイリオ, Meiryo, 'Apple Color Emoji', Arial,
-      sans-serif, 'Segoe UI Emoji', 'Segoe UI Symbol';
+    font-family:
+      ui-sans-serif,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Helvetica,
+      'Hiragino Sans',
+      'Hiragino Kaku Gothic ProN',
+      'Hiragino Sans GB',
+      メイリオ,
+      Meiryo,
+      'Apple Color Emoji',
+      Arial,
+      sans-serif,
+      'Segoe UI Emoji',
+      'Segoe UI Symbol';
 
     /*background-image: radial-gradient(#ddd 1px, transparent 1px),
       radial-gradient(#ddd 1px, transparent 1px);*/
-    background-position: 0 0, 25px 25px;
+    background-position:
+      0 0,
+      25px 25px;
     background-attachment: fixed;
     background-size: 50px 50px;
 

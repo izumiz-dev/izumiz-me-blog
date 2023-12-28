@@ -6,5 +6,5 @@ export const pathJoin = (path: string, subPath: string) => {
       .concat(subPath.split('/'))
       .filter((p) => p)
       .join('/')
-  )
-}
+  );
+};

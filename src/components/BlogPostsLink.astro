@@ -1,14 +1,14 @@
 ---
-import { Post } from '../lib/interfaces.ts'
-import { getPostLink } from '../lib/blog-helpers.ts'
-import NoContents from './NoContents.astro'
+import { type Post } from '../lib/interfaces.ts';
+import { getPostLink } from '../lib/blog-helpers.ts';
+import NoContents from './NoContents.astro';
 
 export interface Props {
-  heading: string
-  posts: Post[]
+  heading: string;
+  posts: Post[];
 }
 
-const { heading, posts } = Astro.props
+const { heading, posts } = Astro.props;
 ---
 
 <div class="blog-posts-link">

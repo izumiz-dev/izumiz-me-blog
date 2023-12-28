@@ -1,20 +1,20 @@
 ---
-import { ENABLE_LIGHTBOX } from '../../server-constants.ts'
-import * as interfaces from '../../lib/notion/interfaces'
-import { filePath } from '../../lib/blog-helpers'
-import Caption from './Caption.astro'
+import { ENABLE_LIGHTBOX } from '../../server-constants.ts';
+import * as interfaces from '../../lib/notion/interfaces';
+import { filePath } from '../../lib/blog-helpers';
+import Caption from './Caption.astro';
 
 export interface Props {
-  block: interfaces.Block
+  block: interfaces.Block;
 }
 
-const { block } = Astro.props
+const { block } = Astro.props;
 
-let image = ''
+let image = '';
 if (block.Image.External) {
-  image = block.Image.External.Url
+  image = block.Image.External.Url;
 } else if (block.Image.File) {
-  image = filePath(new URL(block.Image.File.Url))
+  image = filePath(new URL(block.Image.File.Url));
 }
 ---
 

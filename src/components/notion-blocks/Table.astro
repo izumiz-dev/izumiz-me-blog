@@ -1,12 +1,12 @@
 ---
-import * as interfaces from '../../lib/interfaces.ts'
-import RichText from './RichText.astro'
+import * as interfaces from '../../lib/interfaces.ts';
+import RichText from './RichText.astro';
 
 export interface Props {
-  block: interfaces.Block
+  block: interfaces.Block;
 }
 
-const { block } = Astro.props
+const { block } = Astro.props;
 ---
 
 <div class="table">
@@ -26,7 +26,7 @@ const { block } = Astro.props
                       <RichText richText={richText} />
                     ))}
                   </th>
-                )
+                );
               }
               return (
                 <td>
@@ -34,7 +34,7 @@ const { block } = Astro.props
                     <RichText richText={richText} />
                   ))}
                 </td>
-              )
+              );
             })}
           </tr>
         ))

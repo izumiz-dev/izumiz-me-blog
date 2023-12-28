@@ -1,10 +1,10 @@
 ---
 export interface Props {
-  url: URL
+  url: URL;
 }
-const { url } = Astro.props
-const user = url.pathname.split('/')[1]
-const videoId = url.pathname.split('/')[3]
+const { url } = Astro.props;
+const user = url.pathname.split('/')[1];
+const videoId = url.pathname.split('/')[3];
 ---
 
 <div class="tiktok-wrapper">

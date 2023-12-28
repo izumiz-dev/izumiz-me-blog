@@ -1,14 +1,14 @@
 ---
 export interface Props {
-  url: URL
+  url: URL;
 }
 
-const { url } = Astro.props
+const { url } = Astro.props;
 
 const postURL =
   url.hostname === 'x.com' || url.hostname === 'www.x.com'
     ? new URL(url.pathname, 'https://twitter.com')
-    : url
+    : url;
 ---
 
 <div class="tweet-embed">
@@ -17,7 +17,8 @@ const postURL =
   </blockquote>
 </div>
 
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"
+></script>
 
 <style>
   .tweet-embed {

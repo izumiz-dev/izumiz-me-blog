@@ -1,14 +1,14 @@
 ---
-import { Post } from '../lib/interfaces.ts'
-import { getNavLink, getPostLink } from '../lib/blog-helpers.ts'
-import PostTags from './PostTags.astro'
+import { type Post } from '../lib/interfaces.ts';
+import { getNavLink, getPostLink } from '../lib/blog-helpers.ts';
+import PostTags from './PostTags.astro';
 
 export interface Props {
-  prevPost: Post
-  nextPost: Post
+  prevPost: Post;
+  nextPost: Post;
 }
 
-const { prevPost, nextPost } = Astro.props
+const { prevPost, nextPost } = Astro.props;
 ---
 
 <div class="post-relative-link">

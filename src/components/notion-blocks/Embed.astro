@@ -1,31 +1,31 @@
 ---
-import * as interfaces from '../../lib/interfaces.ts'
+import * as interfaces from '../../lib/interfaces.ts';
 import {
   isTweetURL,
   isTikTokURL,
   isInstagramURL,
   isPinterestURL,
   isCodePenURL,
-} from '../../lib/blog-helpers.ts'
-import Bookmark from './Bookmark.astro'
-import TweetEmbed from './TweetEmbed.astro'
-import TikTokEmbed from './TikTokEmbed.astro'
-import InstagramEmbed from './InstagramEmbed.astro'
-import PinterestEmbed from './PinterestEmbed.astro'
-import CodePenEmbed from './CodePenEmbed.astro'
+} from '../../lib/blog-helpers.ts';
+import Bookmark from './Bookmark.astro';
+import TweetEmbed from './TweetEmbed.astro';
+import TikTokEmbed from './TikTokEmbed.astro';
+import InstagramEmbed from './InstagramEmbed.astro';
+import PinterestEmbed from './PinterestEmbed.astro';
+import CodePenEmbed from './CodePenEmbed.astro';
 
 export interface Props {
-  block: interfaces.Block
-  urlMap: { [key: string]: string }
+  block: interfaces.Block;
+  urlMap: { [key: string]: string };
 }
 
-const { block, urlMap } = Astro.props
+const { block, urlMap } = Astro.props;
 
-let url: URL
+let url: URL;
 try {
-  url = new URL(block.Embed.Url)
+  url = new URL(block.Embed.Url);
 } catch (err) {
-  console.log(err)
+  console.log(err);
 }
 ---
 

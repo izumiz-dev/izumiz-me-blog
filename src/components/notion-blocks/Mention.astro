@@ -1,19 +1,19 @@
 ---
-import { Post } from '../../lib/interfaces.ts'
-import { getPostByPageId } from '../../lib/notion/client'
-import { getPostLink } from '../../lib/blog-helpers.ts'
-import '../../styles/notion-color.css'
-import arrow from '../../images/icon-arrow-link.svg'
+import { Post } from '../../lib/interfaces.ts';
+import { getPostByPageId } from '../../lib/notion/client';
+import { getPostLink } from '../../lib/blog-helpers.ts';
+import '../../styles/notion-color.css';
+import arrow from '../../images/icon-arrow-link.svg';
 
 export interface Props {
-  pageId: string
+  pageId: string;
 }
 
-const { pageId } = Astro.props
+const { pageId } = Astro.props;
 
-let post: Post = null
+let post: Post = null;
 if (pageId) {
-  post = await getPostByPageId(pageId)
+  post = await getPostByPageId(pageId);
 }
 ---
 

@@ -1,19 +1,19 @@
 ---
-import * as interfaces from '../../lib/interfaces.ts'
-import { snakeToKebab } from '../../lib/style-helpers.ts'
-import RichText from './RichText.astro'
-import NotionBlocks from '../NotionBlocks.astro'
-import '../../styles/notion-color.css'
+import * as interfaces from '../../lib/interfaces.ts';
+import { snakeToKebab } from '../../lib/style-helpers.ts';
+import RichText from './RichText.astro';
+import NotionBlocks from '../NotionBlocks.astro';
+import '../../styles/notion-color.css';
 
 export interface Props {
-  block: interfaces.Block
-  level: number
-  headings: interfaces.Block[]
+  block: interfaces.Block;
+  level: number;
+  headings: interfaces.Block[];
 }
 
-const { block, level, headings } = Astro.props
+const { block, level, headings } = Astro.props;
 
-const listTypes = ['i', '1', 'a']
+const listTypes = ['i', '1', 'a'];
 ---
 
 <ol type={listTypes[level % 3]}>

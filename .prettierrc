@@ -1,11 +1,12 @@
 {
   "trailingComma": "es5",
   "singleQuote": true,
+  "plugins": ["prettier-plugin-astro"],
   "overrides": [
     {
       "files": ["*.ts", "*.astro"],
       "options": {
-        "semi": false
+        "semi": true
       }
     }
   ]

@@ -1,20 +1,20 @@
 ---
-import katex from 'katex'
-import { RichText } from '../../lib/interfaces.ts'
-import Bold from './annotations/Bold.astro'
-import Italic from './annotations/Italic.astro'
-import Strikethrough from './annotations/Strikethrough.astro'
-import Underline from './annotations/Underline.astro'
-import Color from './annotations/Color.astro'
-import Code from './annotations/Code.astro'
-import Anchor from './annotations/Anchor.astro'
-import Mention from './Mention.astro'
+import katex from 'katex';
+import { RichText } from '../../lib/interfaces.ts';
+import Bold from './annotations/Bold.astro';
+import Italic from './annotations/Italic.astro';
+import Strikethrough from './annotations/Strikethrough.astro';
+import Underline from './annotations/Underline.astro';
+import Color from './annotations/Color.astro';
+import Code from './annotations/Code.astro';
+import Anchor from './annotations/Anchor.astro';
+import Mention from './Mention.astro';
 
 export interface Props {
-  richText: RichText
+  richText: RichText;
 }
 
-const { richText } = Astro.props
+const { richText } = Astro.props;
 ---
 
 <Anchor richText={richText}>
@@ -35,14 +35,14 @@ const { richText } = Astro.props
                               richText.Text.Content.split('\n').map(
                                 (content: string, i: number) => {
                                   if (i === 0) {
-                                    return content
+                                    return content;
                                   }
                                   return (
                                     <>
                                       <br />
                                       {content}
                                     </>
-                                  )
+                                  );
                                 }
                               )}
                             {richText.Equation && (

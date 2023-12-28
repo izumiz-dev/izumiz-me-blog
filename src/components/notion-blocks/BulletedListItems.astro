@@ -1,16 +1,16 @@
 ---
-import * as interfaces from '../../lib/interfaces.ts'
-import { snakeToKebab } from '../../lib/style-helpers.ts'
-import RichText from './RichText.astro'
-import NotionBlocks from '../NotionBlocks.astro'
-import '../../styles/notion-color.css'
+import * as interfaces from '../../lib/interfaces.ts';
+import { snakeToKebab } from '../../lib/style-helpers.ts';
+import RichText from './RichText.astro';
+import NotionBlocks from '../NotionBlocks.astro';
+import '../../styles/notion-color.css';
 
 export interface Props {
-  block: interfaces.Block
-  headings: interfaces.Block[]
+  block: interfaces.Block;
+  headings: interfaces.Block[];
 }
 
-const { block, headings } = Astro.props
+const { block, headings } = Astro.props;
 ---
 
 <ul>

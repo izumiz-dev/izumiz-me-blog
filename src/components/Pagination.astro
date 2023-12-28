@@ -1,24 +1,24 @@
 ---
-import { getPageLink } from '../lib/blog-helpers.ts'
+import { getPageLink } from '../lib/blog-helpers.ts';
 
 export interface Props {
-  currentPage: number
-  numberOfPages: number
-  tag: string
+  currentPage: number;
+  numberOfPages: number;
+  tag: string;
 }
 
-const { currentPage, numberOfPages, tag = '' } = Astro.props
+const { currentPage, numberOfPages, tag = '' } = Astro.props;
 
-const isFirstPage = currentPage === 1
-const isLastPage = currentPage === numberOfPages
+const isFirstPage = currentPage === 1;
+const isLastPage = currentPage === numberOfPages;
 
-const startPage = currentPage - 2 < 1 ? 1 : currentPage - 2
+const startPage = currentPage - 2 < 1 ? 1 : currentPage - 2;
 const endPage =
-  currentPage + 2 > numberOfPages ? numberOfPages : currentPage + 2
+  currentPage + 2 > numberOfPages ? numberOfPages : currentPage + 2;
 
-let pages = []
+let pages = [];
 for (let i = startPage; i <= endPage; i++) {
-  pages.push(i)
+  pages.push(i);
 }
 ---
 

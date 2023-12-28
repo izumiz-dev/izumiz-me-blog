@@ -1,19 +1,19 @@
 ---
-import { Post } from '../lib/interfaces.ts'
-import { filePath } from '../lib/blog-helpers'
+import { type Post } from '../lib/interfaces.ts';
+import { filePath } from '../lib/blog-helpers';
 
 export interface Props {
-  post: Post
+  post: Post;
 }
 
-const { post } = Astro.props
+const { post } = Astro.props;
 
-let image = ''
+let image = '';
 if (post.FeaturedImage && post.FeaturedImage.Url) {
   if (import.meta.env.DEV) {
-    image = post.FeaturedImage.Url
+    image = post.FeaturedImage.Url;
   } else {
-    image = filePath(new URL(post.FeaturedImage.Url))
+    image = filePath(new URL(post.FeaturedImage.Url));
   }
 }
 ---

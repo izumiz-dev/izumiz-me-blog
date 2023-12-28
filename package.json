@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint --ext .js,.ts,.astro src",
-    "format": "pnpm dlx prettier --write .",
+    "format": "prettier --write . 'src/**/*.{ts,astro,css}'",
     "cache:fetch": "node scripts/blog-contents-cache.cjs",
     "cache:purge": "nx reset && rm -f tmp/*",
     "_fetch-notion-blocks": "node scripts/retrieve-block-children.cjs"
@@ -53,7 +53,8 @@
     "eslint": "^8.51.0",
     "eslint-plugin-astro": "^0.27.0",
     "lefthook": "^1.5.5",
-    "nx": "15.5.3"
+    "nx": "15.5.3",
+    "prettier-plugin-astro": "^0.12.3"
   },
   "nx": {
     "targets": {
