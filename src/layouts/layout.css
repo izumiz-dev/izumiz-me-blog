@@ -29,7 +29,7 @@ aside {
   order: 1;
   width: 300px;
   padding: 20px 20px;
-  background-color: var(--my-bg-color);
+  background-color: var(--my-aside-color);
 }
 @media (max-width: 640px) {
   aside {

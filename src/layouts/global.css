@@ -74,6 +74,7 @@ figure {
   font-size: 0.85rem;
   color: #999;
   line-height: 1.8rem;
+  max-width: 920px;
 }
 
 a {
