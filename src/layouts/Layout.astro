@@ -32,7 +32,7 @@ export interface Props {
 
 const {
   title = '',
-  description = '',
+  // description = '',
   path = '/',
   // ogImage = '',
   openGraph,
@@ -41,7 +41,6 @@ const {
 const database = await getDatabase();
 
 const siteTitle = title ? `${title} - ${database.Title}` : database.Title;
-const siteDescription = description ? description : database.Description;
 const siteURL = new URL(getNavLink(path), Astro.site).toString();
 // const siteOGImage = new URL(
 //   getStaticFilePath('/default-og-image.png'),
@@ -82,12 +81,9 @@ if (database.Icon && database.Icon.Type === 'file') {
     <SEO
       charset="UTF-8"
       title={siteTitle}
-      description={siteDescription}
       openGraph={openGraph}
       twitter={{
         card: 'summary_large_image',
-        site: 'izumiz.me',
-        title: siteTitle,
       }}
     />
     <link
