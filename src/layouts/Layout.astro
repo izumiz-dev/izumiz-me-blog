@@ -78,9 +78,18 @@ if (database.Icon && database.Icon.Type === 'file') {
     <meta charset="UTF-8" />
     <meta name="generator" content={Astro.generator} />
     <title>{siteTitle}</title>
-    <meta name="description" content={siteDescription} />
     <link rel="canonical" href={siteURL} />
-    <SEO charset="UTF-8" openGraph={openGraph} />
+    <SEO
+      charset="UTF-8"
+      title={siteTitle}
+      description={siteDescription}
+      openGraph={openGraph}
+      twitter={{
+        card: 'summary_large_image',
+        site: 'izumiz.me',
+        title: siteTitle,
+      }}
+    />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
