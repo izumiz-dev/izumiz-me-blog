@@ -46,7 +46,7 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <BlogPostsLink heading="Recommended" posts={rankedPosts} />
-    <BlogTagsLink heading="Categories" tags={tags} />
+    <BlogPostsLink heading="固定記事" posts={rankedPosts} />
+    <BlogTagsLink heading="タグ一覧" tags={tags} />
   </div>
 </Layout>

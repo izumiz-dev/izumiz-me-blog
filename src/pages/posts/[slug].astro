@@ -1,9 +1,7 @@
 ---
 import * as interfaces from '@lib/interfaces.ts';
 import {
-  getPosts,
   getAllPosts,
-  getRankedPosts,
   getPostBySlug,
   getPostsByTag,
   getBlock,
@@ -43,8 +41,6 @@ if (!post) {
 const [blocks, allPosts, tags, postsHavingSameTag] = await Promise.all([
   getAllBlocksByBlockId(post.PageId),
   getAllPosts(),
-  getRankedPosts(),
-  getPosts(5),
   getAllTags(),
   getPostsByTag(post.Tags[0]?.name, 6),
 ]);
@@ -129,7 +125,7 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
         (p: interfaces.Post) => p.Slug !== post.Slug
       )}
     />
-    <!-- <BlogPostsLink heading="Recommended" posts={rankedPosts} />
+    <!-- <BlogPostsLink heading="固定記事" posts={rankedPosts} />
     <BlogPostsLink heading="Latest posts" posts={recentPosts} /> -->
     <BlogTagsLink heading="タグ一覧" tags={tags} />
   </div>
