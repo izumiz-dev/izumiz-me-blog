@@ -49,13 +49,13 @@ div.cover img {
 }
 
 div.content {
-  padding: 20px 40px;
+  padding: 40px 80px;
   min-height: 80vh;
   background-color: var(--my-fr-color);
 }
 @media (width <= 640px) {
   div.content {
-    padding: 10 20px;
+    padding: 20px;
   }
 }
 @media (640px < width < 1280px) {

@@ -40,15 +40,14 @@ if (!post) {
   throw new Error('Post not found. slug: ${slug}');
 }
 
-const [blocks, allPosts, rankedPosts, recentPosts, tags, postsHavingSameTag] =
-  await Promise.all([
-    getAllBlocksByBlockId(post.PageId),
-    getAllPosts(),
-    getRankedPosts(),
-    getPosts(5),
-    getAllTags(),
-    getPostsByTag(post.Tags[0]?.name, 6),
-  ]);
+const [blocks, allPosts, tags, postsHavingSameTag] = await Promise.all([
+  getAllBlocksByBlockId(post.PageId),
+  getAllPosts(),
+  getRankedPosts(),
+  getPosts(5),
+  getAllTags(),
+  getPostsByTag(post.Tags[0]?.name, 6),
+]);
 
 const fileAtacchedBlocks = extractTargetBlocks('image', blocks)
   .concat(extractTargetBlocks('file', blocks))
@@ -125,13 +124,13 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
 
   <div slot="aside" class="aside">
     <BlogPostsLink
-      heading="Posts in the same category"
+      heading="同じカテゴリの投稿"
       posts={postsHavingSameTag.filter(
         (p: interfaces.Post) => p.Slug !== post.Slug
       )}
     />
-    <BlogPostsLink heading="Recommended" posts={rankedPosts} />
-    <BlogPostsLink heading="Latest posts" posts={recentPosts} />
-    <BlogTagsLink heading="Categories" tags={tags} />
+    <!-- <BlogPostsLink heading="Recommended" posts={rankedPosts} />
+    <BlogPostsLink heading="Latest posts" posts={recentPosts} /> -->
+    <BlogTagsLink heading="タグ一覧" tags={tags} />
   </div>
 </Layout>

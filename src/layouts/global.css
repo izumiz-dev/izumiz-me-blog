@@ -74,7 +74,12 @@ figure {
   font-size: 0.85rem;
   color: #999;
   line-height: 1.8rem;
-  max-width: 920px;
+  max-width: 600px;
+}
+
+.video {
+  margin: 0.2rem auto 0;
+  max-width: 600px;
 }
 
 a {
