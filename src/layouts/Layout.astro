@@ -1,4 +1,5 @@
 ---
+import { SEO } from 'astro-seo';
 import { PUBLIC_GA_TRACKING_ID, ENABLE_LIGHTBOX } from '../server-constants.ts';
 import { getDatabase } from '@lib/notion/client.ts';
 import { getNavLink, getStaticFilePath, filePath } from '@lib/blog-helpers.ts';
@@ -10,24 +11,41 @@ import SearchButton from '@components/SearchButton.astro';
 import './global.css';
 import './layout.css';
 
+export type OpenGraph = {
+  basic: {
+    title: string;
+    type: 'article' | 'website';
+    image: string;
+  };
+  image: {
+    alt: string;
+  };
+};
+
 export interface Props {
   title: string;
   description: string;
   path: string;
   ogImage: string;
+  openGraph: OpenGraph;
 }
 
-const { title = '', description = '', path = '/', ogImage = '' } = Astro.props;
+const {
+  title = '',
+  // description = '',
+  path = '/',
+  // ogImage = '',
+  openGraph,
+} = Astro.props;
 
 const database = await getDatabase();
 
 const siteTitle = title ? `${title} - ${database.Title}` : database.Title;
-const siteDescription = description ? description : database.Description;
 const siteURL = new URL(getNavLink(path), Astro.site).toString();
-const siteOGImage = new URL(
-  getStaticFilePath('/default-og-image.png'),
-  Astro.site
-);
+// const siteOGImage = new URL(
+//   getStaticFilePath('/default-og-image.png'),
+//   Astro.site
+// );
 
 let coverImageURL: string;
 if (database.Cover) {
@@ -59,17 +77,15 @@ if (database.Icon && database.Icon.Type === 'file') {
     <meta charset="UTF-8" />
     <meta name="generator" content={Astro.generator} />
     <title>{siteTitle}</title>
-    <meta name="description" content={siteDescription} />
     <link rel="canonical" href={siteURL} />
-    <meta property="og:url" content={siteURL} />
-    <meta property="og:title" content={siteTitle} />
-    <meta property="og:description" content={siteDescription} />
-    <meta property="og:site_name" content={database.Title} />
-    <meta property="og:image" content={ogImage || siteOGImage} />
-    <meta name="twitter:title" content={siteTitle} />
-    <meta name="twitter:description" content={siteDescription} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content={ogImage || siteOGImage} />
+    <SEO
+      charset="UTF-8"
+      title={siteTitle}
+      openGraph={openGraph}
+      twitter={{
+        card: 'summary_large_image',
+      }}
+    />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
