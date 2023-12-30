@@ -73,7 +73,7 @@ const currentTag = posts[0].Tags.find((t) => t.name === tag);
       )
     }
 
-    <footer>
+    <footer style={{ maxWidth: '840px' }}>
       <Pagination
         tag={tag}
         currentPage={parseInt(page, 10)}
