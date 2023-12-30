@@ -3,18 +3,41 @@ import sharp from 'sharp';
 
 export async function getOgImage(text: string) {
   const fontData = (await getFontData()) as ArrayBuffer;
+
   const svg = await satori(
     <main
       style={{
         height: '100%',
         width: '100%',
-        backgroundColor: '#444',
-        color: '#fff',
-        padding: '10px',
+        backgroundColor: '#6568c3',
       }}
     >
-      <section>
+      <section
+        style={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          flexDirection: 'column',
+          color: '#2e2e2e',
+          border: '0px solid',
+          borderRadius: '24px',
+          margin: '24px',
+          padding: '32px',
+          backgroundColor: '#fefefe',
+          width: '752px',
+        }}
+      >
         <h1 style={{ fontSize: '40px' }}>{text}</h1>
+        <div
+          style={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row-reverse',
+            alignItems: 'flex-end',
+          }}
+        >
+          <h2 style={{ fontSize: '32px' }}>izumiz.me</h2>
+        </div>
       </section>
     </main>,
     {
