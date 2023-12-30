@@ -45,7 +45,7 @@ export async function getOgImage(text: string) {
       height: 400,
       fonts: [
         {
-          name: 'Noto Sans JP',
+          name: 'M PLUS Rounded 1c',
           data: fontData,
           style: 'normal',
         },
@@ -57,7 +57,7 @@ export async function getOgImage(text: string) {
 }
 
 async function getFontData() {
-  const API = `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700`;
+  const API = `https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700`;
 
   const css = await (
     await fetch(API, {
