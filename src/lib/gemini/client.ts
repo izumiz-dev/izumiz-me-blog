@@ -9,7 +9,8 @@ export async function getSummarizedText(
     // For text-only input, use the gemini-pro model
     const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
-    const prefixPrompt = '次の内容を要約してください:\n';
+    const prefixPrompt =
+      '以下の内容を箇条書きで完結に３行で要約してください。ハイフンを使った箇条書きフォーマットとしてください。\n';
 
     const result = await model.generateContent(prefixPrompt + content);
     const response = await result.response;
