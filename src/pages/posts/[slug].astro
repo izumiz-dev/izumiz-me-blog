@@ -14,6 +14,7 @@ import {
   filePath,
   extractTargetBlocks,
 } from '@lib/blog-helpers.ts';
+import { getSummarizedText } from '@lib/gemini/client';
 import Layout from '@layouts/Layout.astro';
 import PostDate from '@components/PostDate.astro';
 import PostTags from '@components/PostTags.astro';
@@ -106,6 +107,21 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
 >
   <div slot="main" class={styles.main}>
     <div class={styles.post}>
+      <div>
+        {
+          getSummarizedText(
+            blocks.reduce(
+              (acc, cur) =>
+                acc +
+                  cur.Paragraph?.RichTexts.reduce(
+                    (acc, cur) => acc + cur.Text?.Content,
+                    ''
+                  ) || '',
+              ''
+            )
+          )
+        }
+      </div>
       <PostDate post={post} />
       <PostTags post={post} />
       <PostTitle post={post} enableLink={false} />
