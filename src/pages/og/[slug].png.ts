@@ -9,7 +9,7 @@ export async function getStaticPaths() {
   }));
 }
 
-export async function get({ params }: APIContext) {
+export async function GET({ params }: APIContext) {
   if (params.slug === undefined) return;
   const post = await getPostBySlug(params.slug);
   const body = await getOgImage(post?.Title ?? 'No title');
