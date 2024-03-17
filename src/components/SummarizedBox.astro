@@ -13,58 +13,65 @@ const summarizedText: string = await getSummarizedText(blockToText(blocks));
 ---
 
 <div>
-  <span class="gradient-text" data-text="本ポストの要約 Powered by Gemini">本ポストの要約 Powered by Gemini</span>
+  <span class="gradient-text" data-text="本ポストの要約 Powered by Gemini"
+    >本ポストの要約 Powered by Gemini</span
+  >
   <ul>
-    {summarizedText.split('- ').map((line: string) => {
-      if (line) {
-        return <li>{line.replace('。', '')}</li>;
-      }
-    })}
+    {
+      summarizedText.split('- ').map((line: string) => {
+        if (line) {
+          return <li>{line.replace('。', '')}</li>;
+        }
+      })
+    }
   </ul>
 </div>
 
 <style>
-@keyframes gradient-flow {
-  0%, 100% {
-    background-position: 0% 50%;
+  @keyframes gradient-flow {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
-  50% {
-    background-position: 100% 50%;
-  }
-}
 
-@keyframes fade-to-dark {
-  0% {
+  @keyframes fade-to-dark {
+    0% {
+      color: transparent;
+    }
+    100% {
+      color: #333;
+    }
+  }
+
+  .gradient-text {
+    position: relative;
+    font-size: 1.25rem;
+    font-weight: bolder;
+    color: #333; /* 初期色を#333に設定 */
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: fade-to-dark 3s ease-in-out 6s forwards; /* fade-to-darkアニメーションを削除 */
+  }
+
+  .gradient-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, #f06, #0083ee, #f06);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
+    animation:
+      gradient-flow 3s ease-in-out,
+      fade-to-dark 3s ease-in-out 3s forwards; /* ここでfade-to-darkを適用 */
+    pointer-events: none;
   }
-  100% {
-    color: #333;
-  }
-}
-
-.gradient-text {
-  position: relative;
-  font-size: 1.25rem;
-  font-weight: bolder;
-  color: #333; /* 初期色を#333に設定 */
-  background-clip: text;
-  -webkit-background-clip: text;
-  animation: fade-to-dark 3s ease-in-out 6s forwards; /* fade-to-darkアニメーションを削除 */
-}
-
-.gradient-text::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, #f06, #0083ee, #f06);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: gradient-flow 3s ease-in-out, fade-to-dark 3s ease-in-out 3s forwards; /* ここでfade-to-darkを適用 */
-  pointer-events: none;
-}
 </style>
