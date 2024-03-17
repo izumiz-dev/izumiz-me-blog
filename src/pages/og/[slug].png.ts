@@ -12,7 +12,11 @@ export async function getStaticPaths() {
 export async function GET({ params }: APIContext) {
   if (params.slug === undefined) return;
   const post = await getPostBySlug(params.slug);
-  const body = await getOgImage(post?.Title ?? 'No title');
+  const buffer = await getOgImage(post?.Title ?? 'No title');
 
-  return { body, encoding: 'binary' };
+  return new Response(buffer, {
+    headers: {
+      'Content-Type': 'image/png',
+    },
+  });
 }
