@@ -86,6 +86,9 @@ importers:
       '@types/js-base64':
         specifier: ^3.3.1
         version: 3.3.1
+      '@types/katex':
+        specifier: ^0.16.7
+        version: 0.16.7
       '@types/metascraper':
         specifier: ^5.14.1
         version: 5.14.3
@@ -98,6 +101,9 @@ importers:
       '@types/metascraper-title':
         specifier: ^5.14.0
         version: 5.14.5
+      '@types/prismjs':
+        specifier: ^1.26.3
+        version: 1.26.3
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.8.0
         version: 6.16.0(@typescript-eslint/parser@6.16.0(eslint@8.56.0)(typescript@5.3.3))(eslint@8.56.0)(typescript@5.3.3)
@@ -1240,6 +1246,12 @@ packages:
         integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==,
       }
 
+  '@types/katex@0.16.7':
+    resolution:
+      {
+        integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==,
+      }
+
   '@types/mdast@3.0.15':
     resolution:
       {
@@ -1304,6 +1316,12 @@ packages:
     resolution:
       {
         integrity: sha512-SuT16Q1K51EAVPz1K29DJ/sXjhSQ0zjvsypYJ6tlwVsRV9jwW5Adq2ch8Dq8kDBCkYnELS7N7VNCSB5nC56t/g==,
+      }
+
+  '@types/prismjs@1.26.3':
+    resolution:
+      {
+        integrity: sha512-A0D0aTXvjlqJ5ZILMz3rNfDBOx9hHxLZYv2by47Sm/pqW35zzjusrZTryatjN/Rf8Us2gZrJD+KeHbUSTux1Cw==,
       }
 
   '@types/prop-types@15.7.11':
@@ -7294,6 +7312,8 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
+  '@types/katex@0.16.7': {}
+
   '@types/mdast@3.0.15':
     dependencies:
       '@types/unist': 2.0.10
@@ -7350,6 +7370,8 @@ snapshots:
       undici-types: 5.26.5
 
   '@types/parse5@6.0.3': {}
+
+  '@types/prismjs@1.26.3': {}
 
   '@types/prop-types@15.7.11': {}
 
