@@ -1,8 +1,10 @@
-name: Format
+name: lint and format
 
 on:
   push:
     branches:
+      - main
+      - dev
 
 jobs:
   format:
@@ -17,9 +19,11 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Run format
-        run: npm run format
+      - name: Install dependencies
+        run: pnpm install
 
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Format by GitHub Actions
+      - name: Run lint
+        run: pnpm run lint
+
+      - name: Run format
+        run: pnpm run format
