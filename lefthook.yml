@@ -2,6 +2,6 @@ pre-commit:
   parallel: false
   commands:
     format:
-      run: pnpm run format
+      run: pnpm prettier --write {staged_files}
     lint:
-      run: pnpm run lint
+      run: pnpm eslint {staged_files}
