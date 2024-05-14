@@ -1,21 +1,7 @@
-# EXAMPLE USAGE:
-
-#   Refer for explanation to following link:
-#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
-
-# pre-push:
-#   commands:
-#     packages-audit:
-#       tags: frontend security
-#       run: yarn audit
-#     gems-audit:
-#       tags: backend security
-#       run: bundle audit
-
 pre-commit:
-  parallel: true
+  parallel: false
   commands:
-    lint:
-      run: pnpm run lint
     format:
       run: pnpm run format
+    lint:
+      run: pnpm run lint
