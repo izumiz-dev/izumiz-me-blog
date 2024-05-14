@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint --ext .js,.ts,.astro src",
-    "format": "prettier --write . 'src/**/*.{ts,astro,css}'",
+    "format": "prettier --write . '**/*.{ts,astro,css,yaml,json,yml}'",
     "cache:fetch": "node scripts/blog-contents-cache.cjs",
     "cache:purge": "nx reset && rm -f tmp/*",
     "_fetch-notion-blocks": "node scripts/retrieve-block-children.cjs"
