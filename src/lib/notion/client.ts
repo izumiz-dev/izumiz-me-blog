@@ -170,8 +170,11 @@ export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
     .slice(0, pageSize);
 }
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const allPosts = await getAllPosts();
+export async function getPostBySlug(
+  slug: string,
+  isGallery = false
+): Promise<Post | null> {
+  const allPosts = await getAllPosts(isGallery);
   return allPosts.find((post) => post.Slug === slug) || null;
 }
 
