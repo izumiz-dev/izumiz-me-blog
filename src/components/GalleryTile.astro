@@ -15,10 +15,10 @@ let title = post.Title;
 <h2 class="post-title">
   {
     (
-      <a href={getGalleryLink(post.Slug)}>
+      <>
         <PostFeaturedImage post={post} />
-        {title}
-      </a>
+        <a href={getGalleryLink(post.Slug)}>{title}</a>
+      </>
     )
   }
 </h2>
