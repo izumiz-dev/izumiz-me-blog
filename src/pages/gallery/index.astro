@@ -1,0 +1,42 @@
+---
+import { NUMBER_OF_POSTS_PER_PAGE } from '../../server-constants';
+import { getPosts, getNumberOfPages } from '@lib/notion/client.ts';
+import Layout from '@layouts/Layout.astro';
+import NoContents from '@components/NoContents.astro';
+import PostDate from '@components/PostDate.astro';
+import PostTitle from '@components/PostTitle.astro';
+import Pagination from '@components/Pagination.astro';
+import styles from '@styles/blog.module.css';
+
+const [posts, numberOfPages] = await Promise.all([
+  getPosts(NUMBER_OF_POSTS_PER_PAGE, true),
+  getNumberOfPages(true),
+]);
+---
+
+<Layout>
+  <div slot="main" class={styles.main}>
+    {
+      posts.length === 0 ? (
+        <NoContents contents={posts} />
+      ) : (
+        posts.map((post) => (
+          <div class={styles.post} key={post.Slug}>
+            <PostDate post={post} />
+            {/* <PostTags post={post} /> */}
+            <PostTitle post={post} />
+          </div>
+        ))
+      )
+    }
+
+    <footer>
+      <Pagination currentPage={1} numberOfPages={numberOfPages} />
+    </footer>
+  </div>
+
+  <div slot="aside" class={styles.aside}>
+    <!-- <BlogPostsLink heading="固定記事" posts={rankedPosts} />
+    <BlogTagsLink heading="タグ一覧" tags={tags} /> -->
+  </div>
+</Layout>

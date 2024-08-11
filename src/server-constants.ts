@@ -3,6 +3,9 @@ export const NOTION_API_SECRET =
 export const DATABASE_ID =
   import.meta.env.DATABASE_ID || process.env.DATABASE_ID || '';
 
+export const GALLERY_ID =
+  import.meta.env.GALLERY_ID || process.env.GALLERY_ID || '';
+
 export const CUSTOM_DOMAIN =
   import.meta.env.CUSTOM_DOMAIN || process.env.CUSTOM_DOMAIN || ''; // <- Set your costom domain if you have. e.g. alpacat.com
 export const BASE_PATH =

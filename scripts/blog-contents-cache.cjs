@@ -5,9 +5,11 @@ const { PromisePool } = require('@supercharge/promise-pool');
 
 const notion = new Client({ auth: process.env.NOTION_API_SECRET });
 
-const getAllPages = async () => {
+const GALLERY_MODE = true;
+
+const getAllPages = async (isGallery = false) => {
   const params = {
-    database_id: process.env.DATABASE_ID,
+    database_id: isGallery ? process.env.GALLERY_ID : process.env.DATABASE_ID,
     filter: {
       and: [
         {
@@ -53,7 +55,7 @@ const getAllPages = async () => {
 };
 
 (async () => {
-  const pages = await getAllPages();
+  const pages = await getAllPages(GALLERY_MODE);
 
   const concurrency = parseInt(process.env.CACHE_CONCURRENCY || '1', 10);
 

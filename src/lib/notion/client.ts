@@ -7,6 +7,7 @@ import ExifTransformer from 'exif-be-gone';
 import {
   NOTION_API_SECRET,
   DATABASE_ID,
+  GALLERY_ID,
   NUMBER_OF_POSTS_PER_PAGE,
   REQUEST_TIMEOUT_MS,
 } from '../../server-constants';
@@ -64,13 +65,13 @@ let dbCache: Database | null = null;
 
 const numberOfRetry = 2;
 
-export async function getAllPosts(): Promise<Post[]> {
+export async function getAllPosts(isGallery = false): Promise<Post[]> {
   if (postsCache !== null) {
     return Promise.resolve(postsCache);
   }
 
   const params: requestParams.QueryDatabase = {
-    database_id: DATABASE_ID,
+    database_id: isGallery ? GALLERY_ID : DATABASE_ID,
     filter: {
       and: [
         {
@@ -133,8 +134,11 @@ export async function getAllPosts(): Promise<Post[]> {
   return postsCache;
 }
 
-export async function getPosts(pageSize = 10): Promise<Post[]> {
-  const allPosts = await getAllPosts();
+export async function getPosts(
+  pageSize = 10,
+  isGallery = false
+): Promise<Post[]> {
+  const allPosts = await getAllPosts(isGallery);
   return allPosts.slice(0, pageSize);
 }
 
@@ -176,12 +180,15 @@ export async function getPostsByTag(
 }
 
 // page starts from 1 not 0
-export async function getPostsByPage(page: number): Promise<Post[]> {
+export async function getPostsByPage(
+  page: number,
+  isGallery = false
+): Promise<Post[]> {
   if (page < 1) {
     return [];
   }
 
-  const allPosts = await getAllPosts();
+  const allPosts = await getAllPosts(isGallery);
 
   const startIndex = (page - 1) * NUMBER_OF_POSTS_PER_PAGE;
   const endIndex = startIndex + NUMBER_OF_POSTS_PER_PAGE;
@@ -209,8 +216,8 @@ export async function getPostsByTagAndPage(
   return posts.slice(startIndex, endIndex);
 }
 
-export async function getNumberOfPages(): Promise<number> {
-  const allPosts = await getAllPosts();
+export async function getNumberOfPages(isGallery = false): Promise<number> {
+  const allPosts = await getAllPosts(isGallery);
   return (
     Math.floor(allPosts.length / NUMBER_OF_POSTS_PER_PAGE) +
     (allPosts.length % NUMBER_OF_POSTS_PER_PAGE > 0 ? 1 : 0)
@@ -420,13 +427,13 @@ export async function downloadFile(url: URL) {
   }
 }
 
-export async function getDatabase(): Promise<Database> {
+export async function getDatabase(isGallery = false): Promise<Database> {
   if (dbCache !== null) {
     return Promise.resolve(dbCache);
   }
 
   const params: requestParams.RetrieveDatabase = {
-    database_id: DATABASE_ID,
+    database_id: isGallery ? GALLERY_ID : DATABASE_ID,
   };
 
   const res = await retry(
