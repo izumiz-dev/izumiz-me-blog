@@ -62,12 +62,18 @@ const client = new Client({
 
 let postsCache: Post[] | null = null;
 let dbCache: Database | null = null;
+let galleryPostsCache: Post[] | null = null;
+let galleryDbCache: Database | null = null;
 
 const numberOfRetry = 2;
 
 export async function getAllPosts(isGallery = false): Promise<Post[]> {
-  if (postsCache !== null) {
+  if (postsCache !== null && !isGallery) {
     return Promise.resolve(postsCache);
+  }
+
+  if (galleryPostsCache !== null && isGallery) {
+    return Promise.resolve(galleryPostsCache);
   }
 
   const params: requestParams.QueryDatabase = {
@@ -126,6 +132,13 @@ export async function getAllPosts(isGallery = false): Promise<Post[]> {
     }
 
     params['start_cursor'] = res.next_cursor as string;
+  }
+
+  if (isGallery) {
+    galleryPostsCache = results
+      .filter((pageObject) => _validPageObject(pageObject))
+      .map((pageObject) => _buildPost(pageObject));
+    return galleryPostsCache;
   }
 
   postsCache = results
@@ -428,8 +441,12 @@ export async function downloadFile(url: URL) {
 }
 
 export async function getDatabase(isGallery = false): Promise<Database> {
-  if (dbCache !== null) {
+  if (dbCache !== null && !isGallery) {
     return Promise.resolve(dbCache);
+  }
+
+  if (galleryDbCache !== null && isGallery) {
+    return Promise.resolve(galleryDbCache);
   }
 
   const params: requestParams.RetrieveDatabase = {
@@ -492,6 +509,11 @@ export async function getDatabase(isGallery = false): Promise<Database> {
     Icon: icon,
     Cover: cover,
   };
+
+  if (isGallery) {
+    galleryDbCache = database;
+    return database;
+  }
 
   dbCache = database;
   return database;
