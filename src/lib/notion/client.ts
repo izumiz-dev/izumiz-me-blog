@@ -365,8 +365,8 @@ export async function getBlock(blockId: string): Promise<Block> {
   return _buildBlock(res);
 }
 
-export async function getAllTags(): Promise<SelectProperty[]> {
-  const allPosts = await getAllPosts();
+export async function getAllTags(isGallery = false): Promise<SelectProperty[]> {
+  const allPosts = await getAllPosts(isGallery);
 
   const tagNames: string[] = [];
   return allPosts

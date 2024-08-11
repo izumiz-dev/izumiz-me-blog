@@ -27,7 +27,7 @@ const { page } = Astro.params;
 
 const [posts, tags, numberOfPages] = await Promise.all([
   getPostsByPage(parseInt(page, 10), true),
-  getAllTags(),
+  getAllTags(true),
   getNumberOfPages(true),
 ]);
 ---
