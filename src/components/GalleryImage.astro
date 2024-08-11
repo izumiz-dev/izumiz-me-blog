@@ -1,0 +1,36 @@
+---
+import { filePath } from '../lib/blog-helpers';
+
+const { post } = Astro.props;
+
+let image = '';
+if (post.FeaturedImage && post.FeaturedImage.Url) {
+  if (import.meta.env.DEV) {
+    image = post.FeaturedImage.Url;
+  } else {
+    image = filePath(new URL(post.FeaturedImage.Url));
+  }
+}
+---
+
+{
+  image && (
+    <div class="image-container">
+      <img src={image} alt="Featured image of the post" loading="lazy" />
+    </div>
+  )
+}
+
+<style>
+  .image-container {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+</style>

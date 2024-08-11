@@ -20,13 +20,14 @@ const [posts, numberOfPages] = await Promise.all([
       posts.length === 0 ? (
         <NoContents contents={posts} />
       ) : (
-        posts.map((post) => (
-          <div class={styles.post} key={post.Slug}>
-            <PostDate post={post} />
-            {/* <PostTags post={post} /> */}
-            <GalleryTile post={post} />
-          </div>
-        ))
+        <div class="gallery-grid">
+          {posts.map((post) => (
+            <div class="gallery-item" key={post.Slug}>
+              <GalleryTile post={post} />
+              <PostDate post={post} />
+            </div>
+          ))}
+        </div>
       )
     }
 
@@ -36,7 +37,30 @@ const [posts, numberOfPages] = await Promise.all([
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <!-- <BlogPostsLink heading="固定記事" posts={rankedPosts} />
-    <BlogTagsLink heading="タグ一覧" tags={tags} /> -->
+    {
+      /* <BlogPostsLink heading="固定記事" posts={rankedPosts} />
+    <BlogTagsLink heading="タグ一覧" tags={tags} /> */
+    }
   </div>
 </Layout>
+
+<style>
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .gallery-item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 640px) {
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+  }
+</style>
