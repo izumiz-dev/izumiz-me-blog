@@ -4,9 +4,9 @@ import { getPosts, getNumberOfPages } from '@lib/notion/client.ts';
 import Layout from '@layouts/Layout.astro';
 import NoContents from '@components/NoContents.astro';
 import PostDate from '@components/PostDate.astro';
-import PostTitle from '@components/PostTitle.astro';
 import Pagination from '@components/Pagination.astro';
 import styles from '@styles/blog.module.css';
+import GalleryTile from '@components/GalleryTile.astro';
 
 const [posts, numberOfPages] = await Promise.all([
   getPosts(NUMBER_OF_POSTS_PER_PAGE, true),
@@ -24,7 +24,7 @@ const [posts, numberOfPages] = await Promise.all([
           <div class={styles.post} key={post.Slug}>
             <PostDate post={post} />
             {/* <PostTags post={post} /> */}
-            <PostTitle post={post} />
+            <GalleryTile post={post} />
           </div>
         ))
       )

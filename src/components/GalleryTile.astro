@@ -1,0 +1,59 @@
+---
+import { type Post } from '../lib/interfaces.ts';
+import { getGalleryLink } from '../lib/blog-helpers.ts';
+import PostFeaturedImage from './PostFeaturedImage.astro';
+
+export interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+
+let title = post.Title;
+---
+
+<h2 class="post-title">
+  {
+    (
+      <a href={getGalleryLink(post.Slug)}>
+        <PostFeaturedImage post={post} />
+        {title}
+      </a>
+    )
+  }
+</h2>
+
+<style>
+  .post-title {
+    margin: 0;
+    padding: 0.2rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--fg);
+  }
+  .post-title a {
+    font-size: 1.6rem;
+    color: inherit;
+  }
+  .post-title span,
+  .post-title img {
+    display: inline-block;
+    margin-right: 0.2em;
+  }
+  .post-title span {
+    font-size: 1.2em;
+  }
+  .post-title img {
+    width: 1.3em;
+    height: 1.3em;
+    vertical-align: sub;
+  }
+  @media (max-width: 640px) {
+    .post-title {
+      font-size: 1.65rem;
+    }
+    .post-title a {
+      font-size: 1.45rem;
+    }
+  }
+</style>

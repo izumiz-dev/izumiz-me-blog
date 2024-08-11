@@ -136,6 +136,10 @@ export const getPostLink = (slug: string) => {
   return pathJoin(BASE_PATH, `/posts/${slug}`);
 };
 
+export const getGalleryLink = (slug: string) => {
+  return pathJoin(BASE_PATH, `/gallery/${slug}`);
+};
+
 export const getTagLink = (tag: string) => {
   return pathJoin(BASE_PATH, `/posts/tag/${encodeURIComponent(tag)}`);
 };
