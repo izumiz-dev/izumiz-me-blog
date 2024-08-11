@@ -13,15 +13,9 @@ let title = post.Title;
 ---
 
 <h2 class="post-title">
-  {
-    (
-      <>
-        <PostFeaturedImage post={post} />
-        <a href={getGalleryLink(post.Slug)}>{title}</a>
-      </>
-    )
-  }
+  <a href={getGalleryLink(post.Slug)}>{title}</a>
 </h2>
+<PostFeaturedImage post={post} />
 
 <style>
   .post-title {
