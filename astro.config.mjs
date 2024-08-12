@@ -3,6 +3,7 @@ import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
 import FeaturedImageDownloader from './src/integrations/featured-image-downloader';
+import GalleryImagesDownloader from './src/integrations/gallery-images-downloader';
 import PublicNotionCopier from './src/integrations/public-notion-copier';
 import react from '@astrojs/react';
 const getSite = function () {
@@ -35,6 +36,7 @@ export default defineConfig({
     CoverImageDownloader(),
     CustomIconDownloader(),
     FeaturedImageDownloader(),
+    GalleryImagesDownloader(),
     PublicNotionCopier(),
     react(),
   ],
