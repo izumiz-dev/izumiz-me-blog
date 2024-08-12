@@ -399,7 +399,8 @@ export async function getAllTags(isGallery = false): Promise<SelectProperty[]> {
     );
 }
 
-export async function downloadFile(url: URL) {
+export async function downloadFile(url: URL, msg?: string) {
+  console.log(`msg: ${msg}`);
   let res!: AxiosResponse;
   try {
     res = await axios({
