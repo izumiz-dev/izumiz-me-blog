@@ -5,6 +5,7 @@ export default (): AstroIntegration => ({
   name: 'galley-images-downloader',
   hooks: {
     'astro:build:start': async () => {
+      console.log('Gallery images downloader integration started');
       const posts = await getAllPosts(true);
 
       await Promise.all(
