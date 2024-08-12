@@ -427,7 +427,6 @@ export async function downloadFile(url: URL) {
   const filepath = `${dir}/${filename}`;
 
   const writeStream = createWriteStream(filepath);
-  console.log(`Download donwloadfile: ${filepath} ${url}`);
   const rotate = sharp().rotate();
 
   let stream = res.data;

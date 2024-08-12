@@ -16,7 +16,7 @@ export default (): AstroIntegration => ({
           let url!: URL;
           try {
             url = new URL(post.FeaturedImage.Url);
-            console.log(`Download: ${url} ${post.Title}`);
+            console.log(`Download Gallery: ${url} ${post.Title}`);
           } catch (err) {
             console.log('Invalid FeaturedImage URL');
             return Promise.resolve();
