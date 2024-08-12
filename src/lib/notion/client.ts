@@ -427,6 +427,8 @@ export async function downloadFile(url: URL, msg?: string) {
   const filename = decodeURIComponent(url.pathname.split('/').slice(-1)[0]);
   const filepath = `${dir}/${filename}`;
 
+  console.log(`filepath: ${filepath}`);
+
   const writeStream = createWriteStream(filepath);
   const rotate = sharp().rotate();
 
