@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - lefthook
+  - nx
+  - re2
+  - sharp

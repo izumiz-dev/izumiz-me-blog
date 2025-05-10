@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs');
 const { setTimeout } = require('timers/promises');
 const { Client } = require('@notionhq/client');

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const { exec } = require('child_process');
 const { Client } = require('@notionhq/client');
 const cliProgress = require('cli-progress');
