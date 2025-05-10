@@ -4,13 +4,13 @@
   min-height: 100vh;
 }
 
-.container > div {
+.container>div {
   display: flex;
   flex-direction: row-reverse;
 }
 
 @media (max-width: 640px) {
-  .container > div {
+  .container>div {
     display: block;
   }
 }
@@ -127,18 +127,13 @@ div.content {
 
   div.content {
     min-width: 1000px;
-    /* 必要に応じて調整 */
-    max-width: 1200px; /* 中央寄せのための最大幅 */
-    width: 100%; /* 親要素に対して100% */
-    margin: 0 auto; /* 中央寄せ */
-  }
-
-  body:not(.gallery-page) div.content {
-    /* width: calc(100vw - 200px); */ /* この行は一旦コメントアウト */
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
   }
 
   body.gallery-page div.content {
-    width: 100%; /* ギャラリーページは全幅のまま */
+    width: 100%;
   }
 }
 
@@ -228,12 +223,10 @@ nav.header-nav {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent);
   transition: left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 

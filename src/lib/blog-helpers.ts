@@ -207,6 +207,18 @@ export const isTweetURL = (url: URL): boolean => {
   return /\/[^/]+\/status\/[\d]+/.test(url.pathname);
 };
 
+export const isBlueskyURL = (url: URL): boolean => {
+  if (
+    url.hostname !== 'bsky.app' &&
+    url.hostname !== 'www.bsky.app' // wwwサブドメインは通常ないが一応
+    // 必要であれば staging.bsky.app なども追加
+  ) {
+    return false;
+  }
+  // パスは /profile/{handle}/post/{postId} の形式
+  return /^\/profile\/[^/]+\/post\/[^/]+$/.test(url.pathname);
+};
+
 export const isTikTokURL = (url: URL): boolean => {
   if (url.hostname !== 'tiktok.com' && url.hostname !== 'www.tiktok.com') {
     return false;

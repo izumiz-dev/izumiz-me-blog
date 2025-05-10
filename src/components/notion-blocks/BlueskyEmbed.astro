@@ -1,0 +1,57 @@
+---
+export interface Props {
+  url: URL; // This is the HTTP URL of the post
+}
+
+const { url: postHttpUrl } = Astro.props;
+let embedHtml =
+  '<p>Error: Could not load Bluesky post. The URL might be invalid or the post might be private.</p>'; // Default fallback
+
+if (postHttpUrl) {
+  try {
+    const oembedApiUrl = `https://embed.bsky.app/oembed?url=${encodeURIComponent(postHttpUrl.href)}`;
+    const response = await fetch(oembedApiUrl);
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data && typeof data.html === 'string') {
+        embedHtml = data.html;
+      } else {
+        console.error(
+          'Bluesky oEmbed response did not contain valid HTML. Response data:',
+          data
+        );
+        embedHtml = `<p>Error: Received invalid data from Bluesky oEmbed service for ${postHttpUrl.href}</p>`;
+      }
+    } else {
+      const errorText = await response.text();
+      console.error(
+        `Bluesky oEmbed request failed for ${postHttpUrl.href} with status ${response.status}: ${errorText}`
+      );
+      embedHtml = `<p>Error: Failed to fetch embed data from Bluesky for ${postHttpUrl.href}. Status: ${response.status}</p>`;
+    }
+  } catch (error) {
+    console.error(
+      `Error fetching Bluesky oEmbed data for ${postHttpUrl.href}:`,
+      error
+    );
+    embedHtml = `<p>Error: An unexpected error occurred while trying to embed the Bluesky post from ${postHttpUrl.href}.</p>`;
+  }
+} else {
+  embedHtml = '<p>Error: No URL provided for Bluesky embed.</p>';
+}
+---
+
+<div class="bluesky-embed-wrapper" set:html={embedHtml} />
+
+<style>
+  .bluesky-embed-wrapper {
+    width: 100%;
+    max-width: 550px;
+    margin: 0.4rem auto;
+  }
+
+  .bluesky-embed-wrapper :global(blockquote.bluesky-embed) {
+    margin: 0 !important;
+  }
+</style>

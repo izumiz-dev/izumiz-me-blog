@@ -6,9 +6,11 @@ import {
   isInstagramURL,
   isPinterestURL,
   isCodePenURL,
+  isBlueskyURL,
 } from '../../lib/blog-helpers.ts';
 import Bookmark from './Bookmark.astro';
 import TweetEmbed from './TweetEmbed.astro';
+import BlueskyEmbed from './BlueskyEmbed.astro';
 import TikTokEmbed from './TikTokEmbed.astro';
 import InstagramEmbed from './InstagramEmbed.astro';
 import PinterestEmbed from './PinterestEmbed.astro';
@@ -21,11 +23,14 @@ export interface Props {
 
 const { block, urlMap } = Astro.props;
 
-let url: URL;
+let url: URL | undefined = undefined;
 try {
-  url = new URL(block.Embed.Url);
+  if (block.Embed?.Url) {
+    url = new URL(block.Embed.Url);
+  }
 } catch (err) {
   console.log(err);
+  // url remains undefined
 }
 ---
 
@@ -33,6 +38,8 @@ try {
   url ? (
     isTweetURL(url) ? (
       <TweetEmbed url={url} />
+    ) : isBlueskyURL(url) ? (
+      <BlueskyEmbed url={url} />
     ) : isTikTokURL(url) ? (
       <TikTokEmbed url={url} />
     ) : isInstagramURL(url) ? (
@@ -40,7 +47,7 @@ try {
     ) : isPinterestURL(url) ? (
       <PinterestEmbed url={url} />
     ) : isCodePenURL(url) ? (
-      <CodePenEmbed url={url} />
+      <CodePenEmbed url={url.href} />
     ) : (
       <Bookmark block={block} urlMap={urlMap} />
     )
