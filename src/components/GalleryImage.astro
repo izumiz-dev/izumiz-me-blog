@@ -16,7 +16,9 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
 {
   image && (
     <div class="image-container">
-      <img src={image} alt="Featured image of the post" loading="lazy" />
+      <a data-fslightbox="gallery" href={image} data-type="image">
+        <img src={image} alt="Featured image of the post" loading="lazy" />
+      </a>
     </div>
   )
 }
