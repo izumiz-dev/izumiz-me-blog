@@ -40,6 +40,8 @@ const {
 
 const database = await getDatabase();
 
+const isGalleryPage = Astro.url.pathname.startsWith(getNavLink('/gallery'));
+
 const siteTitle = title ? `${title} - ${database.Title}` : database.Title;
 const siteURL = new URL(getNavLink(path), Astro.site).toString();
 // const siteOGImage = new URL(
@@ -93,7 +95,7 @@ if (database.Icon && database.Icon.Type === 'file' && 'Url' in database.Icon) {
       crossorigin="anonymous"
     />
   </head>
-  <body>
+  <body class:list={[{ 'gallery-page': isGalleryPage }]}>
     <GoogleAnalytics trackingId={PUBLIC_GA_TRACKING_ID} />
     <div class="container">
       <header>
@@ -130,14 +132,7 @@ if (database.Icon && database.Icon.Type === 'file' && 'Url' in database.Icon) {
                     ) : database.Icon &&
                       database.Icon.Type === 'file' &&
                       customIconURL ? (
-                      <>
-                        <img
-                          src={customIconURL}
-                          class="custom-icon"
-                          alt="Site icon image"
-                        />
-                        {database.Title}
-                      </>
+                      <>{database.Title}</>
                     ) : (
                       database.Title
                     )
@@ -147,6 +142,25 @@ if (database.Icon && database.Icon.Type === 'file' && 'Url' in database.Icon) {
               <div class="description">
                 {database.Description}
               </div>
+              <nav class="header-nav">
+                <a
+                  href={getNavLink('/')}
+                  class={`nav-link nav-blog ${
+                    Astro.url.pathname === getNavLink('/') ||
+                    Astro.url.pathname.startsWith(getNavLink('/posts'))
+                      ? 'active'
+                      : ''
+                  }`}>Blog</a
+                >
+                <a
+                  href={getNavLink('/gallery/')}
+                  class={`nav-link nav-gallery ${
+                    Astro.url.pathname.startsWith(getNavLink('/gallery'))
+                      ? 'active'
+                      : ''
+                  }`}>Gallery</a
+                >
+              </nav>
             </header>
 
             <slot name="main" />
@@ -167,10 +181,14 @@ if (database.Icon && database.Icon.Type === 'file' && 'Url' in database.Icon) {
           </div>
         </main>
 
-        <aside>
-          <SearchButton />
-          <slot name="aside" />
-        </aside>
+        {
+          !isGalleryPage && (
+            <aside>
+              <SearchButton />
+              <slot name="aside" />
+            </aside>
+          )
+        }
       </div>
     </div>
 

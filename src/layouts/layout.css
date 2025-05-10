@@ -4,13 +4,13 @@
   min-height: 100vh;
 }
 
-.container > div {
+.container>div {
   display: flex;
   flex-direction: row-reverse;
 }
 
 @media (max-width: 640px) {
-  .container > div {
+  .container>div {
     display: block;
   }
 }
@@ -56,8 +56,54 @@ div.content {
 }
 
 @media (width <=640px) {
+  .container {
+    width: 100%;
+    overflow-x: hidden;
+    /* コンテナレベルでもはみ出し防止 */
+  }
+
   div.content {
     padding: 20px;
+    width: 100%;
+    /* モバイルではコンテント幅を100%に */
+    box-sizing: border-box;
+    /* paddingを含めて幅計算 */
+    overflow-x: hidden;
+    /* コンテンツ内部のはみ出しも防止 */
+  }
+
+  main header {
+    word-break: break-all;
+    /* タイトルなどがはみ出るのを防ぐ */
+    display: flex;
+    /* Flexbox を使用 */
+    flex-direction: column;
+    /* 縦方向に配置 */
+    align-items: center;
+    /* 中央揃え */
+    text-align: center;
+    /* テキストも中央揃え */
+  }
+
+  main header h1 {
+    font-size: 1.4rem;
+    /* モバイルでのフォントサイズ調整 */
+    margin-bottom: 0.5rem;
+    /* 説明文とのマージン */
+  }
+
+  main header div.description {
+    font-size: 0.9rem;
+    /* モバイルでのフォントサイズ調整 */
+    margin-bottom: 1rem;
+    /* ナビゲーションとのマージン */
+  }
+
+  nav.header-nav {
+    justify-content: center;
+    /* ナビゲーションリンクを中央揃え */
+    width: 100%;
+    /* ナビゲーション全体の幅を確保 */
   }
 }
 
@@ -72,21 +118,24 @@ div.content {
   }
 }
 
-@media (width >=1280px) {
+/* @media (width >=1280px) {
   main {
     display: flex;
-    justify-content: center;
     background: var(--my-bg-color);
   }
 
   div.content {
     min-width: 1000px;
   }
-}
 
-main header {
-  padding: 20px 0 20px;
-}
+  body:not(.gallery-page) div.content {
+    width: calc(100vw - 200px);
+  }
+
+  body.gallery-page div.content {
+    width: 100%;
+  }
+} */
 
 main header h1 {
   font-weight: 700;
@@ -130,6 +179,113 @@ main header div.description {
   font-size: 0.95rem;
 }
 
+nav.header-nav {
+  margin-top: 0.8rem;
+  margin-bottom: 1.2rem;
+  /* 説明文との間にマージンを少し増やす */
+  font-size: 0.9rem;
+  display: flex;
+  gap: 0.8rem;
+  /* リンク間のスペースを少し広げる */
+}
+
+@media (max-width: 640px) {
+  nav.header-nav {
+    flex-wrap: wrap;
+  }
+}
+
+.nav-link {
+  /* 共通スタイル */
+  color: var(--my-fg-color);
+  text-decoration: none;
+  padding: 0.4em 1em;
+  /* チップ内の余白調整 */
+  border-radius: 1.5em;
+  /* 角丸を少し大きく */
+  background-color: var(--my-aside-color);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* スムーズなトランジション */
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  /* 控えめな影 */
+  position: relative;
+  overflow: hidden;
+  /* gradient アニメーション用 */
+}
+
+.nav-link::before {
+  /* ホバー時のグラデーション用 */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent);
+  transition: left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.nav-link:hover::before {
+  left: 100%;
+  /* 光が駆け抜けるアニメーション */
+}
+
+.nav-link:hover {
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.16),
+    0 3px 6px rgba(0, 0, 0, 0.23);
+  /* ホバー時の影を少し濃く */
+  transform: translateY(-1px);
+  /* 少し浮き上がる */
+}
+
+.nav-link.active {
+  /* background-color: var(--my-accent-color); */
+  /* 個別スタイルで指定するためコメントアウト */
+  /* color: white; */
+  /* 個別スタイルで指定するためコメントアウト */
+  font-weight: bold;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+  /* アクティブ時も影は維持 */
+}
+
+/* Blog 個別スタイル */
+.nav-blog {
+  border: 1px solid var(--my-gray-light);
+  /* 通常時の輪郭線 */
+}
+
+.nav-blog.active {
+  background-color: var(--my-blue-dark);
+  /* 硬派な青 */
+  color: white;
+  /* アクティブ時の文字色 */
+  border-color: var(--my-blue-darker);
+  /* アクティブ時の輪郭線 */
+}
+
+/* Gallery 個別スタイル */
+.nav-gallery {
+  border: 1px solid var(--my-gray-light);
+  /* 通常時の輪郭線 */
+}
+
+.nav-gallery.active {
+  background-color: var(--my-purple-dark);
+  /* カメラっぽい紫 */
+  color: white;
+  /* アクティブ時の文字色 */
+  border-color: var(--my-purple-darker);
+  /* アクティブ時の輪郭線 */
+}
+
 main footer {
   margin: 30px 0 10px;
   text-align: center;
@@ -149,4 +305,66 @@ main footer span {
 main footer a {
   color: inherit;
   text-decoration: underline;
+}
+
+body.gallery-page {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.gallery-page a {
+  color: #e0e0e0;
+}
+
+body.gallery-page .content {
+  background-color: #121212;
+}
+
+body.gallery-page main header h1 a,
+body.gallery-page main header h1 a:hover {
+  color: #e0e0e0;
+}
+
+body.gallery-page main footer span {
+  color: #a0a0a0;
+}
+
+body.gallery-page main {
+  display: flex;
+  justify-content: center;
+  background: var(--my-bg-color);
+}
+
+/* Gallery Page Navigation Link Styles */
+body.gallery-page .nav-link {
+  background-color: #333333;
+  /* 暗めの背景色 */
+  color: #e0e0e0;
+  /* 明るめの文字色 */
+  border-color: #555555;
+  /* 少し明るい境界線 */
+}
+
+body.gallery-page .nav-link:hover {
+  background-color: #444444;
+  border-color: #777777;
+}
+
+body.gallery-page .nav-link.active {
+  /* アクティブなGalleryリンクのスタイルは既存のものを維持しつつ、必要に応じて調整 */
+  background-color: var(--my-purple-dark);
+  color: white;
+  border-color: var(--my-purple-darker);
+}
+
+/* Blogリンクがアクティブでない場合（Galleryページ表示時） */
+body.gallery-page .nav-blog:not(.active) {
+  background-color: #333333;
+  color: #e0e0e0;
+  border-color: #555555;
+}
+
+body.gallery-page .nav-blog:not(.active):hover {
+  background-color: #444444;
+  border-color: #777777;
 }

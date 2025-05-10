@@ -4,10 +4,16 @@ import { getPageLink } from '../lib/blog-helpers.ts';
 export interface Props {
   currentPage: number;
   numberOfPages: number;
-  tag: string;
+  tag?: string; // tag をオプショナルに変更
+  basePath?: string;
 }
 
-const { currentPage, numberOfPages, tag = '' } = Astro.props;
+const {
+  currentPage,
+  numberOfPages,
+  tag,
+  basePath = Astro.url.pathname.startsWith('/gallery') ? '/gallery' : '/posts',
+} = Astro.props;
 
 const isFirstPage = currentPage === 1;
 const isLastPage = currentPage === numberOfPages;
@@ -23,16 +29,23 @@ for (let i = startPage; i <= endPage; i++) {
 ---
 
 <div class="pagination">
-  <a href={getPageLink(1, tag)} class={isFirstPage && 'inactive'}>&lt;&lt;</a>
+  <a
+    href={getPageLink(1, tag || '', basePath)}
+    class={isFirstPage ? 'inactive' : ''}>{'<'}</a
+  >
   {
     pages.map((p: number) => (
-      <a href={getPageLink(p, tag)} class={p === currentPage && 'inactive'}>
+      <a
+        href={getPageLink(p, tag || '', basePath)}
+        class={`${p === currentPage ? 'inactive' : ''} ${p === currentPage && basePath.startsWith('/posts') ? 'active-blog' : ''} ${p === currentPage && basePath.startsWith('/gallery') ? 'active-gallery' : ''}`}
+      >
         {p}
       </a>
     ))
   }
-  <a href={getPageLink(numberOfPages, tag)} class={isLastPage && 'inactive'}
-    >&gt;&gt;</a
+  <a
+    href={getPageLink(numberOfPages, tag || '', basePath)}
+    class={isLastPage ? 'inactive' : ''}>{'>'}</a
   >
 </div>
 
@@ -46,24 +59,86 @@ for (let i = startPage; i <= endPage; i++) {
     align-items: center;
   }
   .pagination a {
-    display: block;
-    width: 2.4rem;
+    display: flex; /* 中央揃えのため flex に変更 */
+    justify-content: center; /* 水平中央揃え */
+    align-items: center; /* 垂直中央揃え */
+    width: 3rem; /* 高さと合わせる */
     height: 3rem;
     margin: 0 0.4rem;
-    border-radius: var(--radius);
-    background: #f4f4f4;
-    color: inherit;
+    /* padding: 0 1em; */ /* 固定幅のためパディングを削除、または調整 */
+    border-radius: 50%; /* 正円にする */
+    background-color: var(--my-aside-color);
+    color: var(--my-fg-color);
     font-size: 0.85rem;
     text-align: center;
-    text-decoration: underline;
+    text-decoration: none; /* 下線を削除 */
     font-weight: 500;
-    line-height: 3rem;
+    /* line-height: 3rem; */ /* flex align-items で中央揃えするので不要 */
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.24);
+    position: relative;
+    overflow: hidden;
+  }
+  .pagination a::before {
+    /* ホバー時のグラデーション用 */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .pagination a:hover:not(.inactive)::before {
+    left: 100%;
   }
   .pagination a:hover:not(.inactive) {
-    background: #ddd;
+    background-color: var(--my-hover-color); /* ホバー時の背景色 */
+    box-shadow:
+      0 3px 6px rgba(0, 0, 0, 0.16),
+      0 3px 6px rgba(0, 0, 0, 0.23);
+    transform: translateY(-1px);
   }
   .pagination a.inactive {
     color: #999;
-    text-decoration: none;
+    background-color: var(--my-aside-color); /* 非アクティブ時も背景色は維持 */
+    box-shadow:
+      0 1px 3px rgba(0, 0, 0, 0.12),
+      0 1px 2px rgba(0, 0, 0, 0.24); /* 非アクティブ時も影は維持 */
+    cursor: default; /* クリックできないことを示すカーソル */
+    font-weight: bold;
+  }
+  .pagination a.inactive.active-blog {
+    background-color: var(--my-blue-dark);
+    color: white;
+    border-color: var(--my-blue-darker); /* 念のため枠線も指定 */
+  }
+  .pagination a.inactive.active-gallery {
+    background-color: var(--my-purple-dark);
+    color: white;
+    border-color: var(--my-purple-darker); /* 念のため枠線も指定 */
+  }
+  .pagination a.inactive:hover {
+    background-color: var(--my-aside-color); /* ホバーしても変わらない */
+    transform: none; /* 浮き上がらない */
+  }
+  .pagination a.inactive.active-blog:hover,
+  .pagination a.inactive.active-gallery:hover {
+    background-color: var(
+      --my-blue-dark
+    ); /* アクティブな場合はホバー色を変えない */
+  }
+  .pagination a.inactive.active-gallery:hover {
+    background-color: var(
+      --my-purple-dark
+    ); /* アクティブな場合はホバー色を変えない */
   }
 </style>

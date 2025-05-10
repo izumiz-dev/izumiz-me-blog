@@ -74,17 +74,28 @@ const ogImageUrl = `${BASE_PATH}/default-og-image.png`;
     padding: 1rem;
     max-width: 1000px; /* ブログのコンテンツ幅に合わせる */
     margin: 0 auto; /* 中央寄せ */
+    box-sizing: border-box; /* パディングを含めて幅計算 */
+  }
+
+  @media (max-width: 640px) {
+    .gallery-grid {
+      padding: 1rem 0; /* モバイルでは左右のパディングを削除 */
+      grid-template-columns: 1fr; /* 1カラムに変更 */
+      width: 100%; /* グリッド自体の幅も100%に */
+    }
   }
 
   .gallery-item {
     width: 100%;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box; /* パディングやボーダーを含めて幅計算 */
+    overflow: hidden; /* アイテム内のはみ出し防止 */
   }
 
   @media (max-width: 640px) {
-    .gallery-grid {
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    .gallery-item {
+      /* 必要であればここにさらにモバイル専用のスタイルを追加 */
     }
   }
 </style>

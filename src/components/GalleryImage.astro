@@ -35,4 +35,19 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
     object-fit: cover;
     object-position: center;
   }
+
+  @media (max-width: 640px) {
+    .image-container {
+      aspect-ratio: 1 / 1; /* モバイルでも正方形にする */
+      width: 100%; /* コンテナ自体も幅100%に */
+      overflow: hidden; /* はみ出し防止 */
+    }
+    .image-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* 正方形にカットアウト */
+      object-position: center;
+      display: block; /* 余計なスペースを取り除く */
+    }
+  }
 </style>

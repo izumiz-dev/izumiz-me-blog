@@ -1,6 +1,27 @@
 :root {
   --my-aside-color: #ececff;
+  /* 通常時のリンク背景 */
   --my-fr-color: #fcfcfc;
   --my-bg-color: #c9c9e1;
   --my-accent-color: #6567c6;
+  /* 元々のアクセントカラー */
+
+  --my-fg-color: #333333;
+  /* 通常時の文字色 */
+  --my-gray-light: #cccccc;
+  /* 通常時の輪郭線 */
+  --my-hover-color: #dcdcf0;
+  /* ホバー時の背景色 */
+
+  --my-blue-dark: #4a70a7;
+  /* Blogアクティブ時の背景 (少し明るめに調整) */
+  --my-blue-darker: #3a5a97;
+  /* Blogアクティブ時の輪郭線 */
+
+  --my-purple-dark: #7c5295;
+  /* Galleryアクティブ時の背景 (少し明るめに調整) */
+  --my-purple-darker: #5d3d74;
+  /* Galleryアクティブ時の輪郭線 */
+
+  --radius: 12px;
 }

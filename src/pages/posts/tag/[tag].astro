@@ -1,5 +1,5 @@
 ---
-import type { SelectProperty } from '@lib/interfaces.ts';
+import type { SelectProperty, Post } from '@lib/interfaces.ts';
 import { NUMBER_OF_POSTS_PER_PAGE } from '../../../server-constants.ts';
 import {
   getPostsByTag,
@@ -25,33 +25,58 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 
-const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
+const [posts, rankedPosts, allTagsData, numberOfPages] = await Promise.all([
   getPostsByTag(tag, NUMBER_OF_POSTS_PER_PAGE),
   getRankedPosts(),
   getAllTags(),
   getNumberOfPagesByTag(tag),
 ]);
 
-const currentTag = posts[0].Tags.find((t) => t.name === tag);
+const currentTag =
+  posts.length > 0
+    ? posts[0].Tags.find((t: SelectProperty) => t.name === tag)
+    : undefined;
+const pageTitle = `Posts in ${tag}`; // SITE_TITLE を削除
+const pageDescription = `Filtered posts by tag: ${tag}`;
+const defaultOgImage = new URL('/default-og-image.png', Astro.site);
 ---
 
-<Layout title={`Posts in ${tag}`} path={`/posts/tag/${tag}`}>
+<Layout
+  title={pageTitle}
+  path={`/posts/tag/${tag}`}
+  description={pageDescription}
+  ogImage={defaultOgImage.toString()}
+  openGraph={{
+    basic: {
+      title: pageTitle,
+      type: 'website',
+      image: defaultOgImage.toString(),
+    },
+    image: {
+      alt: pageTitle,
+    },
+  }}
+>
   <div slot="main" class={styles.main}>
     <header>
-      <div class="tag-container">
-        <span class={`tag ${currentTag.color}`}>{tag}</span>
-      </div>
+      {
+        currentTag && (
+          <div class="tag-container">
+            <span class={`tag ${currentTag.color}`}>{tag}</span>
+          </div>
+        )
+      }
     </header>
 
     {
       posts.length === 0 ? (
         <NoContents contents={posts} />
       ) : (
-        posts.map((post) => (
-          <div class={styles.post} key={post.Slug}>
+        posts.map((post: Post) => (
+          <div class={styles.post}>
             <PostDate post={post} />
-            <PostTags post={post} />
-            <PostTitle post={post} />
+            <PostTags post={post} enableLink={true} />
+            <PostTitle post={post} enableLink={true} />
           </div>
         ))
       )
@@ -64,7 +89,7 @@ const currentTag = posts[0].Tags.find((t) => t.name === tag);
 
   <div slot="aside" class={styles.aside}>
     <BlogPostsLink heading="固定記事" posts={rankedPosts} />
-    <BlogTagsLink heading="タグ一覧" tags={tags} />
+    <BlogTagsLink heading="タグ一覧" tags={allTagsData} />
   </div>
 </Layout>
 
@@ -81,7 +106,7 @@ const currentTag = posts[0].Tags.find((t) => t.name === tag);
     }
   }
   .tag-container span.tag {
-    border-radius: 4px;
+    border-radius: 12px;
     padding: 3px 9px;
     background: var(--tag-bg-light-gray);
   }
