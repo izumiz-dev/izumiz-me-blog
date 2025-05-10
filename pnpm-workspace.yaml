@@ -1,5 +1,6 @@
 onlyBuiltDependencies:
   - '@parcel/watcher'
+  - es5-ext
   - esbuild
   - lefthook
   - nx

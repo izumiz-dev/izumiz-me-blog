@@ -4,14 +4,15 @@ import {
   getAllTags,
   getNumberOfPages,
 } from '@lib/notion/client.ts';
+import type { GalleryItem } from '@lib/interfaces';
 import Layout from '@layouts/Layout.astro';
 import NoContents from '@components/NoContents.astro';
+import { BASE_PATH } from '../../../server-constants';
 import PostDate from '@components/PostDate.astro';
-import PostTags from '@components/PostTags.astro';
-import PostTitle from '@components/PostTitle.astro';
 import Pagination from '@components/Pagination.astro';
 import BlogTagsLink from '@components/BlogTagsLink.astro';
 import styles from '@styles/blog.module.css';
+import GalleryTile from '@components/GalleryTile.astro';
 
 export async function getStaticPaths() {
   const numberOfPages = await getNumberOfPages(true);
@@ -30,34 +31,59 @@ const [posts, tags, numberOfPages] = await Promise.all([
   getAllTags(true),
   getNumberOfPages(true),
 ]);
+
+const pageTitle = `Gallery Page ${page} - My Blog`;
+const pageDescription = `Gallery page ${page} of ${numberOfPages}`;
+const ogImageUrl = `${BASE_PATH}/default-og-image.png`;
 ---
 
-<Layout title={`Posts ${page}/${numberOfPages}`} path={`/gallery/page/${page}`}>
-  <div slot="main" class={styles.main}>
-    <header>
-      <div class="page-container">{page}/{numberOfPages}</div>
-    </header>
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  path={`/gallery/page/${page}`}
+  ogImage={ogImageUrl}
+  openGraph={{
+    basic: {
+      title: pageTitle,
+      type: 'website',
+      image: ogImageUrl,
+    },
+    image: {
+      alt: pageTitle,
+    },
+  }}
+>
+  <div slot="main">
+    <div class={styles.main}>
+      <header>
+        <div class="page-container">{page}/{numberOfPages}</div>
+      </header>
 
-    {
-      posts.length === 0 ? (
-        <NoContents contents={posts} />
-      ) : (
-        posts.map((post) => (
-          <div class={styles.post} key={post.Slug}>
-            <PostDate post={post} />
-            <PostTags post={post} />
-            <PostTitle post={post} />
+      {
+        posts.length === 0 ? (
+          <NoContents contents={posts} />
+        ) : (
+          <div class="gallery-grid">
+            {posts.map((post) => (
+              <div class="gallery-item">
+                {' '}
+                {/* クラス名を gallery-item に統一 */}
+                <GalleryTile post={post as GalleryItem} />
+                <PostDate post={post as GalleryItem} />
+              </div>
+            ))}
           </div>
-        ))
-      )
-    }
+        )
+      }
 
-    <footer>
-      <Pagination
-        currentPage={parseInt(page, 10)}
-        numberOfPages={numberOfPages}
-      />
-    </footer>
+      <footer>
+        <Pagination
+          currentPage={parseInt(page, 10)}
+          numberOfPages={numberOfPages}
+          tag=""
+        />
+      </footer>
+    </div>
   </div>
 
   <div slot="aside" class={styles.aside}>
@@ -73,9 +99,26 @@ const [posts, tags, numberOfPages] = await Promise.all([
     font-size: 1.2rem;
     font-weight: normal;
   }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1000px; /* ブログのコンテンツ幅に合わせる */
+    margin: 0 auto; /* 中央寄せ */
+  }
+  .gallery-item {
+    /* gallery-item のスタイルを追加 (index.astro と同様) */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
   @media (max-width: 640px) {
     .page-container {
       font-size: 1.15rem;
+    }
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
   }
 </style>

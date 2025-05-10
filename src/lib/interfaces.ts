@@ -18,6 +18,15 @@ export interface Post {
   Rank: number;
 }
 
+export interface GalleryItem {
+  PageId: string;
+  Title: string;
+  Icon: FileObject | Emoji | null;
+  Cover: FileObject | null;
+  Date: string;
+  FeaturedImage: FileObject | null;
+}
+
 export interface Block {
   Id: string;
   Type: string;

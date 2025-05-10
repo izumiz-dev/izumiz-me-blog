@@ -1,6 +1,7 @@
 ---
-import { NUMBER_OF_POSTS_PER_PAGE } from '../../server-constants';
+import { NUMBER_OF_GALLERY_PER_PAGE, BASE_PATH } from '../../server-constants';
 import { getPosts, getNumberOfPages } from '@lib/notion/client.ts';
+import type { GalleryItem } from '@lib/interfaces';
 import Layout from '@layouts/Layout.astro';
 import NoContents from '@components/NoContents.astro';
 import PostDate from '@components/PostDate.astro';
@@ -9,31 +10,52 @@ import styles from '@styles/blog.module.css';
 import GalleryTile from '@components/GalleryTile.astro';
 
 const [posts, numberOfPages] = await Promise.all([
-  getPosts(NUMBER_OF_POSTS_PER_PAGE, true),
+  getPosts(NUMBER_OF_GALLERY_PER_PAGE, true),
   getNumberOfPages(true),
 ]);
+
+const pageTitle = 'Gallery - My Blog';
+const pageDescription = 'Image gallery';
+const ogImageUrl = `${BASE_PATH}/default-og-image.png`;
 ---
 
-<Layout>
-  <div slot="main" class={styles.main}>
-    {
-      posts.length === 0 ? (
-        <NoContents contents={posts} />
-      ) : (
-        <div class="gallery-grid">
-          {posts.map((post) => (
-            <div class="gallery-item" key={post.Slug}>
-              <GalleryTile post={post} />
-              <PostDate post={post} />
-            </div>
-          ))}
-        </div>
-      )
-    }
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  path="/gallery/"
+  ogImage={ogImageUrl}
+  openGraph={{
+    basic: {
+      title: pageTitle,
+      type: 'website',
+      image: ogImageUrl,
+    },
+    image: {
+      alt: pageTitle,
+    },
+  }}
+>
+  <div slot="main">
+    <div class={styles.main}>
+      {
+        posts.length === 0 ? (
+          <NoContents contents={posts} />
+        ) : (
+          <div class="gallery-grid">
+            {posts.map((post) => (
+              <div class="gallery-item">
+                <GalleryTile post={post as GalleryItem} />
+                <PostDate post={post as GalleryItem} />
+              </div>
+            ))}
+          </div>
+        )
+      }
 
-    <footer>
-      <Pagination currentPage={1} numberOfPages={numberOfPages} />
-    </footer>
+      <footer>
+        <Pagination currentPage={1} numberOfPages={numberOfPages} tag="" />
+      </footer>
+    </div>
   </div>
 
   <div slot="aside" class={styles.aside}>
@@ -50,6 +72,8 @@ const [posts, numberOfPages] = await Promise.all([
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
     padding: 1rem;
+    max-width: 1000px; /* ブログのコンテンツ幅に合わせる */
+    margin: 0 auto; /* 中央寄せ */
   }
 
   .gallery-item {

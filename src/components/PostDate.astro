@@ -1,9 +1,9 @@
 ---
-import { type Post } from '@lib/interfaces.ts';
+import type { Post, GalleryItem } from '@lib/interfaces.ts';
 import { getDateStr } from '@lib/blog-helpers.ts';
 
 export interface Props {
-  post: Post;
+  post: Post | GalleryItem;
 }
 
 const { post } = Astro.props;

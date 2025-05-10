@@ -47,7 +47,7 @@ const siteURL = new URL(getNavLink(path), Astro.site).toString();
 //   Astro.site
 // );
 
-let coverImageURL: string;
+let coverImageURL: string = '';
 if (database.Cover) {
   if (database.Cover.Type === 'external') {
     coverImageURL = database.Cover.Url;
@@ -60,8 +60,8 @@ if (database.Cover) {
   }
 }
 
-let customIconURL: string;
-if (database.Icon && database.Icon.Type === 'file') {
+let customIconURL: string = '';
+if (database.Icon && database.Icon.Type === 'file' && 'Url' in database.Icon) {
   try {
     customIconURL = filePath(new URL(database.Icon.Url));
   } catch (err) {
@@ -115,15 +115,21 @@ if (database.Icon && database.Icon.Type === 'file') {
                   {
                     database.Icon && database.Icon.Type === 'emoji' ? (
                       <>
-                        <span>{database.Icon.Emoji}</span>
+                        <span>
+                          {'Emoji' in database.Icon ? database.Icon.Emoji : ''}
+                        </span>
                         {database.Title}
                       </>
-                    ) : database.Icon && database.Icon.Type === 'external' ? (
+                    ) : database.Icon &&
+                      database.Icon.Type === 'external' &&
+                      'Url' in database.Icon ? (
                       <>
                         <img src={database.Icon.Url} alt="Site icon image" />
                         {database.Title}
                       </>
-                    ) : database.Icon && database.Icon.Type === 'file' ? (
+                    ) : database.Icon &&
+                      database.Icon.Type === 'file' &&
+                      customIconURL ? (
                       <>
                         <img
                           src={customIconURL}

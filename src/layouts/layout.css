@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: row-reverse;
 }
+
 @media (max-width: 640px) {
   .container > div {
     display: block;
@@ -19,6 +20,7 @@ main {
   order: 2;
   justify-content: space-between;
 }
+
 @media (max-width: 640px) {
   main {
     order: 1;
@@ -31,6 +33,7 @@ aside {
   padding: 20px 20px;
   background-color: var(--my-aside-color);
 }
+
 @media (max-width: 640px) {
   aside {
     order: 2;
@@ -38,8 +41,6 @@ aside {
   }
 }
 
-div.cover {
-}
 div.cover img {
   display: block;
   width: 100%;
@@ -53,26 +54,31 @@ div.content {
   min-height: 80vh;
   background-color: var(--my-fr-color);
 }
-@media (width <= 640px) {
+
+@media (width <=640px) {
   div.content {
     padding: 20px;
   }
 }
+
 @media (640px < width < 1280px) {
   aside {
     width: 200px;
     padding: 10px;
   }
+
   div.content {
     width: calc(100vw - 200px);
   }
 }
-@media (width >= 1280px) {
+
+@media (width >=1280px) {
   main {
     display: flex;
     justify-content: center;
     background: var(--my-bg-color);
   }
+
   div.content {
     min-width: 1000px;
   }
@@ -81,26 +87,32 @@ div.content {
 main header {
   padding: 20px 0 20px;
 }
+
 main header h1 {
   font-weight: 700;
   color: #333;
 }
+
 main header h1 a {
   display: block;
   color: inherit;
 }
+
 main header h1 a:hover {
   color: inherit;
 }
+
 main header h1 a span,
 main header h1 a img {
   display: inline-block;
   font-size: 1.1em;
 }
+
 main header h1 a span {
   margin-right: 0.3em;
   margin-left: -0.1rem;
 }
+
 main header h1 a img {
   width: 1.2em;
   height: 1.2em;
@@ -108,6 +120,7 @@ main header h1 a img {
   margin-left: -0.3rem;
   vertical-align: sub;
 }
+
 main header h1 a img.custom-icon {
   border-radius: var(--radius);
 }
@@ -122,14 +135,17 @@ main footer {
   text-align: center;
   font-size: 0.75rem;
 }
+
 @media (max-width: 640px) {
   main footer {
     margin: 0 auto 30px;
   }
 }
+
 main footer span {
   color: #777;
 }
+
 main footer a {
   color: inherit;
   text-decoration: underline;

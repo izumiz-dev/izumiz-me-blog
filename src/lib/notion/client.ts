@@ -1,6 +1,7 @@
 import fs, { createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosResponse } from 'axios';
 import sharp from 'sharp';
 import retry from 'async-retry';
 import ExifTransformer from 'exif-be-gone';
@@ -9,6 +10,7 @@ import {
   DATABASE_ID,
   GALLERY_ID,
   NUMBER_OF_POSTS_PER_PAGE,
+  NUMBER_OF_GALLERY_PER_PAGE,
   REQUEST_TIMEOUT_MS,
 } from '../../server-constants';
 import type * as responses from './responses';
@@ -16,6 +18,7 @@ import type * as requestParams from './request-params';
 import type {
   Database,
   Post,
+  GalleryItem,
   Block,
   Paragraph,
   Heading1,
@@ -62,18 +65,20 @@ const client = new Client({
 
 let postsCache: Post[] | null = null;
 let dbCache: Database | null = null;
-let galleryPostsCache: Post[] | null = null;
+let galleryPostsCache: GalleryItem[] | null = null;
 let galleryDbCache: Database | null = null;
 
 const numberOfRetry = 2;
 
-export async function getAllPosts(isGallery = false): Promise<Post[]> {
+export async function getAllPosts(
+  isGallery = false
+): Promise<(Post | GalleryItem)[]> {
   if (postsCache !== null && !isGallery) {
-    return Promise.resolve(postsCache);
+    return Promise.resolve(postsCache as Post[]);
   }
 
   if (galleryPostsCache !== null && isGallery) {
-    return Promise.resolve(galleryPostsCache);
+    return Promise.resolve(galleryPostsCache as GalleryItem[]);
   }
 
   const params: requestParams.QueryDatabase = {
@@ -136,27 +141,27 @@ export async function getAllPosts(isGallery = false): Promise<Post[]> {
 
   if (isGallery) {
     galleryPostsCache = results
-      .filter((pageObject) => _validPageObject(pageObject))
-      .map((pageObject) => _buildPost(pageObject));
+      .filter((pageObject) => _validPageObject(pageObject, true))
+      .map((pageObject) => _buildPost(pageObject, true) as GalleryItem);
     return galleryPostsCache;
   }
 
   postsCache = results
-    .filter((pageObject) => _validPageObject(pageObject))
-    .map((pageObject) => _buildPost(pageObject));
+    .filter((pageObject) => _validPageObject(pageObject, false))
+    .map((pageObject) => _buildPost(pageObject, false) as Post);
   return postsCache;
 }
 
 export async function getPosts(
   pageSize = 10,
   isGallery = false
-): Promise<Post[]> {
+): Promise<(Post | GalleryItem)[]> {
   const allPosts = await getAllPosts(isGallery);
   return allPosts.slice(0, pageSize);
 }
 
 export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
-  const allPosts = await getAllPosts();
+  const allPosts = (await getAllPosts(false)) as Post[];
   return allPosts
     .filter((post) => !!post.Rank)
     .sort((a, b) => {
@@ -173,12 +178,17 @@ export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
 export async function getPostBySlug(
   slug: string,
   isGallery = false
-): Promise<Post | null> {
+): Promise<Post | GalleryItem | null> {
   const allPosts = await getAllPosts(isGallery);
-  return allPosts.find((post) => post.Slug === slug) || null;
+  // Slug is not available in GalleryItem, so this function will not work for gallery items.
+  // This needs to be handled by the caller or by removing slug-based access for gallery.
+  if (isGallery) return null;
+  return (allPosts as Post[]).find((post) => post.Slug === slug) || null;
 }
 
-export async function getPostByPageId(pageId: string): Promise<Post | null> {
+export async function getPostByPageId(
+  pageId: string
+): Promise<Post | GalleryItem | null> {
   const allPosts = await getAllPosts();
   return allPosts.find((post) => post.PageId === pageId) || null;
 }
@@ -189,9 +199,11 @@ export async function getPostsByTag(
 ): Promise<Post[]> {
   if (!tagName) return [];
 
-  const allPosts = await getAllPosts();
+  const allPosts = (await getAllPosts(false)) as Post[];
   return allPosts
-    .filter((post) => post.Tags.find((tag) => tag.name === tagName))
+    .filter((post) =>
+      post.Tags.find((tag: SelectProperty) => tag.name === tagName)
+    )
     .slice(0, pageSize);
 }
 
@@ -199,15 +211,18 @@ export async function getPostsByTag(
 export async function getPostsByPage(
   page: number,
   isGallery = false
-): Promise<Post[]> {
+): Promise<(Post | GalleryItem)[]> {
   if (page < 1) {
     return [];
   }
 
   const allPosts = await getAllPosts(isGallery);
+  const itemsPerPage = isGallery
+    ? NUMBER_OF_GALLERY_PER_PAGE
+    : NUMBER_OF_POSTS_PER_PAGE;
 
-  const startIndex = (page - 1) * NUMBER_OF_POSTS_PER_PAGE;
-  const endIndex = startIndex + NUMBER_OF_POSTS_PER_PAGE;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
   return allPosts.slice(startIndex, endIndex);
 }
@@ -221,9 +236,9 @@ export async function getPostsByTagAndPage(
     return [];
   }
 
-  const allPosts = await getAllPosts();
+  const allPosts = (await getAllPosts(false)) as Post[];
   const posts = allPosts.filter((post) =>
-    post.Tags.find((tag) => tag.name === tagName)
+    post.Tags.find((tag: SelectProperty) => tag.name === tagName)
   );
 
   const startIndex = (page - 1) * NUMBER_OF_POSTS_PER_PAGE;
@@ -234,16 +249,19 @@ export async function getPostsByTagAndPage(
 
 export async function getNumberOfPages(isGallery = false): Promise<number> {
   const allPosts = await getAllPosts(isGallery);
+  const itemsPerPage = isGallery
+    ? NUMBER_OF_GALLERY_PER_PAGE
+    : NUMBER_OF_POSTS_PER_PAGE;
   return (
-    Math.floor(allPosts.length / NUMBER_OF_POSTS_PER_PAGE) +
-    (allPosts.length % NUMBER_OF_POSTS_PER_PAGE > 0 ? 1 : 0)
+    Math.floor(allPosts.length / itemsPerPage) +
+    (allPosts.length % itemsPerPage > 0 ? 1 : 0)
   );
 }
 
 export async function getNumberOfPagesByTag(tagName: string): Promise<number> {
-  const allPosts = await getAllPosts();
+  const allPosts = (await getAllPosts(false)) as Post[];
   const posts = allPosts.filter((post) =>
-    post.Tags.find((tag) => tag.name === tagName)
+    post.Tags.find((tag: SelectProperty) => tag.name === tagName)
   );
   return (
     Math.floor(posts.length / NUMBER_OF_POSTS_PER_PAGE) +
@@ -382,7 +400,10 @@ export async function getBlock(blockId: string): Promise<Block> {
 }
 
 export async function getAllTags(isGallery = false): Promise<SelectProperty[]> {
-  const allPosts = await getAllPosts(isGallery);
+  if (isGallery) {
+    return []; // Gallery items do not have tags based on the new model
+  }
+  const allPosts = (await getAllPosts(false)) as Post[];
 
   const tagNames: string[] = [];
   return allPosts
@@ -951,18 +972,27 @@ async function _getSyncedBlockChildren(block: Block): Promise<Block[]> {
   return children;
 }
 
-function _validPageObject(pageObject: responses.PageObject): boolean {
+function _validPageObject(
+  pageObject: responses.PageObject,
+  isGallery = false
+): boolean {
   const prop = pageObject.properties;
+  const commonConditions =
+    !!prop.Page.title && prop.Page.title.length > 0 && !!prop.Date.date;
+
+  if (isGallery) {
+    return commonConditions; // Slug is not required for gallery items
+  }
+
   return (
-    !!prop.Page.title &&
-    prop.Page.title.length > 0 &&
-    !!prop.Slug.rich_text &&
-    prop.Slug.rich_text.length > 0 &&
-    !!prop.Date.date
+    commonConditions && !!prop.Slug.rich_text && prop.Slug.rich_text.length > 0
   );
 }
 
-function _buildPost(pageObject: responses.PageObject): Post {
+function _buildPost(
+  pageObject: responses.PageObject,
+  isGallery = false
+): Post | GalleryItem {
   const prop = pageObject.properties;
 
   let icon: FileObject | Emoji | null = null;
@@ -1007,27 +1037,42 @@ function _buildPost(pageObject: responses.PageObject): Post {
     }
   }
 
-  const post: Post = {
-    PageId: pageObject.id,
-    Title: prop.Page.title
-      ? prop.Page.title.map((richText) => richText.plain_text).join('')
-      : '',
-    Icon: icon,
-    Cover: cover,
-    Slug: prop.Slug.rich_text
-      ? prop.Slug.rich_text.map((richText) => richText.plain_text).join('')
-      : '',
-    Date: prop.Date.date ? prop.Date.date.start : '',
-    Tags: prop.Tags.multi_select ? prop.Tags.multi_select : [],
-    Excerpt:
-      prop.Excerpt.rich_text && prop.Excerpt.rich_text.length > 0
-        ? prop.Excerpt.rich_text.map((richText) => richText.plain_text).join('')
+  if (isGallery) {
+    const galleryItem: GalleryItem = {
+      PageId: pageObject.id,
+      Title: prop.Page.title
+        ? prop.Page.title.map((richText) => richText.plain_text).join('')
         : '',
-    FeaturedImage: featuredImage,
-    Rank: prop.Rank.number ? prop.Rank.number : 0,
-  };
-
-  return post;
+      Icon: icon,
+      Cover: cover,
+      Date: prop.Date.date ? prop.Date.date.start : '',
+      FeaturedImage: featuredImage,
+    };
+    return galleryItem;
+  } else {
+    const post: Post = {
+      PageId: pageObject.id,
+      Title: prop.Page.title
+        ? prop.Page.title.map((richText) => richText.plain_text).join('')
+        : '',
+      Icon: icon,
+      Cover: cover,
+      Slug: prop.Slug.rich_text
+        ? prop.Slug.rich_text.map((richText) => richText.plain_text).join('')
+        : '',
+      Date: prop.Date.date ? prop.Date.date.start : '',
+      Tags: prop.Tags.multi_select ? prop.Tags.multi_select : [],
+      Excerpt:
+        prop.Excerpt.rich_text && prop.Excerpt.rich_text.length > 0
+          ? prop.Excerpt.rich_text
+              .map((richText) => richText.plain_text)
+              .join('')
+          : '',
+      FeaturedImage: featuredImage,
+      Rank: prop.Rank.number ? prop.Rank.number : 0,
+    };
+    return post;
+  }
 }
 
 function _buildRichText(richTextObject: responses.RichTextObject): RichText {

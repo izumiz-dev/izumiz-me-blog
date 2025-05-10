@@ -1,6 +1,10 @@
 ---
-import { getGalleryLink } from '../lib/blog-helpers';
+import type { GalleryItem } from '../lib/interfaces';
 import GalleryImage from './GalleryImage.astro';
+
+export interface Props {
+  post: GalleryItem;
+}
 
 const { post } = Astro.props;
 const title = post.Title;
@@ -8,8 +12,8 @@ const title = post.Title;
 
 <div class="gallery-tile">
   <GalleryImage post={post} />
-  <h2 class="post-title">
-    <a href={getGalleryLink(post.Slug)}>{title}</a>
+  <h2 class="post-title" title={title}>
+    {title}
   </h2>
 </div>
 
@@ -23,6 +27,10 @@ const title = post.Title;
     margin: 0.5rem 0 0;
     font-size: 1rem;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%; /* 親要素の幅に合わせるために追加 */
   }
 
   .post-title a {
