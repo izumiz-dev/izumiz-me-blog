@@ -17,7 +17,7 @@ export default (): AstroIntegration => ({
       let url!: URL;
       try {
         url = new URL(icon.Url);
-      } catch (err) {
+      } catch {
         console.log('Invalid Icon image URL');
         return Promise.resolve();
       }

@@ -525,7 +525,7 @@ export async function getDatabase(isGallery = false): Promise<Database> {
       if (icon.Url) {
         try {
           await downloadFile(new URL(icon.Url));
-        } catch (err) {
+        } catch {
           console.log('Failed to cache icon file');
         }
       }
@@ -541,7 +541,7 @@ export async function getDatabase(isGallery = false): Promise<Database> {
     if (res.cover.type === 'file' && cover.Url) {
       try {
         await downloadFile(new URL(cover.Url));
-      } catch (err) {
+      } catch {
         console.log('Failed to cache cover file');
       }
     }
