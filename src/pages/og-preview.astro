@@ -1,0 +1,118 @@
+---
+const defaultText = 'Preview Title';
+const basePath = import.meta.env.BASE_PATH || '';
+const defaultImageSrc = `${basePath}/og/preview.png?text=${encodeURIComponent(defaultText)}`;
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>OG Image Preview</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+      }
+
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: radial-gradient(circle at top, #f7f7ff, #e8ecfb);
+      }
+
+      main {
+        background: rgba(255, 255, 255, 0.84);
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 960px;
+        width: 100%;
+        box-shadow: 0 12px 40px rgba(104, 112, 225, 0.16);
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      textarea {
+        font: inherit;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(104, 112, 225, 0.25);
+        resize: vertical;
+        min-height: 68px;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+      }
+
+      small {
+        color: rgba(26, 28, 56, 0.66);
+      }
+
+      button {
+        align-self: flex-start;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid rgba(104, 112, 225, 0.4);
+        background: linear-gradient(135deg, #6c6fde, #8f93f3);
+        color: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 6px 20px rgba(104, 112, 225, 0.24);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 28px rgba(104, 112, 225, 0.3);
+      }
+
+      button:active {
+        transform: translateY(1px);
+        box-shadow: 0 4px 16px rgba(104, 112, 225, 0.22);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>OG Image Preview</h1>
+      <form>
+        <label for="og-text">テキスト</label>
+        <textarea id="og-text" name="text">{defaultText}</textarea>
+        <small>生成ボタンを押すとプレビューが更新されます。キャッシュ回避のため毎回新しい画像 URL が生成されます。</small>
+        <button type="button" id="generate-button">生成</button>
+      </form>
+      <img id="og-image" src={defaultImageSrc} alt="OG image preview" width="800" height="400" />
+    </main>
+    <script is:inline define:vars={{ basePath }}>
+      const input = document.getElementById('og-text');
+      const image = document.getElementById('og-image');
+
+      const updateImage = () => {
+        const params = new URLSearchParams({
+          text: input.value || '',
+          t: Date.now().toString(),
+        });
+        image.src = `${basePath}/og/preview.png?${params.toString()}`;
+      };
+
+      document
+        .getElementById('generate-button')
+        .addEventListener('click', updateImage);
+
+      updateImage();
+    </script>
+  </body>
+</html>

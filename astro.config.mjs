@@ -28,8 +28,11 @@ const getSite = function () {
   return new URL(BASE_PATH, 'http://localhost:4321').toString();
 };
 
+const isDev = process.env.NODE_ENV === 'development';
+
 // https://astro.build/config
 export default defineConfig({
+  output: isDev ? 'server' : 'static',
   site: getSite(),
   base: BASE_PATH,
   integrations: [

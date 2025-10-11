@@ -1,8 +1,10 @@
 import satori from 'satori';
 import sharp from 'sharp';
 
+let fontDataCache: ArrayBuffer | undefined;
+
 export async function getOgImage(text: string) {
-  const fontData = (await getFontData()) as ArrayBuffer;
+  const fontData = await getFontData();
 
   const svg = await satori(
     <main
@@ -45,7 +47,7 @@ export async function getOgImage(text: string) {
       height: 400,
       fonts: [
         {
-          name: 'M PLUS Rounded 1c',
+          name: 'Noto Sans JP',
           data: fontData,
           style: 'normal',
         },
@@ -57,7 +59,9 @@ export async function getOgImage(text: string) {
 }
 
 async function getFontData() {
-  const API = `https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@700`;
+  if (fontDataCache) return fontDataCache;
+
+  const API = `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700`;
 
   const css = await (
     await fetch(API, {
@@ -68,11 +72,28 @@ async function getFontData() {
     })
   ).text();
 
-  const resource = css.match(
-    /src: url\((.+)\) format\('(opentype|truetype)'\)/
-  );
+  const resource = [...css.matchAll(/src:\s*url\(([^)]+)\)\s*format\('([^']+)'\)/g)].find((match) => {
+    const format = match[2]?.toLowerCase();
+    return (
+      format === 'opentype' ||
+      format === 'truetype' ||
+      format === 'woff' ||
+      format === 'woff2'
+    );
+  });
 
-  if (!resource) return;
+  if (!resource) {
+    throw new Error('Failed to locate downloadable font resource for OG image generation.');
+  }
 
-  return await fetch(resource[1]).then((res) => res.arrayBuffer());
+  const fontUrl = resource[1].replace(/['"]/g, '').trim();
+
+  const fontResponse = await fetch(fontUrl);
+  if (!fontResponse.ok) {
+    throw new Error('Failed to download font resource for OG image generation.');
+  }
+
+  fontDataCache = await fontResponse.arrayBuffer();
+
+  return fontDataCache;
 }
