@@ -60,6 +60,7 @@
     "eslint-plugin-astro": "^0.27.0",
     "lefthook": "^1.5.5",
     "nx": "15.5.3",
+    "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.12.3",
     "satori": "^0.10.11",
     "sharp": "^0.32.6"

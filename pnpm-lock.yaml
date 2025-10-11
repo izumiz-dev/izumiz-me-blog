@@ -132,6 +132,9 @@ importers:
       nx:
         specifier: 15.5.3
         version: 15.5.3
+      prettier:
+        specifier: ^3.3.3
+        version: 3.5.3
       prettier-plugin-astro:
         specifier: ^0.12.3
         version: 0.12.3
