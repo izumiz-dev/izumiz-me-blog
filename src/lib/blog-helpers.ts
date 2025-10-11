@@ -207,6 +207,83 @@ export const isTweetURL = (url: URL): boolean => {
   return /\/[^/]+\/status\/[\d]+/.test(url.pathname);
 };
 
+const hasEquationInRichTexts = (richTexts?: RichText[]): boolean => {
+  return !!richTexts?.some((richText) => Boolean(richText.Equation));
+};
+
+export const blocksContainEquation = (blocks: Block[]): boolean => {
+  const stack = [...blocks];
+
+  while (stack.length > 0) {
+    const block = stack.pop();
+    if (!block) continue;
+
+    if (block.Type === 'equation') {
+      return true;
+    }
+
+    if (
+      (block.Paragraph && hasEquationInRichTexts(block.Paragraph.RichTexts)) ||
+      (block.Heading1 && hasEquationInRichTexts(block.Heading1.RichTexts)) ||
+      (block.Heading2 && hasEquationInRichTexts(block.Heading2.RichTexts)) ||
+      (block.Heading3 && hasEquationInRichTexts(block.Heading3.RichTexts)) ||
+      (block.Callout && hasEquationInRichTexts(block.Callout.RichTexts)) ||
+      (block.Quote && hasEquationInRichTexts(block.Quote.RichTexts)) ||
+      (block.BulletedListItem &&
+        hasEquationInRichTexts(block.BulletedListItem.RichTexts)) ||
+      (block.NumberedListItem &&
+        hasEquationInRichTexts(block.NumberedListItem.RichTexts)) ||
+      (block.ToDo && hasEquationInRichTexts(block.ToDo.RichTexts))
+    ) {
+      return true;
+    }
+
+    if (block.ColumnList?.Columns) {
+      block.ColumnList.Columns.forEach((column) => {
+        if (column.Children) {
+          stack.push(...column.Children);
+        }
+      });
+    }
+
+    if (block.Paragraph?.Children) {
+      stack.push(...block.Paragraph.Children);
+    }
+    if (block.Heading1?.Children) {
+      stack.push(...block.Heading1.Children);
+    }
+    if (block.Heading2?.Children) {
+      stack.push(...block.Heading2.Children);
+    }
+    if (block.Heading3?.Children) {
+      stack.push(...block.Heading3.Children);
+    }
+    if (block.BulletedListItem?.Children) {
+      stack.push(...block.BulletedListItem.Children);
+    }
+    if (block.NumberedListItem?.Children) {
+      stack.push(...block.NumberedListItem.Children);
+    }
+    if (block.ToDo?.Children) {
+      stack.push(...block.ToDo.Children);
+    }
+    if (block.SyncedBlock?.Children) {
+      stack.push(...block.SyncedBlock.Children);
+    }
+    if (block.Toggle?.Children) {
+      stack.push(...block.Toggle.Children);
+    }
+    if (block.Quote?.Children) {
+      stack.push(...block.Quote.Children);
+    }
+    if (block.Callout?.Children) {
+      stack.push(...block.Callout.Children);
+    }
+  }
+
+  return false;
+};
+
 export const isBlueskyURL = (url: URL): boolean => {
   if (
     url.hostname !== 'bsky.app' &&

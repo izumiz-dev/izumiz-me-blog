@@ -13,6 +13,7 @@ import {
   getPostLink,
   filePath,
   extractTargetBlocks,
+  blocksContainEquation,
 } from '@lib/blog-helpers.ts';
 import Layout from '@layouts/Layout.astro';
 import PostDate from '@components/PostDate.astro';
@@ -88,6 +89,22 @@ let ogImage = '';
 if (post.FeaturedImage && post.FeaturedImage.Url) {
   ogImage = new URL(filePath(new URL(post.FeaturedImage.Url)), Astro.site);
 }
+
+const firstImageBlock = extractTargetBlocks('image', blocks)[0];
+let heroImageURL = '';
+if (firstImageBlock?.Image) {
+  if (firstImageBlock.Image.External?.Url) {
+    heroImageURL = firstImageBlock.Image.External.Url;
+  } else if (firstImageBlock.Image.File?.Url) {
+    try {
+      heroImageURL = filePath(new URL(firstImageBlock.Image.File.Url));
+    } catch {
+      heroImageURL = '';
+    }
+  }
+}
+
+const includeKatex = blocksContainEquation(blocks);
 ---
 
 <Layout
@@ -103,6 +120,8 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
     },
     image: { alt: post.Title },
   }}
+  includeKatex={includeKatex}
+  preloadImages={heroImageURL ? [heroImageURL] : []}
 >
   <div slot="main" class={styles.main}>
     <div class={styles.post}>

@@ -1,14 +1,19 @@
 ---
-import { ENABLE_LIGHTBOX } from '../../server-constants.ts';
+import fs from 'node:fs';
+import path from 'node:path';
+import sharp from 'sharp';
+import { fileURLToPath } from 'node:url';
+import { ENABLE_LIGHTBOX, BASE_PATH } from '../../server-constants.ts';
 import * as interfaces from '../../lib/interfaces';
 import { filePath } from '../../lib/blog-helpers';
 import Caption from './Caption.astro';
 
 export interface Props {
   block: interfaces.Block;
+  priority?: boolean;
 }
 
-const { block } = Astro.props;
+const { block, priority = false } = Astro.props;
 
 let image = '';
 if (block.Image.External) {
@@ -16,19 +21,82 @@ if (block.Image.External) {
 } else if (block.Image.File) {
   image = filePath(new URL(block.Image.File.Url));
 }
+
+const __filename = fileURLToPath(import.meta.url);
+const projectRoot = path.join(path.dirname(__filename), '..', '..', '..');
+
+const stripBasePath = (targetPath: string) => {
+  if (!targetPath) return targetPath;
+  if (/^https?:\/\//.test(targetPath)) {
+    return '';
+  }
+  if (BASE_PATH && targetPath.startsWith(BASE_PATH)) {
+    return targetPath.substring(BASE_PATH.length).replace(/^\\\//, '');
+  }
+  return targetPath.replace(/^\\\//, '');
+};
+
+let intrinsicWidth: number | undefined = block.Image?.Width;
+let intrinsicHeight: number | undefined = block.Image?.Height;
+
+if (!intrinsicWidth || !intrinsicHeight) {
+  const relativePath = stripBasePath(image);
+  if (relativePath) {
+    const fileSystemPath = path.join(projectRoot, 'public', relativePath);
+    if (fs.existsSync(fileSystemPath)) {
+      try {
+        const metadata = await sharp(fileSystemPath).metadata();
+        intrinsicWidth = metadata.width;
+        intrinsicHeight = metadata.height;
+      } catch (error) {
+        console.warn(
+          `Failed to read image metadata for ${fileSystemPath}`,
+          error
+        );
+      }
+    }
+  }
+}
+
+const aspectRatio =
+  intrinsicWidth && intrinsicHeight
+    ? `${intrinsicWidth} / ${intrinsicHeight}`
+    : undefined;
+const loading = priority ? 'eager' : 'lazy';
+const fetchPriority = priority ? 'high' : undefined;
 ---
 
 <figure class="image">
   {
     image && (
-      <div>
+      <div
+        style={
+          aspectRatio ? `aspect-ratio: ${aspectRatio}; width: 100%;` : undefined
+        }
+      >
         <div>
           {ENABLE_LIGHTBOX ? (
             <a data-fslightbox href={image} data-type="image">
-              <img src={image} alt="Image in a image block" loading="lazy" />
+              <img
+                src={image}
+                alt="Image in a image block"
+                loading={loading}
+                fetchpriority={fetchPriority}
+                decoding="async"
+                width={intrinsicWidth}
+                height={intrinsicHeight}
+              />
             </a>
           ) : (
-            <img src={image} alt="Image in a image block" loading="lazy" />
+            <img
+              src={image}
+              alt="Image in a image block"
+              loading={loading}
+              fetchpriority={fetchPriority}
+              decoding="async"
+              width={intrinsicWidth}
+              height={intrinsicHeight}
+            />
           )}
         </div>
         <Caption richTexts={block.Image.Caption} />
@@ -45,10 +113,9 @@ if (block.Image.External) {
   .image > div {
     margin: 0 auto;
   }
-  .image > div > div {
-  }
   .image > div > div img {
     display: block;
     max-width: 100%;
+    height: auto;
   }
 </style>

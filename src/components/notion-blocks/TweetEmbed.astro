@@ -4,21 +4,87 @@ export interface Props {
 }
 
 const { url } = Astro.props;
+const locals = Astro.locals as { tweetLazyScriptInserted?: boolean };
 
 const postURL =
   url.hostname === 'x.com' || url.hostname === 'www.x.com'
     ? new URL(url.pathname, 'https://twitter.com')
     : url;
+
+const shouldInjectScript = !locals.tweetLazyScriptInserted;
+locals.tweetLazyScriptInserted = true;
+
+const scriptContent = `(() => {
+  const ATTRIBUTE = 'data-tweet-embed';
+  const SCRIPT_URL = 'https://platform.twitter.com/widgets.js';
+
+  const loadTwitterScript = () => {
+    if (window.__mermaidTwitterPromise) {
+      return window.__mermaidTwitterPromise;
+    }
+    window.__mermaidTwitterPromise = new Promise((resolve) => {
+      if (window.twttr && window.twttr.widgets) {
+        resolve(window.twttr);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = SCRIPT_URL;
+      script.async = true;
+      script.onload = () => resolve(window.twttr);
+      document.head.appendChild(script);
+    });
+    return window.__mermaidTwitterPromise;
+  };
+
+  const activate = (target) => {
+    loadTwitterScript().then((twttr) => {
+      if (twttr && twttr.widgets) {
+        twttr.widgets.load(target);
+      }
+    });
+  };
+
+  const observe = () => {
+    const targets = document.querySelectorAll('[' + ATTRIBUTE + ']');
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach((target) => activate(target));
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            obs.unobserve(entry.target);
+            activate(entry.target);
+          }
+        });
+      },
+      { rootMargin: '300px 0px' }
+    );
+    targets.forEach((target) => observer.observe(target));
+  };
+
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', observe, { once: true });
+    } else {
+      observe();
+    }
+    document.addEventListener('astro:page-load', observe);
+  }
+})();`;
 ---
 
-<div class="tweet-embed">
+<div class="tweet-embed" data-tweet-embed>
   <blockquote class="twitter-tweet">
     <a href={postURL}></a>
   </blockquote>
+  <p class="tweet-fallback">
+    <a href={postURL} target="_blank" rel="noopener">View on X</a>
+  </p>
 </div>
 
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"
-></script>
+{shouldInjectScript && <script is:inline set:html={scriptContent} />}
 
 <style>
   .tweet-embed {
@@ -28,5 +94,14 @@ const postURL =
   }
   .tweet-embed div:first-child div:first-child {
     margin: auto;
+  }
+  .tweet-fallback {
+    margin: 0.4rem 0;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+  .tweet-fallback a {
+    color: inherit;
+    text-decoration: underline;
   }
 </style>

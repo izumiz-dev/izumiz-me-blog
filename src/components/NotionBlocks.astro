@@ -4,6 +4,7 @@ import {
   isTweetURL,
   isAmazonURL,
   buildURLToHTMLMap,
+  extractTargetBlocks,
 } from '@lib/blog-helpers.ts';
 import Paragraph from './notion-blocks/Paragraph.astro';
 import Heading1 from './notion-blocks/Heading1.astro';
@@ -95,6 +96,14 @@ if (isRoot) {
   );
 }
 
+const locals = Astro.locals as { firstImageId?: string };
+if (isRoot) {
+  locals.firstImageId = extractTargetBlocks('image', rawBlocks)[0]?.Id;
+} else if (locals.firstImageId === undefined) {
+  locals.firstImageId = extractTargetBlocks('image', rawBlocks)[0]?.Id;
+}
+const priorityImageId = locals.firstImageId;
+
 const bookmarkURLs = blocks
   .filter((b: interfaces.Block) =>
     ['bookmark', 'link_preview', 'embed'].includes(b.Type)
@@ -129,7 +138,7 @@ const bookmarkURLMap = await buildURLToHTMLMap(bookmarkURLs);
       case 'table_of_contents':
         return <TableOfContents block={block} headings={headings} />;
       case 'image':
-        return <Image block={block} />;
+        return <Image block={block} priority={block.Id === priorityImageId} />;
       case 'video':
         return <Video block={block} />;
       case 'code':
