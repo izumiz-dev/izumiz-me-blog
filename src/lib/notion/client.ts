@@ -422,6 +422,19 @@ export async function getAllTags(isGallery = false): Promise<SelectProperty[]> {
 
 export async function downloadFile(url: URL, msg?: string) {
   console.log(`msg: ${msg}`);
+
+  const dir = './public/notion/' + url.pathname.split('/').slice(-2)[0];
+  const filename = decodeURIComponent(url.pathname.split('/').slice(-1)[0]);
+  const filepath = `${dir}/${filename}`;
+
+  if (fs.existsSync(filepath)) {
+    return Promise.resolve();
+  }
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
   let res!: AxiosResponse;
   try {
     res = await axios({
@@ -439,14 +452,6 @@ export async function downloadFile(url: URL, msg?: string) {
     console.log(res);
     return Promise.resolve();
   }
-
-  const dir = './public/notion/' + url.pathname.split('/').slice(-2)[0];
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
-
-  const filename = decodeURIComponent(url.pathname.split('/').slice(-1)[0]);
-  const filepath = `${dir}/${filename}`;
 
   console.log(`filepath: ${filepath}`);
 
@@ -517,6 +522,13 @@ export async function getDatabase(isGallery = false): Promise<Database> {
         Type: res.icon.type,
         Url: res.icon.file?.url || '',
       };
+      if (icon.Url) {
+        try {
+          await downloadFile(new URL(icon.Url));
+        } catch (err) {
+          console.log('Failed to cache icon file');
+        }
+      }
     }
   }
 
@@ -526,6 +538,13 @@ export async function getDatabase(isGallery = false): Promise<Database> {
       Type: res.cover.type,
       Url: res.cover.external?.url || res.cover?.file?.url || '',
     };
+    if (res.cover.type === 'file' && cover.Url) {
+      try {
+        await downloadFile(new URL(cover.Url));
+      } catch (err) {
+        console.log('Failed to cache cover file');
+      }
+    }
   }
 
   const database: Database = {
