@@ -51,6 +51,7 @@ const scriptContent = `(() => {
       target.prepend(blockquote);
     }
     blockquote.setAttribute('data-theme', getTheme());
+    blockquote.setAttribute('data-chrome', 'transparent');
     return blockquote;
   };
 
@@ -134,7 +135,7 @@ const scriptContent = `(() => {
 ---
 
 <div class="tweet-embed" data-tweet-embed data-tweet-url={postURL.toString()}>
-  <blockquote class="twitter-tweet">
+  <blockquote class="twitter-tweet" data-chrome="transparent">
     <a href={postURL}></a>
   </blockquote>
   <p class="tweet-fallback">
@@ -150,6 +151,22 @@ const scriptContent = `(() => {
     max-width: 550px;
     margin: 0.4rem auto;
   }
+
+  .tweet-embed blockquote.twitter-tweet,
+  .tweet-embed :global(.twitter-tweet-rendered) {
+    margin: 0 !important;
+    border-radius: var(--radius, 12px);
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .tweet-embed iframe {
+    display: block;
+    width: 100%;
+    border-radius: inherit;
+    background: transparent;
+  }
+
   .tweet-embed div:first-child div:first-child {
     margin: auto;
   }

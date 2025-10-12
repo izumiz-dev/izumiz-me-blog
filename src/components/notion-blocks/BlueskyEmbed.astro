@@ -150,7 +150,17 @@ if (postHttpUrl) {
     margin: 0.4rem auto;
   }
 
-  .bluesky-embed-wrapper :global(blockquote.bluesky-embed) {
+  .bluesky-embed-wrapper :global(.bluesky-embed) {
     margin: 0 !important;
+    border-radius: var(--radius, 12px);
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .bluesky-embed-wrapper :global(.bluesky-embed iframe) {
+    display: block;
+    width: 100%;
+    border-radius: inherit;
+    background: transparent;
   }
 </style>
