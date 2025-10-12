@@ -38,7 +38,7 @@ export async function getOgImage(text: string) {
             lineHeight: 1.22,
             fontWeight: 700,
             margin: 0,
-            color: '#e2e8f0',
+            color: '#fafbfcff',
           }}
         >
           {text}
@@ -55,7 +55,7 @@ export async function getOgImage(text: string) {
               fontSize: '18px',
               letterSpacing: '0.24em',
               textTransform: 'uppercase',
-              color: '#94a3f8',
+              color: '#bac4ffff',
             }}
           >
             blog by izumiz
@@ -93,7 +93,9 @@ async function getFontData() {
     })
   ).text();
 
-  const resource = [...css.matchAll(/src:\s*url\(([^)]+)\)\s*format\('([^']+)'\)/g)].find((match) => {
+  const resource = [
+    ...css.matchAll(/src:\s*url\(([^)]+)\)\s*format\('([^']+)'\)/g),
+  ].find((match) => {
     const format = match[2]?.toLowerCase();
     return (
       format === 'opentype' ||
@@ -104,14 +106,18 @@ async function getFontData() {
   });
 
   if (!resource) {
-    throw new Error('Failed to locate downloadable font resource for OG image generation.');
+    throw new Error(
+      'Failed to locate downloadable font resource for OG image generation.'
+    );
   }
 
   const fontUrl = resource[1].replace(/['"]/g, '').trim();
 
   const fontResponse = await fetch(fontUrl);
   if (!fontResponse.ok) {
-    throw new Error('Failed to download font resource for OG image generation.');
+    throw new Error(
+      'Failed to download font resource for OG image generation.'
+    );
   }
 
   fontDataCache = await fontResponse.arrayBuffer();

@@ -420,9 +420,7 @@ export async function getAllTags(isGallery = false): Promise<SelectProperty[]> {
     );
 }
 
-export async function downloadFile(url: URL, msg?: string) {
-  console.log(`msg: ${msg}`);
-
+export async function downloadFile(url: URL) {
   const dir = './public/notion/' + url.pathname.split('/').slice(-2)[0];
   const filename = decodeURIComponent(url.pathname.split('/').slice(-1)[0]);
   const filepath = `${dir}/${filename}`;
