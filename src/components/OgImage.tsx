@@ -11,40 +11,61 @@ export async function getOgImage(text: string) {
       style={{
         height: '100%',
         width: '100%',
-        backgroundColor: '#6568c3',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundImage:
+          'radial-gradient(circle at 20% 20%, #a5b4fc 0%, #7c83f9 40%, #475569 100%)',
       }}
     >
       <section
         style={{
           display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center',
           flexDirection: 'column',
-          color: '#2e2e2e',
-          border: '0px solid',
-          borderRadius: '24px',
-          margin: '24px',
-          padding: '32px',
-          backgroundColor: '#fefefe',
-          width: '752px',
+          justifyContent: 'center',
+          gap: '36px',
+          color: '#f8fafc',
+          borderRadius: '32px',
+          padding: '48px',
+          backgroundColor: 'rgba(15, 23, 42, 0.78)',
+          width: '720px',
+          border: '1px solid rgba(148, 163, 184, 0.25)',
         }}
       >
-        <h1 style={{ fontSize: '40px' }}>{text}</h1>
-        <div
+        <h1
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row-reverse',
-            alignItems: 'flex-end',
+            fontSize: '48px',
+            lineHeight: 1.22,
+            fontWeight: 700,
+            margin: 0,
+            color: '#e2e8f0',
           }}
         >
-          <h2 style={{ fontSize: '32px' }}>izumiz.me</h2>
+          {text}
+        </h1>
+        <div
+          style={{
+            display: 'flex',
+            width: '100%',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '18px',
+              letterSpacing: '0.24em',
+              textTransform: 'uppercase',
+              color: '#94a3f8',
+            }}
+          >
+            blog by izumiz
+          </span>
         </div>
       </section>
     </main>,
     {
       width: 800,
-      height: 400,
+      height: 420,
       fonts: [
         {
           name: 'Noto Sans JP',
