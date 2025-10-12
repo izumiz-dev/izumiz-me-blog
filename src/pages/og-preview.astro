@@ -70,7 +70,9 @@ const defaultImageSrc = `${basePath}/og/preview.png?text=${encodeURIComponent(de
         color: #fff;
         font-weight: 600;
         cursor: pointer;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
         box-shadow: 0 6px 20px rgba(104, 112, 225, 0.24);
       }
 
@@ -91,10 +93,19 @@ const defaultImageSrc = `${basePath}/og/preview.png?text=${encodeURIComponent(de
       <form>
         <label for="og-text">テキスト</label>
         <textarea id="og-text" name="text">{defaultText}</textarea>
-        <small>生成ボタンを押すとプレビューが更新されます。キャッシュ回避のため毎回新しい画像 URL が生成されます。</small>
+        <small
+          >生成ボタンを押すとプレビューが更新されます。キャッシュ回避のため毎回新しい画像
+          URL が生成されます。</small
+        >
         <button type="button" id="generate-button">生成</button>
       </form>
-      <img id="og-image" src={defaultImageSrc} alt="OG image preview" width="800" height="400" />
+      <img
+        id="og-image"
+        src={defaultImageSrc}
+        alt="OG image preview"
+        width="800"
+        height="400"
+      />
     </main>
     <script is:inline define:vars={{ basePath }}>
       const input = document.getElementById('og-text');
