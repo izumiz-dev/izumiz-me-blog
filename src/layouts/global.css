@@ -20,6 +20,12 @@
   --code-bg: rgba(135, 131, 120, 0.15);
   --code-color: #eb5757;
   --mark-bg: rgba(247, 212, 255, 0.8);
+  --code-block-bg: rgb(247, 246, 243);
+  --code-block-border: rgba(0, 0, 0, 0.08);
+  --code-copy-bg: rgba(227, 226, 224, 0.5);
+  --code-copy-hover-bg: rgba(227, 226, 224, 0.7);
+  --code-scrollbar-thumb: rgb(211, 209, 203);
+  --code-scrollbar-track: rgb(237, 236, 233);
   --tag-chip-fg: #32302c;
 
   --radius: 4px;
@@ -51,6 +57,12 @@
     --code-bg: rgba(255, 255, 255, 0.08);
     --code-color: #ffb868;
     --mark-bg: rgba(247, 212, 255, 0.25);
+    --code-block-bg: rgba(16, 21, 36, 0.97);
+    --code-block-border: rgba(255, 255, 255, 0.12);
+    --code-copy-bg: rgba(255, 255, 255, 0.06);
+    --code-copy-hover-bg: rgba(255, 255, 255, 0.12);
+    --code-scrollbar-thumb: rgba(148, 163, 184, 0.45);
+    --code-scrollbar-track: rgba(15, 17, 27, 0.8);
     --tag-chip-fg: #ffffff;
 
     color-scheme: dark;

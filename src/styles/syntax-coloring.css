@@ -68,3 +68,55 @@
 .token.italic {
   font-style: italic;
 }
+
+@media (prefers-color-scheme: dark) {
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: #6272a4;
+  }
+
+  .token.string,
+  .token.attr-value {
+    color: #f1fa8c;
+  }
+
+  .token.punctuation {
+    color: #cbd5f5;
+  }
+
+  .token.operator {
+    color: #ff79c6;
+  }
+
+  .token.entity,
+  .token.url,
+  .token.symbol,
+  .token.number,
+  .token.boolean,
+  .token.variable,
+  .token.constant,
+  .token.property,
+  .token.regex {
+    color: #bd93f9;
+  }
+
+  .token.atrule,
+  .token.keyword,
+  .token.attr-name,
+  .language-autohotkey .token.selector {
+    color: #8be9fd;
+  }
+
+  .token.function,
+  .language-autohotkey .token.tag {
+    color: #50fa7b;
+  }
+
+  .token.tag,
+  .token.selector,
+  .language-autohotkey .token.keyword {
+    color: #ff5555;
+  }
+}
