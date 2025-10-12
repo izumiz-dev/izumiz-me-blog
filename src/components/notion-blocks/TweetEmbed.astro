@@ -17,6 +17,7 @@ locals.tweetLazyScriptInserted = true;
 const scriptContent = `(() => {
   const ATTRIBUTE = 'data-tweet-embed';
   const SCRIPT_URL = 'https://platform.twitter.com/widgets.js';
+  const MEDIA_QUERY = '(prefers-color-scheme: dark)';
 
   const loadTwitterScript = () => {
     if (window.__mermaidTwitterPromise) {
@@ -36,12 +37,50 @@ const scriptContent = `(() => {
     return window.__mermaidTwitterPromise;
   };
 
-  const activate = (target) => {
+  const getTheme = () =>
+    window.matchMedia(MEDIA_QUERY).matches ? 'dark' : 'light';
+
+  const ensureBlockquote = (target, tweetUrl) => {
+    let blockquote = target.querySelector('blockquote.twitter-tweet');
+    if (!blockquote) {
+      blockquote = document.createElement('blockquote');
+      blockquote.className = 'twitter-tweet';
+      const anchor = document.createElement('a');
+      anchor.href = tweetUrl;
+      blockquote.appendChild(anchor);
+      target.prepend(blockquote);
+    }
+    blockquote.setAttribute('data-theme', getTheme());
+    return blockquote;
+  };
+
+  const cleanupWidgets = (target) => {
+    target.querySelectorAll('iframe').forEach((node) => node.remove());
+    target
+      .querySelectorAll('.twitter-tweet-rendered')
+      .forEach((node) => node.remove());
+  };
+
+  const render = (target) => {
+    const tweetUrl = target.getAttribute('data-tweet-url');
+    if (!tweetUrl) {
+      return;
+    }
+    ensureBlockquote(target, tweetUrl);
     loadTwitterScript().then((twttr) => {
-      if (twttr && twttr.widgets) {
-        twttr.widgets.load(target);
+      if (!twttr || !twttr.widgets) {
+        return;
       }
+      cleanupWidgets(target);
+      twttr.widgets.load(target);
     });
+  };
+
+  const activate = (target) => {
+    if (!target.getAttribute('data-tweet-activated')) {
+      target.setAttribute('data-tweet-activated', 'true');
+    }
+    render(target);
   };
 
   const observe = () => {
@@ -64,6 +103,24 @@ const scriptContent = `(() => {
     targets.forEach((target) => observer.observe(target));
   };
 
+  const setupThemeListener = () => {
+    if (window.__tweetThemeListenerSetup) {
+      return;
+    }
+    window.__tweetThemeListenerSetup = true;
+    const mql = window.matchMedia(MEDIA_QUERY);
+    const handleThemeChange = () => {
+      document
+        .querySelectorAll('[' + ATTRIBUTE + '][data-tweet-activated]')
+        .forEach((target) => render(target));
+    };
+    if (mql.addEventListener) {
+      mql.addEventListener('change', handleThemeChange);
+    } else if (mql.addListener) {
+      mql.addListener(handleThemeChange);
+    }
+  };
+
   if (typeof window !== 'undefined') {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', observe, { once: true });
@@ -71,11 +128,12 @@ const scriptContent = `(() => {
       observe();
     }
     document.addEventListener('astro:page-load', observe);
+    setupThemeListener();
   }
 })();`;
 ---
 
-<div class="tweet-embed" data-tweet-embed>
+<div class="tweet-embed" data-tweet-embed data-tweet-url={postURL.toString()}>
   <blockquote class="twitter-tweet">
     <a href={postURL}></a>
   </blockquote>

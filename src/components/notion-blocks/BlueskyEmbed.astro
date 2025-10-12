@@ -6,6 +6,7 @@ export interface Props {
 const { url: postHttpUrl } = Astro.props;
 let embedHtml =
   '<p>Error: Could not load Bluesky post. The URL might be invalid or the post might be private.</p>'; // Default fallback
+let blueskyEmbedId = '';
 
 if (postHttpUrl) {
   try {
@@ -16,6 +17,21 @@ if (postHttpUrl) {
       const data = await response.json();
       if (data && typeof data.html === 'string') {
         embedHtml = data.html;
+        if (embedHtml.includes('bluesky-embed')) {
+          embedHtml = embedHtml.replace(
+            /(<blockquote\b[^>]*class=(['"]).*?bluesky-embed.*?\2[^>]*)(>)/i,
+            (fullMatch, start) => {
+              if (/data-bluesky-embed-color-mode=/.test(fullMatch)) {
+                return fullMatch;
+              }
+              return `${start} data-bluesky-embed-color-mode="system">`;
+            }
+          );
+        }
+        const idMatch = data.html.match(/data-bluesky-id=["']?([^"'>]+)["']?/);
+        if (idMatch && idMatch[1]) {
+          blueskyEmbedId = idMatch[1];
+        }
       } else {
         console.error(
           'Bluesky oEmbed response did not contain valid HTML. Response data:',
@@ -42,7 +58,90 @@ if (postHttpUrl) {
 }
 ---
 
-<div class="bluesky-embed-wrapper" set:html={embedHtml} />
+<div
+  class="bluesky-embed-wrapper"
+  data-bluesky-id={blueskyEmbedId || undefined}
+  set:html={embedHtml}
+/>
+{
+  blueskyEmbedId && (
+    <script
+      is:inline
+      set:html={`(() => {
+        if (typeof window === 'undefined') {
+          return;
+        }
+        const WRAPPER_SELECTOR = '.bluesky-embed-wrapper[data-bluesky-id="${blueskyEmbedId}"]';
+        const IFRAME_SELECTOR = 'iframe[data-bluesky-id="${blueskyEmbedId}"]';
+        const MEDIA_QUERY = '(prefers-color-scheme: dark)';
+
+        const getWrapper = () => document.querySelector(WRAPPER_SELECTOR);
+        const getIframe = () =>
+          document.querySelector(IFRAME_SELECTOR) ||
+          (getWrapper() ? getWrapper().querySelector('iframe') : null);
+
+        let rafToken = null;
+
+        const applyTheme = () => {
+          const iframe = getIframe();
+          if (!iframe) {
+            return;
+          }
+          const theme = window.matchMedia(MEDIA_QUERY).matches ? 'dark' : 'light';
+
+          if (iframe.dataset.themeApplied === theme) {
+            return;
+          }
+          const currentSrc = iframe.getAttribute('src');
+          if (!currentSrc) {
+            return;
+          }
+          try {
+            const url = new URL(currentSrc, window.location.href);
+            url.searchParams.set('theme', theme);
+            iframe.dataset.themeApplied = theme;
+            iframe.setAttribute('src', url.toString());
+          } catch {
+            // ignore malformed URLs
+          }
+        };
+
+        const scheduleApply = () => {
+          if (rafToken != null) {
+            cancelAnimationFrame(rafToken);
+          }
+          rafToken = requestAnimationFrame(() => {
+            rafToken = null;
+            applyTheme();
+          });
+        };
+
+        const init = () => {
+          scheduleApply();
+          const wrapper = getWrapper();
+          if (wrapper && !wrapper.dataset.themeObserverAttached) {
+            wrapper.dataset.themeObserverAttached = 'true';
+            const observer = new MutationObserver(scheduleApply);
+            observer.observe(wrapper, { childList: true, subtree: true });
+          }
+          const mql = window.matchMedia(MEDIA_QUERY);
+          if (mql.addEventListener) {
+            mql.addEventListener('change', scheduleApply);
+          } else if (mql.addListener) {
+            mql.addListener(scheduleApply);
+          }
+          document.addEventListener('astro:page-load', scheduleApply);
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', init, { once: true });
+        } else {
+          init();
+        }
+      })();`}
+    />
+  )
+}
 
 <style>
   .bluesky-embed-wrapper {

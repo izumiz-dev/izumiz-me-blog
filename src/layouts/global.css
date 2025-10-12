@@ -27,6 +27,8 @@
   --code-scrollbar-thumb: rgb(211, 209, 203);
   --code-scrollbar-track: rgb(237, 236, 233);
   --tag-chip-fg: #32302c;
+  --callout-bg: rgba(235, 236, 237, 0.6);
+  --callout-border: rgba(0, 0, 0, 0.05);
 
   --radius: 4px;
   color-scheme: light;
@@ -64,6 +66,8 @@
     --code-scrollbar-thumb: rgba(148, 163, 184, 0.45);
     --code-scrollbar-track: rgba(15, 17, 27, 0.8);
     --tag-chip-fg: #ffffff;
+    --callout-bg: rgba(32, 36, 54, 0.78);
+    --callout-border: rgba(148, 163, 184, 0.38);
 
     color-scheme: dark;
   }

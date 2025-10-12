@@ -144,4 +144,76 @@
     color: var(--tag-chip-fg);
     background: rgba(232, 135, 135, 0.3) !important;
   }
+  .gray,
+  .gray:hover {
+    color: #cbd5f5 !important;
+  }
+  .brown,
+  .brown:hover {
+    color: #f3c8a7 !important;
+  }
+  .orange,
+  .orange:hover {
+    color: #ffcba5 !important;
+  }
+  .yellow,
+  .yellow:hover {
+    color: #ffe8a3 !important;
+  }
+  .green,
+  .green:hover {
+    color: #a6f0d1 !important;
+  }
+  .blue,
+  .blue:hover {
+    color: #a8d8ff !important;
+  }
+  .purple,
+  .purple:hover {
+    color: #d7c0ff !important;
+  }
+  .pink,
+  .pink:hover {
+    color: #f9bada !important;
+  }
+  .red,
+  .red:hover {
+    color: #ffc1c6 !important;
+  }
+  .gray-background {
+    background: rgba(92, 101, 128, 0.42) !important;
+    color: var(--fg) !important;
+  }
+  .brown-background {
+    background: rgba(142, 96, 66, 0.38) !important;
+    color: #f8e1d0 !important;
+  }
+  .orange-background {
+    background: rgba(196, 118, 54, 0.34) !important;
+    color: #ffe0c0 !important;
+  }
+  .yellow-background {
+    background: rgba(183, 140, 45, 0.32) !important;
+    color: #ffeab5 !important;
+  }
+  .green-background {
+    background: rgba(76, 131, 102, 0.34) !important;
+    color: #d2f5e4 !important;
+  }
+  .blue-background {
+    background: rgba(70, 123, 172, 0.33) !important;
+    color: #d7ebff !important;
+  }
+  .purple-background {
+    background: rgba(112, 82, 147, 0.33) !important;
+    color: #e5dbff !important;
+  }
+  .pink-background {
+    background: rgba(170, 82, 128, 0.33) !important;
+    color: #ffd4eb !important;
+  }
+  .red-background {
+    background: rgba(166, 64, 78, 0.33) !important;
+    color: #ffd2d6 !important;
+  }
 }

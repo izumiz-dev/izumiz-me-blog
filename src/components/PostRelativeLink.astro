@@ -65,7 +65,8 @@ const { prevPost, nextPost } = Astro.props;
     padding: 1rem;
     border-radius: var(--radius);
     color: var(--fg);
-    background: rgba(227, 226, 224, 0.5);
+    background: var(--callout-bg);
+    border: 1px solid var(--callout-border);
     text-decoration: none;
   }
   div.post-relative-link > div > a.colored > div:first-child {
