@@ -14,14 +14,17 @@ import { Icon } from 'astro-icon';
     border: none;
     border-radius: var(--radius);
     padding: 0.4rem 0.4rem;
-    color: #777;
+    color: var(--fg-muted);
     font-size: 0.95rem;
     font-weight: bold;
-    border: #ddd 1px solid;
+    background-color: transparent;
+    border: 1px solid var(--border-muted);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
   .search-button:hover {
     cursor: pointer;
-    background-color: #ddd;
+    background-color: var(--my-hover-color);
+    color: var(--my-fg-color);
   }
   .search-button svg {
     width: 20px;

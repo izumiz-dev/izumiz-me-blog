@@ -102,3 +102,46 @@
   color: rgb(28, 56, 41);
   background: rgb(255, 226, 221) !important;
 }
+
+@media (prefers-color-scheme: dark) {
+  .tag.light-gray {
+    color: var(--tag-chip-fg);
+    background: rgba(163, 168, 213, 0.28) !important;
+  }
+  .tag.gray {
+    color: var(--tag-chip-fg);
+    background: rgba(151, 156, 197, 0.32) !important;
+  }
+  .tag.brown {
+    color: var(--tag-chip-fg);
+    background: rgba(189, 147, 123, 0.3) !important;
+  }
+  .tag.orange {
+    color: var(--tag-chip-fg);
+    background: rgba(237, 166, 110, 0.28) !important;
+  }
+  .tag.yellow {
+    color: var(--tag-chip-fg);
+    background: rgba(239, 198, 120, 0.28) !important;
+  }
+  .tag.green {
+    color: var(--tag-chip-fg);
+    background: rgba(152, 193, 158, 0.3) !important;
+  }
+  .tag.blue {
+    color: var(--tag-chip-fg);
+    background: rgba(132, 186, 216, 0.3) !important;
+  }
+  .tag.purple {
+    color: var(--tag-chip-fg);
+    background: rgba(190, 160, 220, 0.3) !important;
+  }
+  .tag.pink {
+    color: var(--tag-chip-fg);
+    background: rgba(217, 148, 194, 0.3) !important;
+  }
+  .tag.red {
+    color: var(--tag-chip-fg);
+    background: rgba(232, 135, 135, 0.3) !important;
+  }
+}

@@ -54,7 +54,7 @@ const { heading, posts } = Astro.props;
   .blog-posts-link h2 {
     margin: 0;
     padding-left: 0.4rem;
-    color: #777;
+    color: var(--fg-muted);
     font-size: 0.95rem;
   }
   .blog-posts-link ul {
@@ -75,9 +75,10 @@ const { heading, posts } = Astro.props;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    transition: background-color 0.2s ease;
   }
   .blog-posts-link ul li a:hover {
-    background-color: #ddd;
+    background-color: var(--my-hover-color);
   }
   .blog-posts-link ul li a span,
   .blog-posts-link ul li a img {

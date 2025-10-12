@@ -139,7 +139,7 @@ div.content {
 
 main header h1 {
   font-weight: 700;
-  color: #333;
+  color: var(--my-fg-color);
 }
 
 main header h1 a {
@@ -301,7 +301,7 @@ main footer {
 }
 
 main footer span {
-  color: #777;
+  color: var(--fg-muted);
 }
 
 main footer a {

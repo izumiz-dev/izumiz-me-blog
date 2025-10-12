@@ -25,3 +25,22 @@
 
   --radius: 12px;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --my-aside-color: #1f2235;
+    --my-fr-color: #15192b;
+    --my-bg-color: #0f111d;
+    --my-accent-color: #8f93ff;
+
+    --my-fg-color: #f3f4ff;
+    --my-gray-light: rgba(255, 255, 255, 0.2);
+    --my-hover-color: rgba(132, 138, 202, 0.35);
+
+    --my-blue-dark: #4a6edb;
+    --my-blue-darker: #3a5ac7;
+
+    --my-purple-dark: #8b63c5;
+    --my-purple-darker: #6e4e9f;
+  }
+}

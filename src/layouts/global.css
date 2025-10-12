@@ -12,7 +12,18 @@
   --geist-foreground: #000;
   --geist-success: #690;
 
+  --fg-muted: #777;
+  --fg-subtle: #999;
+  --border-color: #e4e4e4;
+  --border-muted: #ddd;
+  --table-header-bg: #f4f4f4;
+  --code-bg: rgba(135, 131, 120, 0.15);
+  --code-color: #eb5757;
+  --mark-bg: rgba(247, 212, 255, 0.8);
+  --tag-chip-fg: #32302c;
+
   --radius: 4px;
+  color-scheme: light;
 
   --font-sans:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
@@ -20,6 +31,30 @@
   --font-mono:
     SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier,
     monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f111b;
+    --fg: #e8ecf8;
+    --accents-1: #aab6ff;
+    --accents-2: #aab6ff;
+    --accents-3: #aab6ff;
+    --geist-foreground: #f5f5f5;
+    --geist-success: #7bbf5f;
+
+    --fg-muted: #b3bbcf;
+    --fg-subtle: #8b93a7;
+    --border-color: rgba(255, 255, 255, 0.18);
+    --border-muted: rgba(255, 255, 255, 0.12);
+    --table-header-bg: rgba(255, 255, 255, 0.06);
+    --code-bg: rgba(255, 255, 255, 0.08);
+    --code-color: #ffb868;
+    --mark-bg: rgba(247, 212, 255, 0.25);
+    --tag-chip-fg: #ffffff;
+
+    color-scheme: dark;
+  }
 }
 
 * {
@@ -57,7 +92,7 @@ body {
 figure {
   margin: 0;
   font-size: 0.85rem;
-  color: #999;
+  color: var(--fg-subtle);
   line-height: 1.8rem;
   max-width: 600px;
 }
@@ -79,7 +114,7 @@ a:hover {
 mark {
   padding: var(--gap-quarter);
   border-radius: var(--radius);
-  background: rgba(247, 212, 255, 0.8);
+  background: var(--mark-bg);
 }
 
 h1 {
@@ -96,7 +131,7 @@ h1 {
 }
 
 ol {
-  color: #222;
+  color: var(--fg);
   font-weight: 400;
   font-size: 0.9rem;
   line-height: 1.8rem;
@@ -104,7 +139,7 @@ ol {
 
 p,
 ul {
-  color: #222;
+  color: var(--fg);
   font-weight: 400;
   font-size: 1rem;
   line-height: 1.8rem;
@@ -132,13 +167,13 @@ hr {
   height: 1px;
   border: 0;
   margin: 0.3rem 0;
-  background-color: #333;
+  background-color: var(--border-muted);
 }
 
 code {
   font-size: 0.9rem;
-  background: rgba(135, 131, 120, 0.15);
-  color: #eb5757;
+  background: var(--code-bg);
+  color: var(--code-color);
   padding: 0.25rem;
   border-radius: var(--radius);
   font-family: var(--font-mono);
@@ -157,16 +192,17 @@ table tr {
 
 table th {
   font-weight: 600;
-  background-color: #f4f4f4;
+  background-color: var(--table-header-bg);
 }
 
 table td,
 table th {
   font-size: 0.9rem;
-  border: 1px solid #e4e4e4;
+  border: 1px solid var(--border-color);
   padding: 0.5rem 1rem;
   text-align: left;
   line-height: 1.2rem;
+  color: var(--fg);
 }
 
 table td::after {

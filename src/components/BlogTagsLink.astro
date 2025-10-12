@@ -37,7 +37,7 @@ const { heading, tags } = Astro.props;
   .blog-tags-link h2 {
     margin: 0;
     padding-left: 0.4rem;
-    color: #777;
+    color: var(--fg-muted);
     font-size: 0.95rem;
   }
   .blog-tags-link ul {
@@ -57,7 +57,12 @@ const { heading, tags } = Astro.props;
     min-width: 0;
     border-radius: 12px;
     padding: 2px 6px;
-    color: rgb(50, 48, 44);
-    background: rgba(227, 226, 224, 0.5);
+    color: var(--my-fg-color);
+    background: var(--my-hover-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .blog-tags-link ul li a:hover {
+    background: var(--my-accent-color);
+    color: #fff;
   }
 </style>
