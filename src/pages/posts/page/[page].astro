@@ -1,7 +1,6 @@
 ---
 import {
   getPostsByPage,
-  getRankedPosts,
   getAllTags,
   getNumberOfPages,
 } from '@lib/notion/client.ts';
@@ -11,7 +10,6 @@ import PostDate from '@components/PostDate.astro';
 import PostTags from '@components/PostTags.astro';
 import PostTitle from '@components/PostTitle.astro';
 import Pagination from '@components/Pagination.astro';
-import BlogPostsLink from '@components/BlogPostsLink.astro';
 import BlogTagsLink from '@components/BlogTagsLink.astro';
 import styles from '@styles/blog.module.css';
 
@@ -27,9 +25,8 @@ export async function getStaticPaths() {
 
 const { page } = Astro.params;
 
-const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
+const [posts, tags, numberOfPages] = await Promise.all([
   getPostsByPage(parseInt(page, 10)),
-  getRankedPosts(),
   getAllTags(),
   getNumberOfPages(),
 ]);
@@ -64,7 +61,6 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <BlogPostsLink heading="固定記事" posts={rankedPosts} />
     <BlogTagsLink heading="タグ一覧" tags={tags} />
   </div>
 </Layout>

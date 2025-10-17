@@ -1,24 +1,17 @@
 ---
 import { NUMBER_OF_POSTS_PER_PAGE } from '../server-constants.ts';
-import {
-  getPosts,
-  getRankedPosts,
-  getAllTags,
-  getNumberOfPages,
-} from '@lib/notion/client.ts';
+import { getPosts, getAllTags, getNumberOfPages } from '@lib/notion/client.ts';
 import Layout from '@layouts/Layout.astro';
 import NoContents from '@components/NoContents.astro';
 import PostDate from '@components/PostDate.astro';
 import PostTags from '@components/PostTags.astro';
 import PostTitle from '@components/PostTitle.astro';
 import Pagination from '@components/Pagination.astro';
-import BlogPostsLink from '@components/BlogPostsLink.astro';
 import BlogTagsLink from '@components/BlogTagsLink.astro';
 import styles from '@styles/blog.module.css';
 
-const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
+const [posts, tags, numberOfPages] = await Promise.all([
   getPosts(NUMBER_OF_POSTS_PER_PAGE),
-  getRankedPosts(),
   getAllTags(),
   getNumberOfPages(),
 ]);
@@ -46,7 +39,6 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <BlogPostsLink heading="固定記事" posts={rankedPosts} />
     <BlogTagsLink heading="タグ一覧" tags={tags} />
   </div>
 </Layout>

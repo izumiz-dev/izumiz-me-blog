@@ -3,7 +3,6 @@ import type { SelectProperty, Post } from '@lib/interfaces.ts';
 import { NUMBER_OF_POSTS_PER_PAGE } from '../../../server-constants.ts';
 import {
   getPostsByTag,
-  getRankedPosts,
   getAllTags,
   getNumberOfPagesByTag,
 } from '@lib/notion/client.ts';
@@ -13,7 +12,6 @@ import PostDate from '@components/PostDate.astro';
 import PostTags from '@components/PostTags.astro';
 import PostTitle from '@components/PostTitle.astro';
 import Pagination from '@components/Pagination.astro';
-import BlogPostsLink from '@components/BlogPostsLink.astro';
 import BlogTagsLink from '@components/BlogTagsLink.astro';
 import styles from '@styles/blog.module.css';
 import '@styles/notion-color.css';
@@ -25,9 +23,8 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 
-const [posts, rankedPosts, allTagsData, numberOfPages] = await Promise.all([
+const [posts, allTagsData, numberOfPages] = await Promise.all([
   getPostsByTag(tag, NUMBER_OF_POSTS_PER_PAGE),
-  getRankedPosts(),
   getAllTags(),
   getNumberOfPagesByTag(tag),
 ]);
@@ -88,7 +85,6 @@ const defaultOgImage = new URL('/default-og-image.png', Astro.site);
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <BlogPostsLink heading="固定記事" posts={rankedPosts} />
     <BlogTagsLink heading="タグ一覧" tags={allTagsData} />
   </div>
 </Layout>

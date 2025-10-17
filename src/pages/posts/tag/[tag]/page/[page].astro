@@ -2,7 +2,6 @@
 import type { SelectProperty } from '@lib/interfaces.ts';
 import {
   getPostsByTagAndPage,
-  getRankedPosts,
   getAllTags,
   getNumberOfPagesByTag,
 } from '@lib/notion/client.ts';
@@ -12,7 +11,6 @@ import PostDate from '@components/PostDate.astro';
 import PostTags from '@components/PostTags.astro';
 import PostTitle from '@components/PostTitle.astro';
 import Pagination from '@components/Pagination.astro';
-import BlogPostsLink from '@components/BlogPostsLink.astro';
 import BlogTagsLink from '@components/BlogTagsLink.astro';
 import styles from '@styles/blog.module.css';
 import '@styles/notion-color.css';
@@ -37,9 +35,8 @@ export async function getStaticPaths() {
 
 const { tag, page } = Astro.params;
 
-const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
+const [posts, tags, numberOfPages] = await Promise.all([
   getPostsByTagAndPage(tag, parseInt(page, 10)),
-  getRankedPosts(),
   getAllTags(),
   getNumberOfPagesByTag(tag),
 ]);
@@ -83,7 +80,6 @@ const currentTag = posts[0].Tags.find((t) => t.name === tag);
   </div>
 
   <div slot="aside" class={styles.aside}>
-    <BlogPostsLink heading="固定記事" posts={rankedPosts} />
     <BlogTagsLink heading="タグ一覧" tags={tags} />
   </div>
 </Layout>
