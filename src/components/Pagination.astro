@@ -17,6 +17,8 @@ const {
 
 const isFirstPage = currentPage === 1;
 const isLastPage = currentPage === numberOfPages;
+const previousPage = currentPage - 1;
+const nextPage = currentPage + 1;
 
 const startPage = currentPage - 2 < 1 ? 1 : currentPage - 2;
 const endPage =
@@ -29,10 +31,11 @@ for (let i = startPage; i <= endPage; i++) {
 ---
 
 <div class="pagination">
-  <a
-    href={getPageLink(1, tag || '', basePath)}
-    class={isFirstPage ? 'inactive' : ''}>{'<'}</a
-  >
+  {
+    !isFirstPage && (
+      <a href={getPageLink(previousPage, tag || '', basePath)}>{'<'}</a>
+    )
+  }
   {
     pages.map((p: number) => (
       <a
@@ -43,10 +46,11 @@ for (let i = startPage; i <= endPage; i++) {
       </a>
     ))
   }
-  <a
-    href={getPageLink(numberOfPages, tag || '', basePath)}
-    class={isLastPage ? 'inactive' : ''}>{'>'}</a
-  >
+  {
+    !isLastPage && (
+      <a href={getPageLink(nextPage, tag || '', basePath)}>{'>'}</a>
+    )
+  }
 </div>
 
 <style>
