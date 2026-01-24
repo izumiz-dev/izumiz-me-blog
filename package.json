@@ -35,6 +35,7 @@
     "metascraper-image": "^5.34.4",
     "metascraper-title": "^5.34.4",
     "node-fetch": "^3.3.2",
+    "normalize-url": "^8.1.1",
     "prismjs": "^1.29.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
