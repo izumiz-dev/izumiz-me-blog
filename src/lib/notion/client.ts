@@ -56,7 +56,6 @@ import type {
   Mention,
   Reference,
 } from '../interfaces';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 import { Client, APIResponseError } from '@notionhq/client';
 
 const client = new Client({

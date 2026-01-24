@@ -6,6 +6,7 @@ import FeaturedImageDownloader from './src/integrations/featured-image-downloade
 import GalleryImagesDownloader from './src/integrations/gallery-images-downloader';
 import PublicNotionCopier from './src/integrations/public-notion-copier';
 import react from '@astrojs/react';
+import icon from 'astro-icon';
 const getSite = function () {
   if (CUSTOM_DOMAIN) {
     return new URL(BASE_PATH, `https://${CUSTOM_DOMAIN}`).toString();
@@ -28,11 +29,9 @@ const getSite = function () {
   return new URL(BASE_PATH, 'http://localhost:4321').toString();
 };
 
-const isDev = process.env.NODE_ENV === 'development';
-
 // https://astro.build/config
 export default defineConfig({
-  output: isDev ? 'server' : 'static',
+  output: 'static',
   site: getSite(),
   base: BASE_PATH,
   integrations: [
@@ -42,5 +41,6 @@ export default defineConfig({
     GalleryImagesDownloader(),
     PublicNotionCopier(),
     react(),
+    icon(),
   ],
 });
