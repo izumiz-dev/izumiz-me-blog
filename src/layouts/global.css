@@ -187,11 +187,11 @@ hr {
 }
 
 code {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   background: var(--code-bg);
   color: var(--code-color);
   padding: 0.25rem;
-  border-radius: var(--radius);
+  border-radius: 2px;
   font-family: var(--font-mono);
 }
 
