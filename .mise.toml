@@ -1,0 +1,13 @@
+[tools]
+node = "22"
+
+[hooks]
+# Enabling corepack will install the `pnpm` package manager specified in your package.json
+postinstall = "corepack enable"
+
+[settings]
+# This must be enabled to make the hooks work
+experimental = true
+
+[env]
+_.path = ["{{config_root}}/node_modules/.bin"]

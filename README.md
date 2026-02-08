@@ -75,6 +75,7 @@ Please note that the astro-notion-blog requires manual deployment every time you
 
 ### Additional requirements
 
+- [mise](https://mise.jdx.dev/) (recommended for version management)
 - Node.js v18.14.1 or higher
 
 ### Steps
@@ -87,6 +88,16 @@ export DATABASE_ID=<YOUR_DATABASE_ID>
 ```
 
 2. Install dependencies and start local server
+
+**Using mise (recommended):**
+
+```sh
+mise install    # Installs Node.js and enables corepack/pnpm
+pnpm install
+pnpm dev
+```
+
+**Without mise:**
 
 ```sh
 npm install

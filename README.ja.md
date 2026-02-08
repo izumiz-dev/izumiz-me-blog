@@ -81,6 +81,7 @@ Cloudflare Pages のダッシュボードから手動でデプロイするか、
 
 ### 追加の必要要件
 
+- [mise](https://mise.jdx.dev/) (バージョン管理に推奨)
 - Node.js v18.14.1 かそれ以上
 - Git
 
@@ -94,6 +95,16 @@ export DATABASE_ID=<YOUR_DATABASE_ID>
 ```
 
 2. 依存関係をインストールしローカルサーバーを起動します
+
+**mise を使う場合（推奨）:**
+
+```sh
+mise install    # Node.js をインストールし corepack/pnpm を有効化
+pnpm install
+pnpm dev
+```
+
+**mise を使わない場合:**
 
 ```sh
 npm install
