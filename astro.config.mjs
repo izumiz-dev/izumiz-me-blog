@@ -34,6 +34,9 @@ export default defineConfig({
   output: 'static',
   site: getSite(),
   base: BASE_PATH,
+  redirects: {
+    '/feed': '/feed.xml'
+  },
   integrations: [
     CoverImageDownloader(),
     CustomIconDownloader(),
