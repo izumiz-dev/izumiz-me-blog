@@ -52,18 +52,55 @@ let title = post.Title;
 
 <style>
   .post-title {
-    margin: 0.4rem 0 1.2rem;
+    margin: 0.4rem 0 1rem;
     padding: 0;
-    font-size: 2rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    line-height: 1.45;
+    line-height: 1.4;
     color: var(--fg);
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     font-feature-settings: 'palt' 1;
+    position: relative;
+  }
+  /* Detail-page title: bigger, groove line underneath */
+  .post-title:not(:has(a)) {
+    font-size: 1.9rem;
+    font-weight: 800;
+    padding: 0 0 0.8rem 0;
+    margin-bottom: 1.4rem;
+  }
+  .post-title:not(:has(a))::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(180, 200, 240, 0.7) 30%,
+      rgba(140, 170, 220, 0.9) 50%,
+      rgba(180, 200, 240, 0.7) 70%,
+      transparent 100%
+    );
+  }
+  @media (prefers-color-scheme: dark) {
+    .post-title:not(:has(a))::after {
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(140, 170, 220, 0.45) 30%,
+        rgba(180, 200, 240, 0.6) 50%,
+        rgba(140, 170, 220, 0.45) 70%,
+        transparent 100%
+      );
+    }
   }
   .post-title a {
     display: inline-block;
-    font-size: 1.6rem;
+    font-size: inherit;
     color: inherit;
   }
   .post-title span,
@@ -81,12 +118,13 @@ let title = post.Title;
   }
   @media (max-width: 640px) {
     .post-title {
-      font-size: 1.65rem;
+      font-size: 1.15rem;
       line-height: 1.4;
-      margin: 0.3rem 0 1rem;
+      margin: 0.3rem 0 0.8rem;
     }
-    .post-title a {
-      font-size: 1.45rem;
+    .post-title:not(:has(a)) {
+      font-size: 1.5rem;
+      padding: 0 0 0.6rem 0;
     }
   }
 </style>

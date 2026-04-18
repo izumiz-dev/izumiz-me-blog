@@ -61,7 +61,7 @@ const currentTag = posts[0].Tags.find((t) => t.name === tag);
         <NoContents contents={posts} />
       ) : (
         posts.map((post) => (
-          <div class={styles.post} key={post.Slug}>
+          <div class={styles.postCard} key={post.Slug}>
             <PostDate post={post} />
             <PostTags post={post} />
             <PostTitle post={post} />

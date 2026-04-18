@@ -24,6 +24,40 @@
   /* Galleryアクティブ時の輪郭線 */
 
   --radius: 12px;
+
+  /* Silver chrome palette (light) */
+  --chrome-bright: #fdfefe;
+  --chrome-mid: #d8dde6;
+  --chrome-shade: #a7afbe;
+  --chrome-rim: rgba(255, 255, 255, 0.75);
+  --chrome-rim-bottom: rgba(0, 0, 0, 0.1);
+  --chrome-border: #b8c0cf;
+  --chrome-gradient: linear-gradient(
+    180deg,
+    var(--chrome-bright) 0%,
+    var(--chrome-mid) 48%,
+    var(--chrome-shade) 52%,
+    var(--chrome-mid) 100%
+  );
+  /* Aqua accent (for active / current) */
+  --aqua-bright: #6fb5ff;
+  --aqua-mid: #2b7fe0;
+  --aqua-shade: #1b5fb0;
+  --aqua-gradient: linear-gradient(
+    180deg,
+    var(--aqua-bright) 0%,
+    var(--aqua-mid) 55%,
+    var(--aqua-shade) 100%
+  );
+
+  /* Glass common tokens */
+  --glass-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(245, 248, 252, 0.7) 100%
+  );
+  --glass-rim-top: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --glass-border: var(--chrome-border);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,5 +76,26 @@
 
     --my-purple-dark: #8b63c5;
     --my-purple-darker: #6e4e9f;
+
+    /* Dark chrome (gunmetal) */
+    --chrome-bright: #3a3f4d;
+    --chrome-mid: #252836;
+    --chrome-shade: #13151d;
+    --chrome-rim: rgba(255, 255, 255, 0.14);
+    --chrome-rim-bottom: rgba(0, 0, 0, 0.5);
+    --chrome-border: rgba(255, 255, 255, 0.12);
+
+    /* Dark aqua */
+    --aqua-bright: #82c5ff;
+    --aqua-mid: #3b8de0;
+    --aqua-shade: #1f4b90;
+
+    /* Dark glass */
+    --glass-bg: linear-gradient(
+      180deg,
+      rgba(40, 44, 60, 0.85) 0%,
+      rgba(25, 28, 42, 0.7) 100%
+    );
+    --glass-rim-top: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 }

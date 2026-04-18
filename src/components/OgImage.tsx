@@ -15,7 +15,7 @@ export async function getOgImage(text: string) {
         alignItems: 'center',
         justifyContent: 'center',
         backgroundImage:
-          'radial-gradient(circle at 20% 20%, #a5b4fc 0%, #7c83f9 40%, #475569 100%)',
+          'linear-gradient(180deg, #6fb5ff 0%, #2b7fe0 55%, #1b5fb0 100%)',
       }}
     >
       <section
@@ -24,12 +24,15 @@ export async function getOgImage(text: string) {
           flexDirection: 'column',
           justifyContent: 'center',
           gap: '36px',
-          color: '#f8fafc',
-          borderRadius: '32px',
+          color: '#f2f4fa',
+          borderRadius: '24px',
           padding: '48px',
-          backgroundColor: 'rgba(15, 23, 42, 0.78)',
+          backgroundImage:
+            'linear-gradient(180deg, #4a5063 0%, #2b3040 48%, #13161f 52%, #252a38 100%)',
           width: '720px',
-          border: '1px solid rgba(148, 163, 184, 0.25)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          boxShadow:
+            'inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 24px rgba(0, 0, 0, 0.35)',
         }}
       >
         <h1
@@ -38,7 +41,8 @@ export async function getOgImage(text: string) {
             lineHeight: 1.22,
             fontWeight: 700,
             margin: 0,
-            color: '#fafbfcff',
+            color: '#f2f4fa',
+            textShadow: '0 -1px 0 rgba(0, 0, 0, 0.6)',
           }}
         >
           {text}
@@ -55,7 +59,7 @@ export async function getOgImage(text: string) {
               fontSize: '18px',
               letterSpacing: '0.24em',
               textTransform: 'uppercase',
-              color: '#bac4ffff',
+              color: '#6fb5ff',
             }}
           >
             blog by izumiz

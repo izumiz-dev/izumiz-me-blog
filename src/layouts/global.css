@@ -17,8 +17,8 @@
   --border-color: #e4e4e4;
   --border-muted: #ddd;
   --table-header-bg: #f4f4f4;
-  --code-bg: rgba(135, 131, 120, 0.15);
-  --code-color: #eb5757;
+  --code-bg: color-mix(in oklab, #2a2a2a 8%, transparent);
+  --code-color: var(--fg);
   --mark-bg: rgba(247, 212, 255, 0.8);
   --code-block-bg: rgb(247, 246, 243);
   --code-block-border: rgba(0, 0, 0, 0.08);
@@ -30,12 +30,11 @@
   --callout-bg: rgba(235, 236, 237, 0.6);
   --callout-border: rgba(0, 0, 0, 0.05);
 
-  --radius: 4px;
   color-scheme: light;
 
   --font-sans:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'YuGothic',
+    'Meiryo', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono:
     SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier,
     monospace;
@@ -56,8 +55,8 @@
     --border-color: rgba(255, 255, 255, 0.18);
     --border-muted: rgba(255, 255, 255, 0.12);
     --table-header-bg: rgba(255, 255, 255, 0.06);
-    --code-bg: rgba(255, 255, 255, 0.08);
-    --code-color: #ffb868;
+    --code-bg: rgba(255, 255, 255, 0.1);
+    --code-color: var(--fg);
     --mark-bg: rgba(247, 212, 255, 0.25);
     --code-block-bg: rgba(16, 21, 36, 0.97);
     --code-block-border: rgba(255, 255, 255, 0.12);
@@ -88,9 +87,7 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--fg);
-  font-family:
-    'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans',
-    'Noto Sans JP', Meiryo, sans-serif;
+  font-family: var(--font-sans);
 
   background-position:
     0 0,
@@ -104,11 +101,34 @@ body {
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
 
-  font-feature-settings: 'palt' 1;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   text-spacing-trim: trim-start;
   word-break: normal;
   overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+.post-title,
+nav.header-nav {
+  font-feature-settings: 'palt' 1;
+  letter-spacing: -0.01em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link::before,
+  .pagination a::before {
+    display: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
 
 figure {
@@ -116,7 +136,7 @@ figure {
   font-size: 0.85rem;
   color: var(--fg-subtle);
   line-height: 1.7;
-  max-width: 600px;
+  max-width: 100%;
 }
 
 .video {
@@ -152,30 +172,26 @@ h1 {
     font-size: 1.6rem;
   }
 
-  body {
-    letter-spacing: 0.01em;
-  }
-
   p,
   ul,
   ol {
-    line-height: 1.85;
+    line-height: 1.75;
   }
 }
 
-ol {
-  color: var(--fg);
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.95;
-}
-
-p,
+ol,
 ul {
   color: var(--fg);
   font-weight: 400;
   font-size: 1rem;
-  line-height: 1.95;
+  line-height: 1.7;
+}
+
+p {
+  color: var(--fg);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.8;
 }
 
 ul,
@@ -199,23 +215,21 @@ hr {
   display: block;
   height: 1px;
   border: 0;
-  margin: 0.3rem 0;
+  margin: 2.4em 0;
   background-color: var(--border-muted);
 }
 
 code {
-  font-size: 0.85rem;
+  font-size: 0.92em;
   background: var(--code-bg);
   color: var(--code-color);
-  padding: 0.25rem;
-  border-radius: 2px;
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
   font-family: var(--font-mono);
 }
 
 table {
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
+  width: 100%;
   border-collapse: collapse;
 }
 

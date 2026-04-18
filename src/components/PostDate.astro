@@ -16,6 +16,16 @@ const { post } = Astro.props;
 <style>
   .post-date {
     padding: 0 0 0.5rem;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    color: var(--fg-subtle);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+  .post-date::before {
+    content: '●';
+    color: var(--aqua-mid);
+    font-size: 0.55em;
+    margin-right: 0.4em;
+    vertical-align: middle;
   }
 </style>

@@ -18,4 +18,41 @@ const { blocks } = Astro.props;
     max-width: 840px;
     padding: 0.5rem 0;
   }
+  .post-body :global(p a),
+  .post-body :global(li a) {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 0.06em;
+    text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+    transition: text-decoration-color 0.15s ease;
+  }
+  .post-body :global(p a:hover),
+  .post-body :global(li a:hover) {
+    text-decoration-color: currentColor;
+  }
+  /* Narrow the measure for text-only blocks, keep media/code wide */
+  .post-body :global(p),
+  .post-body :global(ul),
+  .post-body :global(ol),
+  .post-body :global(h3),
+  .post-body :global(h4),
+  .post-body :global(h5),
+  .post-body :global(blockquote),
+  .post-body :global(.table-of-contents),
+  .post-body :global(hr) {
+    max-width: clamp(32rem, 62ch, 44rem);
+  }
+  @media (max-width: 640px) {
+    .post-body :global(p),
+    .post-body :global(ul),
+    .post-body :global(ol),
+    .post-body :global(h3),
+    .post-body :global(h4),
+    .post-body :global(h5),
+    .post-body :global(blockquote),
+    .post-body :global(.table-of-contents),
+    .post-body :global(hr) {
+      max-width: 100%;
+    }
+  }
 </style>

@@ -62,87 +62,169 @@
   background: rgba(253, 235, 236, 1) !important;
 }
 
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px !important;
+  padding: 0.1rem 0.55rem !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+    0 1px 1px rgba(0, 0, 0, 0.04);
+}
+.tag.default,
 .tag.light-gray {
-  color: rgb(28, 56, 41);
-  background: rgba(227, 226, 224, 0.5) !important;
+  color: #3a3d44 !important;
+  background: linear-gradient(180deg, #f5f5f4 0%, #dcdbd8 100%) !important;
+  border: 1px solid rgba(130, 130, 130, 0.3);
 }
 .tag.gray {
-  color: rgb(28, 56, 41);
-  background: rgb(227, 226, 224) !important;
+  color: #2c2f35 !important;
+  background: linear-gradient(180deg, #e6e5e3 0%, #b8b7b3 100%) !important;
+  border: 1px solid rgba(100, 100, 100, 0.35);
 }
 .tag.brown {
-  color: rgb(28, 56, 41);
-  background: rgb(238, 224, 218) !important;
+  color: #4a2f1c !important;
+  background: linear-gradient(180deg, #f2e1d6 0%, #c9a58a 100%) !important;
+  border: 1px solid rgba(142, 95, 60, 0.35);
 }
 .tag.orange {
-  color: rgb(28, 56, 41);
-  background: rgb(250, 222, 201) !important;
+  color: #5a3a12 !important;
+  background: linear-gradient(180deg, #fdf0de 0%, #f5d3a3 100%) !important;
+  border: 1px solid rgba(212, 152, 82, 0.4);
 }
 .tag.yellow {
-  color: rgb(28, 56, 41);
-  background: rgb(253, 236, 200) !important;
+  color: #5a4410 !important;
+  background: linear-gradient(180deg, #fdf4d8 0%, #f2dc92 100%) !important;
+  border: 1px solid rgba(196, 161, 56, 0.4);
 }
 .tag.green {
-  color: rgb(28, 56, 41);
-  background: rgb(219, 237, 219) !important;
+  color: #204a2d !important;
+  background: linear-gradient(180deg, #e4f2e1 0%, #a8d3a7 100%) !important;
+  border: 1px solid rgba(88, 150, 100, 0.4);
 }
 .tag.blue {
-  color: rgb(28, 56, 41);
-  background: rgb(211, 229, 239) !important;
+  color: #173c56 !important;
+  background: linear-gradient(180deg, #e0effa 0%, #9dc7e8 100%) !important;
+  border: 1px solid rgba(78, 140, 190, 0.4);
 }
 .tag.purple {
-  color: rgb(28, 56, 41);
-  background: rgb(232, 222, 238) !important;
+  color: #3c1d56 !important;
+  background: linear-gradient(180deg, #ece0f5 0%, #c2a4df 100%) !important;
+  border: 1px solid rgba(132, 94, 180, 0.4);
 }
 .tag.pink {
-  color: rgb(28, 56, 41);
-  background: rgb(245, 224, 233) !important;
+  color: #561a38 !important;
+  background: linear-gradient(180deg, #f8e0ec 0%, #e5a8c6 100%) !important;
+  border: 1px solid rgba(188, 96, 146, 0.4);
 }
 .tag.red {
-  color: rgb(28, 56, 41);
-  background: rgb(255, 226, 221) !important;
+  color: #5a1818 !important;
+  background: linear-gradient(180deg, #fce0de 0%, #f0a39f 100%) !important;
+  border: 1px solid rgba(200, 85, 80, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
+  .tag {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+      0 1px 1px rgba(0, 0, 0, 0.2);
+  }
+  .tag.default,
   .tag.light-gray {
-    color: var(--tag-chip-fg);
-    background: rgba(163, 168, 213, 0.28) !important;
+    color: #e6e8f0 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(180, 184, 200, 0.4) 0%,
+      rgba(100, 104, 120, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14);
   }
   .tag.gray {
-    color: var(--tag-chip-fg);
-    background: rgba(151, 156, 197, 0.32) !important;
+    color: #e6e8f0 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(160, 164, 180, 0.42) 0%,
+      rgba(90, 94, 110, 0.32) 100%
+    ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14);
   }
   .tag.brown {
-    color: var(--tag-chip-fg);
-    background: rgba(189, 147, 123, 0.3) !important;
+    color: #f5d8c2 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(200, 140, 100, 0.4) 0%,
+      rgba(120, 72, 44, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(255, 200, 160, 0.2);
   }
   .tag.orange {
-    color: var(--tag-chip-fg);
-    background: rgba(237, 166, 110, 0.28) !important;
+    color: #ffd8b0 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(240, 160, 90, 0.4) 0%,
+      rgba(160, 90, 30, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(255, 200, 140, 0.22);
   }
   .tag.yellow {
-    color: var(--tag-chip-fg);
-    background: rgba(239, 198, 120, 0.28) !important;
+    color: #ffe8a8 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(230, 190, 80, 0.4) 0%,
+      rgba(150, 120, 30, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(255, 220, 140, 0.22);
   }
   .tag.green {
-    color: var(--tag-chip-fg);
-    background: rgba(152, 193, 158, 0.3) !important;
+    color: #c4f0d2 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(130, 200, 150, 0.4) 0%,
+      rgba(50, 110, 80, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(180, 240, 200, 0.2);
   }
   .tag.blue {
-    color: var(--tag-chip-fg);
-    background: rgba(132, 186, 216, 0.3) !important;
+    color: #cce6ff !important;
+    background: linear-gradient(
+      180deg,
+      rgba(120, 180, 230, 0.4) 0%,
+      rgba(40, 90, 150, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(160, 210, 255, 0.22);
   }
   .tag.purple {
-    color: var(--tag-chip-fg);
-    background: rgba(190, 160, 220, 0.3) !important;
+    color: #e0ccff !important;
+    background: linear-gradient(
+      180deg,
+      rgba(180, 140, 220, 0.4) 0%,
+      rgba(90, 60, 130, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(210, 180, 255, 0.22);
   }
   .tag.pink {
-    color: var(--tag-chip-fg);
-    background: rgba(217, 148, 194, 0.3) !important;
+    color: #ffcce0 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(220, 140, 180, 0.4) 0%,
+      rgba(130, 55, 95, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(255, 180, 210, 0.22);
   }
   .tag.red {
-    color: var(--tag-chip-fg);
-    background: rgba(232, 135, 135, 0.3) !important;
+    color: #ffc6c6 !important;
+    background: linear-gradient(
+      180deg,
+      rgba(230, 120, 120, 0.4) 0%,
+      rgba(140, 50, 50, 0.3) 100%
+    ) !important;
+    border: 1px solid rgba(255, 170, 170, 0.22);
   }
   .gray,
   .gray:hover {

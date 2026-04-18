@@ -84,6 +84,7 @@ const grammer =
     background: var(--code-block-bg);
     border: 1px solid var(--code-block-border);
     border-radius: var(--radius);
+    position: relative;
   }
   .code > div div {
     display: flex;
@@ -91,16 +92,23 @@ const grammer =
   }
   .code button.copy {
     display: block;
-    width: 4rem;
-    border: 0;
-    border-radius: var(--radius);
+    padding: 0.2rem 0.7rem;
+    border: 1px solid var(--border-color);
+    border-radius: calc(var(--radius) / 2);
     background-color: var(--code-copy-bg);
     color: var(--fg);
+    font-size: 0.78rem;
     line-height: 1.2rem;
     cursor: pointer;
+    opacity: 0;
     transition:
       background-color 0.2s ease,
-      color 0.2s ease;
+      color 0.2s ease,
+      opacity 0.2s ease;
+  }
+  .code:hover button.copy,
+  .code button.copy:focus-visible {
+    opacity: 1;
   }
   .code button.copy:hover {
     background-color: var(--code-copy-hover-bg);
@@ -109,11 +117,10 @@ const grammer =
   .code pre {
     display: block;
     overflow: auto;
-    padding: 0.8rem 2rem 2rem;
+    padding: 0.8rem 1.2rem 1.2rem;
     font-size: 0.9rem;
-    line-height: 1.2rem;
+    line-height: 1.5;
     white-space: pre;
-    width: 100px;
     min-width: 100%;
     overflow-x: auto;
     &::-webkit-scrollbar {

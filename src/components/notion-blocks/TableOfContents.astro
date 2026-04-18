@@ -48,17 +48,25 @@ const { block, headings } = Astro.props;
 
 <style>
   .table-of-contents {
+    margin: 0.6rem 0 1rem;
+    padding: 0.4rem 0.2rem;
   }
   .table-of-contents > a {
     display: block;
-    line-height: 1.8rem;
+    line-height: 1.5;
+    padding: 0.1rem 0.5rem;
+    border-radius: calc(var(--radius) / 2);
     font-size: 0.9rem;
     font-weight: 500;
-    text-decoration: underline;
+    text-decoration: none;
     color: var(--fg);
+    transition: background-color 0.15s ease;
   }
   .table-of-contents > a:hover {
-    background: rgba(241, 241, 239, 1) !important;
+    background: var(--my-hover-color);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 0.06em;
   }
   .table-of-contents > a.indent-1 {
     padding-left: 1.5rem;
@@ -66,9 +74,9 @@ const { block, headings } = Astro.props;
   .table-of-contents > a.indent-2 {
     padding-left: 3rem;
   }
-  @media (prefers-color-scheme: dark) {
-    .table-of-contents > a:hover {
-      background: rgba(148, 163, 184, 0.18) !important;
-    }
+  .table-of-contents > a.indent-3 {
+    padding-left: 4.5rem;
+    font-size: 0.85rem;
+    color: var(--fg-muted);
   }
 </style>

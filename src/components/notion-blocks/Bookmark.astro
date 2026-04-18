@@ -84,24 +84,31 @@ try {
   }
   .bookmark {
     display: flex;
-    overflow: hidden;
     width: 100%;
     max-width: 550px;
     font-size: 0.9rem;
-    margin: 0.4rem auto;
+    margin: 0.8rem auto;
+    padding: 2px 0;
   }
   .bookmark > a {
     width: 100%;
     box-sizing: border-box;
     text-decoration: none;
-    border: 1px solid rgba(55, 53, 47, 0.16);
-    border-radius: 3px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
     display: flex;
     overflow: hidden;
     user-select: none;
+    transition:
+      border-color 0.18s ease,
+      transform 0.18s ease;
+  }
+  .bookmark > a:hover {
+    border-color: var(--fg-muted);
+    transform: translateY(-1px);
   }
   .bookmark > a > div:first-child {
-    flex: 4 1 180px;
+    flex: 3 1 180px;
     padding: 12px 14px 14px;
     overflow: hidden;
     text-align: left;
@@ -148,17 +155,12 @@ try {
     text-overflow: ellipsis;
   }
   .bookmark > a > div:last-child {
-    flex: 1 1 180px;
+    flex: 1.4 1 160px;
     position: relative;
   }
   @media (max-width: 640px) {
     .bookmark > a > div:last-child {
       display: none;
-    }
-  }
-  @media (prefers-color-scheme: dark) {
-    .bookmark > a {
-      border-color: rgba(255, 255, 255, 0.35);
     }
   }
   .bookmark > a > div:last-child > img {

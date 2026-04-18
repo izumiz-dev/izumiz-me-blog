@@ -55,24 +55,60 @@ const { prevPost, nextPost } = Astro.props;
   }
   div.post-relative-link > div > a.text {
     margin-top: 1rem;
-    padding: 0.5rem;
-    color: inherit;
-    font-size: 1rem;
+    padding: 0.45rem 0.9rem;
+    color: var(--aqua-mid);
+    font-size: 0.85rem;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    box-shadow:
+      var(--glass-rim-top),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+    display: inline-block;
+    transition:
+      transform 0.18s,
+      box-shadow 0.18s;
+  }
+  div.post-relative-link > div > a.text:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      var(--glass-rim-top),
+      0 2px 6px rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(43, 127, 224, 0.3);
   }
   div.post-relative-link > div > a.colored {
     padding: 1rem;
     border-radius: var(--radius);
     color: var(--fg);
-    background: var(--callout-bg);
-    border: 1px solid var(--callout-border);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
     text-decoration: none;
+    box-shadow:
+      var(--glass-rim-top),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+    transition:
+      transform 0.18s,
+      box-shadow 0.18s;
+  }
+  div.post-relative-link > div > a.colored:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      var(--glass-rim-top),
+      0 2px 8px rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(43, 127, 224, 0.3);
   }
   div.post-relative-link > div > a.colored > div:first-child {
     width: auto;
     text-align: left;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+    color: var(--aqua-mid);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
   div.post-relative-link > div > a.colored > div:nth-child(2) {
     width: auto;
@@ -80,5 +116,15 @@ const { prevPost, nextPost } = Astro.props;
     text-align: left;
     font-size: 1rem;
     font-weight: bold;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    div.post-relative-link > div > a.colored,
+    div.post-relative-link > div > a.text {
+      transition: none;
+    }
+    div.post-relative-link > div > a.colored:hover,
+    div.post-relative-link > div > a.text:hover {
+      transform: none;
+    }
   }
 </style>

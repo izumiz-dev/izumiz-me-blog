@@ -34,22 +34,39 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(10, 15, 30, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
   }
 
   div.search-modal {
     z-index: 100;
     position: fixed;
-    top: 100px;
-    left: 20%;
-    width: 60%;
-    border-radius: 6px;
-    background-color: var(--bg);
+    top: clamp(48px, 12vh, 160px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92vw, 640px);
+    max-height: min(70vh, 560px);
+    overflow: auto;
+    border-radius: var(--radius);
+    background: color-mix(in oklab, var(--bg) 65%, transparent);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid var(--chrome-border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 10px 40px rgba(0, 0, 0, 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    div.search-modal {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 10px 40px rgba(0, 0, 0, 0.5);
+    }
   }
   @media (max-width: 640px) {
     div.search-modal {
-      left: 0;
-      width: 100%;
+      width: 96vw;
     }
   }
 
@@ -59,16 +76,22 @@
   }
   div.search-prompt input {
     width: 100%;
-    border: 0px solid transparent;
+    border: 0;
+    border-bottom: 1px solid transparent;
     padding: 0.4rem;
-    background-color: var(--input-bg);
+    background-color: transparent;
     color: var(--fg);
     font-size: 1.2rem;
     line-height: 1.6rem;
+    transition: border-color 0.2s ease;
+  }
+  div.search-prompt input:focus {
+    outline: none;
+    border-bottom-color: var(--aqua-mid);
   }
 
   div.search-result {
-    border-top: 1px solid var(--hr-border);
+    border-top: 1px solid var(--border-muted);
   }
   div.search-result ul {
     list-style: none;
@@ -83,7 +106,8 @@
     border-radius: var(--radius);
   }
   div.search-result ul > :global(li.selected > a) {
-    background-color: rgba(241, 241, 239, 1);
+    background: color-mix(in oklab, var(--aqua-mid) 15%, transparent);
+    box-shadow: inset 0 0 0 1px rgba(43, 127, 224, 0.3);
   }
 
   div.search-result :global(div.search-result-title) {
@@ -245,7 +269,9 @@
       const url = new URL(location.href);
       const port = url.port ? `:${url.port}` : '';
 
-      const res = await fetch(`${url.protocol}//${url.hostname}${port}/feed.xml`);
+      const res = await fetch(
+        `${url.protocol}//${url.hostname}${port}/feed.xml`
+      );
       if (res.status !== 200) {
         console.log(res.status);
         throw new Error('Failed to fetch RSS feed');
