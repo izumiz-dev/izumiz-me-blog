@@ -36,6 +36,7 @@ export interface Block {
   Heading1?: Heading1;
   Heading2?: Heading2;
   Heading3?: Heading3;
+  Heading4?: Heading4;
   BulletedListItem?: BulletedListItem;
   NumberedListItem?: NumberedListItem;
   ToDo?: ToDo;
@@ -78,6 +79,13 @@ export interface Heading2 {
 }
 
 export interface Heading3 {
+  RichTexts: RichText[];
+  Color: string;
+  IsToggleable: boolean;
+  Children?: Block[];
+}
+
+export interface Heading4 {
   RichTexts: RichText[];
   Color: string;
   IsToggleable: boolean;

@@ -103,13 +103,19 @@ body {
 
   -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%;
+
+  font-feature-settings: 'palt' 1;
+  letter-spacing: 0.02em;
+  text-spacing-trim: trim-start;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 figure {
   margin: 0;
   font-size: 0.85rem;
   color: var(--fg-subtle);
-  line-height: 1.8rem;
+  line-height: 1.7;
   max-width: 600px;
 }
 
@@ -138,19 +144,30 @@ h1 {
   color: var(--fg);
   font-size: 2rem;
   font-weight: 700;
+  line-height: 1.4;
 }
 
 @media (max-width: 640px) {
   h1 {
     font-size: 1.6rem;
   }
+
+  body {
+    letter-spacing: 0.01em;
+  }
+
+  p,
+  ul,
+  ol {
+    line-height: 1.85;
+  }
 }
 
 ol {
   color: var(--fg);
   font-weight: 400;
-  font-size: 0.9rem;
-  line-height: 1.8rem;
+  font-size: 1rem;
+  line-height: 1.95;
 }
 
 p,
@@ -158,7 +175,7 @@ ul {
   color: var(--fg);
   font-weight: 400;
   font-size: 1rem;
-  line-height: 1.8rem;
+  line-height: 1.95;
 }
 
 ul,

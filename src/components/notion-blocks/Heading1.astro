@@ -11,7 +11,7 @@ export interface Props {
 
 const { block, headings } = Astro.props;
 
-const id = buildHeadingId(block.Heading1);
+const id = buildHeadingId(block.Heading1!);
 ---
 
 {
@@ -45,14 +45,15 @@ const id = buildHeadingId(block.Heading1);
 
 <style>
   h3 {
-    margin: 1.1em 0 0.3em;
+    margin: 2em 0 0.6em;
     color: var(--fg);
     font-size: 1.8rem;
+    line-height: 1.45;
   }
   @media (max-width: 640px) {
     h3 {
       font-size: 1.5rem;
-      margin: 1.1em 0 0.5em;
+      margin: 1.6em 0 0.5em;
     }
   }
 

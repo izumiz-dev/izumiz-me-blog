@@ -5,6 +5,7 @@ import type {
   Heading1,
   Heading2,
   Heading3,
+  Heading4,
   RichText,
   Column,
 } from './interfaces';
@@ -60,6 +61,10 @@ export const extractTargetBlocks = (
       } else if (block.Heading3 && block.Heading3.Children) {
         acc = acc.concat(
           extractTargetBlocks(blockType, block.Heading3.Children)
+        );
+      } else if (block.Heading4 && block.Heading4.Children) {
+        acc = acc.concat(
+          extractTargetBlocks(blockType, block.Heading4.Children)
         );
       } else if (block.Quote && block.Quote.Children) {
         acc = acc.concat(extractTargetBlocks(blockType, block.Quote.Children));
@@ -184,7 +189,9 @@ export const getDateStr = (date: string) => {
   return y + '-' + m + '-' + d;
 };
 
-export const buildHeadingId = (heading: Heading1 | Heading2 | Heading3) => {
+export const buildHeadingId = (
+  heading: Heading1 | Heading2 | Heading3 | Heading4
+) => {
   return heading.RichTexts.map((richText: RichText) => {
     if (!richText.Text) {
       return '';
@@ -227,6 +234,7 @@ export const blocksContainEquation = (blocks: Block[]): boolean => {
       (block.Heading1 && hasEquationInRichTexts(block.Heading1.RichTexts)) ||
       (block.Heading2 && hasEquationInRichTexts(block.Heading2.RichTexts)) ||
       (block.Heading3 && hasEquationInRichTexts(block.Heading3.RichTexts)) ||
+      (block.Heading4 && hasEquationInRichTexts(block.Heading4.RichTexts)) ||
       (block.Callout && hasEquationInRichTexts(block.Callout.RichTexts)) ||
       (block.Quote && hasEquationInRichTexts(block.Quote.RichTexts)) ||
       (block.BulletedListItem &&
@@ -257,6 +265,9 @@ export const blocksContainEquation = (blocks: Block[]): boolean => {
     }
     if (block.Heading3?.Children) {
       stack.push(...block.Heading3.Children);
+    }
+    if (block.Heading4?.Children) {
+      stack.push(...block.Heading4.Children);
     }
     if (block.BulletedListItem?.Children) {
       stack.push(...block.BulletedListItem.Children);
