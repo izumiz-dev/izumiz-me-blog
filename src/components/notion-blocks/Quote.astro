@@ -30,9 +30,9 @@ const { block, headings } = Astro.props;
   blockquote {
     margin: 1.2em 0;
     padding: 0.4rem 1rem;
-    border-left: 4px solid var(--accents-1);
+    border-left: 4px solid var(--aqua-mid);
     background: color-mix(in srgb, var(--fg) 4%, transparent);
-    border-radius: 0 calc(var(--radius) / 2) calc(var(--radius) / 2) 0;
+    border-radius: 0 var(--radius-tight, 4px) var(--radius-tight, 4px) 0;
     font-size: 1rem;
     line-height: 1.8;
   }

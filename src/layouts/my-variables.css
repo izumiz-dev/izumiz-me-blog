@@ -23,7 +23,16 @@
   --my-purple-darker: #5d3d74;
   /* Galleryアクティブ時の輪郭線 */
 
-  --radius: 12px;
+  --radius: 6px;
+  --radius-tight: 4px;
+
+  --font-round:
+    'Hiragino Maru Gothic ProN', 'Hiragino Sans', 'Yu Gothic', 'Meiryo',
+    system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Lime accent (Frutiger nature note, used sparingly) */
+  --lime: #8fdc4e;
+  --lime-deep: #5bb524;
 
   /* Silver chrome palette (light) */
   --chrome-bright: #fdfefe;
@@ -76,6 +85,10 @@
 
     --my-purple-dark: #8b63c5;
     --my-purple-darker: #6e4e9f;
+
+    /* Lime accent (dark) */
+    --lime: #a3e86b;
+    --lime-deep: #6bcc2e;
 
     /* Dark chrome (gunmetal) */
     --chrome-bright: #3a3f4d;

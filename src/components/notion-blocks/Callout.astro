@@ -40,10 +40,11 @@ const { block, headings } = Astro.props;
 
 <style>
   .callout {
+    position: relative;
     display: flex;
     gap: 0.75rem;
     margin: 1.1em auto;
-    padding: 0.9rem 1.1rem;
+    padding: 0.95rem 1.1rem 0.9rem;
     width: 100%;
     max-width: 920px;
     font-size: 1rem;
@@ -52,8 +53,33 @@ const { block, headings } = Astro.props;
     border-radius: var(--radius);
     border-width: 1px;
     border-style: solid;
-    border-color: var(--callout-border);
+    border-color: var(--chrome-border);
     background: var(--callout-bg);
+    overflow: hidden;
+  }
+  .callout::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.9),
+      transparent
+    );
+  }
+  @media (prefers-color-scheme: dark) {
+    .callout::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.22),
+        transparent
+      );
+    }
   }
   .callout > div {
     margin: 0;
