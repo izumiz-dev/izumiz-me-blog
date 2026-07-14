@@ -189,7 +189,13 @@ main header h1 a {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
     inset 0 -2px 6px rgba(0, 0, 0, 0.6);
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6);
+  text-shadow:
+    0 -1px 0 rgba(0, 0, 0, 0.6),
+    0 0 6px rgba(200, 235, 255, 0.55),
+    0 0 14px rgba(140, 210, 255, 0.3);
+  animation:
+    title-tube-boot 1.4s cubic-bezier(0.2, 0.9, 0.3, 1) 1 both,
+    title-tube-idle 32s linear 1.4s infinite;
 }
 @media (prefers-color-scheme: dark) {
   main header h1 a {
@@ -208,12 +214,173 @@ main header h1 a {
       0 2px 6px rgba(0, 0, 0, 0.5);
     text-shadow:
       0 1px 0 rgba(255, 255, 255, 0.1),
-      0 -1px 0 rgba(0, 0, 0, 0.8);
+      0 -1px 0 rgba(0, 0, 0, 0.8),
+      0 0 7px rgba(190, 230, 255, 0.7),
+      0 0 18px rgba(130, 197, 255, 0.4);
   }
 }
 
 main header h1 a:hover {
   color: inherit;
+}
+
+/* Fluorescent tube flicker: a stuttering boot-up, then a rare idle flicker. */
+@keyframes title-tube-boot {
+  0%,
+  3% {
+    color: #7c8798;
+    text-shadow: none;
+  }
+  6% {
+    color: #eaf2fb;
+    text-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.6),
+      0 0 6px rgba(200, 235, 255, 0.55),
+      0 0 14px rgba(140, 210, 255, 0.3);
+  }
+  9%,
+  14% {
+    color: #7c8798;
+    text-shadow: none;
+  }
+  18% {
+    color: #eaf2fb;
+    text-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.6),
+      0 0 6px rgba(200, 235, 255, 0.55),
+      0 0 14px rgba(140, 210, 255, 0.3);
+  }
+  22%,
+  27% {
+    color: #7c8798;
+    text-shadow: none;
+  }
+  100% {
+    color: #eaf2fb;
+    text-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.6),
+      0 0 6px rgba(200, 235, 255, 0.55),
+      0 0 14px rgba(140, 210, 255, 0.3);
+  }
+}
+@keyframes title-tube-idle {
+  0%,
+  96.6%,
+  100% {
+    color: #eaf2fb;
+    text-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.6),
+      0 0 6px rgba(200, 235, 255, 0.55),
+      0 0 14px rgba(140, 210, 255, 0.3);
+  }
+  96.8% {
+    color: #7c8798;
+    text-shadow: none;
+  }
+  97% {
+    color: #eaf2fb;
+    text-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.6),
+      0 0 6px rgba(200, 235, 255, 0.55),
+      0 0 14px rgba(140, 210, 255, 0.3);
+  }
+  97.2% {
+    color: #7c8798;
+    text-shadow: none;
+  }
+  97.5%,
+  99% {
+    color: #eaf2fb;
+    text-shadow:
+      0 -1px 0 rgba(0, 0, 0, 0.6),
+      0 0 6px rgba(200, 235, 255, 0.55),
+      0 0 14px rgba(140, 210, 255, 0.3);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  @keyframes title-tube-boot {
+    0%,
+    3% {
+      color: #565f70;
+      text-shadow: none;
+    }
+    6% {
+      color: #eaf2fb;
+      text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.1),
+        0 -1px 0 rgba(0, 0, 0, 0.8),
+        0 0 7px rgba(190, 230, 255, 0.7),
+        0 0 18px rgba(130, 197, 255, 0.4);
+    }
+    9%,
+    14% {
+      color: #565f70;
+      text-shadow: none;
+    }
+    18% {
+      color: #eaf2fb;
+      text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.1),
+        0 -1px 0 rgba(0, 0, 0, 0.8),
+        0 0 7px rgba(190, 230, 255, 0.7),
+        0 0 18px rgba(130, 197, 255, 0.4);
+    }
+    22%,
+    27% {
+      color: #565f70;
+      text-shadow: none;
+    }
+    100% {
+      color: #eaf2fb;
+      text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.1),
+        0 -1px 0 rgba(0, 0, 0, 0.8),
+        0 0 7px rgba(190, 230, 255, 0.7),
+        0 0 18px rgba(130, 197, 255, 0.4);
+    }
+  }
+  @keyframes title-tube-idle {
+    0%,
+    96.6%,
+    100% {
+      color: #eaf2fb;
+      text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.1),
+        0 -1px 0 rgba(0, 0, 0, 0.8),
+        0 0 7px rgba(190, 230, 255, 0.7),
+        0 0 18px rgba(130, 197, 255, 0.4);
+    }
+    96.8% {
+      color: #565f70;
+      text-shadow: none;
+    }
+    97% {
+      color: #eaf2fb;
+      text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.1),
+        0 -1px 0 rgba(0, 0, 0, 0.8),
+        0 0 7px rgba(190, 230, 255, 0.7),
+        0 0 18px rgba(130, 197, 255, 0.4);
+    }
+    97.2% {
+      color: #565f70;
+      text-shadow: none;
+    }
+    97.5%,
+    99% {
+      color: #eaf2fb;
+      text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.1),
+        0 -1px 0 rgba(0, 0, 0, 0.8),
+        0 0 7px rgba(190, 230, 255, 0.7),
+        0 0 18px rgba(130, 197, 255, 0.4);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  main header h1 a {
+    animation: none;
+  }
 }
 
 main header h1 a span,
