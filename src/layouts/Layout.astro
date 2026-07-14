@@ -6,6 +6,7 @@ import { getNavLink, getStaticFilePath, filePath } from '@lib/blog-helpers.ts';
 import '@styles/syntax-coloring.css';
 import GoogleAnalytics from '@components/GoogleAnalytics.astro';
 import SearchModal from '@components/SearchModal.astro';
+import GalleryPreviewModal from '@components/GalleryPreviewModal.astro';
 import SearchButton from '@components/SearchButton.astro';
 
 import './global.css';
@@ -228,9 +229,8 @@ const uniquePreloadImages = preloadImages
               </div>
               <nav class="header-nav">
                 <a
-                  href={getNavLink('/')}
+                  href={getNavLink('/posts')}
                   class={`nav-link nav-blog ${
-                    Astro.url.pathname === getNavLink('/') ||
                     Astro.url.pathname.startsWith(getNavLink('/posts'))
                       ? 'active'
                       : ''
@@ -285,6 +285,7 @@ const uniquePreloadImages = preloadImages
     </div>
 
     <SearchModal />
+    <GalleryPreviewModal />
     {
       ENABLE_LIGHTBOX && (
         <script src={getStaticFilePath('/scripts/fslightbox.js')} defer />

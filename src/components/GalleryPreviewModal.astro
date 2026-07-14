@@ -1,0 +1,228 @@
+---
+
+---
+
+<div class="gallery-preview-container">
+  <div class="overlay"></div>
+
+  <div class="gallery-preview-modal">
+    <button class="close-btn" type="button" aria-label="Close"> ✕</button>
+    <div class="preview-image-wrap">
+      <img class="preview-image" alt="" />
+    </div>
+    <div class="preview-meta">
+      <div class="preview-date"></div>
+      <div class="preview-title"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  div.gallery-preview-container {
+    display: none;
+  }
+
+  div.overlay {
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 15, 30, 0.35);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  div.gallery-preview-modal {
+    z-index: 100;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(92vw, 640px);
+    max-height: min(88vh, 800px);
+    overflow: auto;
+    padding: 1rem;
+    border-radius: calc(var(--radius) + 4px);
+    background: color-mix(in oklab, var(--bg) 65%, transparent);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1px solid var(--chrome-border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 0 0 3px rgba(255, 255, 255, 0.35),
+      0 10px 40px rgba(0, 0, 0, 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    div.gallery-preview-modal {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 0 3px rgba(130, 197, 255, 0.08),
+        0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+  }
+  @media (max-width: 640px) {
+    div.gallery-preview-modal {
+      width: 96vw;
+      max-height: 90vh;
+    }
+  }
+
+  /* Close button — chrome corner button */
+  .close-btn {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius);
+    background: var(--chrome-gradient);
+    border: 1px solid var(--chrome-border);
+    color: var(--fg);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      inset 0 -1px 0 var(--chrome-rim-bottom),
+      0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 0.18s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .close-btn:hover {
+    filter: brightness(1.06);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      inset 0 -1px 0 var(--chrome-rim-bottom),
+      0 2px 6px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .close-btn {
+      transition: none;
+    }
+    .close-btn:hover {
+      transform: none;
+    }
+  }
+
+  /* Preview image — framing recipe */
+  div.preview-image-wrap {
+    border-radius: var(--radius);
+    border: 1px solid var(--chrome-border);
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      0 3px 12px rgba(20, 40, 80, 0.12);
+    background: rgba(0, 0, 0, 0.02);
+  }
+  @media (prefers-color-scheme: dark) {
+    div.preview-image-wrap {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        0 3px 14px rgba(0, 0, 0, 0.35);
+    }
+  }
+  img.preview-image {
+    display: block;
+    width: 100%;
+    max-height: min(72vh, 640px);
+    object-fit: contain;
+    object-position: center;
+  }
+
+  /* Meta block */
+  div.preview-meta {
+    padding: 0.6rem 0.2rem 0.2rem;
+  }
+  div.preview-date {
+    padding: 0 0 0.3rem;
+    font-size: 0.8rem;
+    color: var(--fg-subtle);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+  div.preview-date::before {
+    content: '●';
+    color: var(--aqua-mid);
+    font-size: 0.55em;
+    margin-right: 0.4em;
+    vertical-align: middle;
+  }
+  div.preview-title {
+    font-family: var(--font-round);
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+    font-feature-settings: 'palt' 1;
+  }
+  @media (max-width: 640px) {
+    div.preview-title {
+      font-size: 1.05rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.querySelector('.gallery-preview-container');
+    if (!container) return;
+
+    const img = container.querySelector(
+      '.preview-image'
+    ) as HTMLImageElement | null;
+    const dateEl = container.querySelector('.preview-date');
+    const titleEl = container.querySelector('.preview-title');
+
+    function openModal(imageUrl: string, title: string, date: string) {
+      if (!img || !dateEl || !titleEl) return;
+      img.src = imageUrl;
+      img.alt = title;
+      dateEl.textContent = date;
+      titleEl.textContent = title;
+      (container as HTMLElement).style.display = 'block';
+    }
+
+    function closeModal() {
+      (container as HTMLElement).style.display = 'none';
+    }
+
+    function handleTriggerClick(event: Event) {
+      const target = event.currentTarget as HTMLElement;
+      const imageUrl = target.dataset.previewImage;
+      if (!imageUrl) return;
+      const title = target.dataset.previewTitle || '';
+      const date = target.dataset.previewDate || '';
+      openModal(imageUrl, title, date);
+    }
+
+    Array.from(document.getElementsByClassName('open-gallery-preview')).forEach(
+      (element) => {
+        element.addEventListener('click', handleTriggerClick);
+      }
+    );
+
+    const overlay = container.querySelector('.overlay');
+    if (overlay) {
+      overlay.addEventListener('click', closeModal);
+    }
+
+    const closeBtn = container.querySelector('.close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeModal);
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.keyCode === 27) {
+        // ESC
+        closeModal();
+      }
+    });
+  });
+</script>

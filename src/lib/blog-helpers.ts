@@ -161,9 +161,13 @@ export const getPageLink = (
     if (tag) {
       return getTagLink(tag, basePath);
     }
-    return basePath === '/gallery'
-      ? pathJoin(BASE_PATH, '/gallery')
-      : pathJoin(BASE_PATH, '/');
+    if (basePath === '/gallery') {
+      return pathJoin(BASE_PATH, '/gallery');
+    }
+    if (basePath === '/posts') {
+      return pathJoin(BASE_PATH, '/posts');
+    }
+    return pathJoin(BASE_PATH, '/');
   }
   if (tag) {
     return pathJoin(

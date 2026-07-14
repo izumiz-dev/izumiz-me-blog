@@ -9,13 +9,28 @@ import TimelineCard from '@components/TimelineCard.astro';
 import Pagination from '@components/Pagination.astro';
 import styles from '@styles/blog.module.css';
 
+export async function getStaticPaths() {
+  const numberOfPages = await getNumberOfTimelinePages();
+
+  let params = [];
+  for (let i = 2; i <= numberOfPages; i++) {
+    params.push({ params: { page: i.toString() } });
+  }
+  return params;
+}
+
+const { page } = Astro.params;
+
 const [entries, numberOfPages] = await Promise.all([
-  getTimelineByPage(1),
+  getTimelineByPage(parseInt(page, 10)),
   getNumberOfTimelinePages(),
 ]);
 ---
 
-<Layout>
+<Layout
+  title={`Timeline ${page}/${numberOfPages}`}
+  path={`/timeline/page/${page}`}
+>
   <div slot="main" class={styles.main}>
     {
       entries.length === 0 ? (
@@ -32,7 +47,7 @@ const [entries, numberOfPages] = await Promise.all([
 
     <footer>
       <Pagination
-        currentPage={1}
+        currentPage={parseInt(page, 10)}
         numberOfPages={numberOfPages}
         basePath="/timeline"
       />

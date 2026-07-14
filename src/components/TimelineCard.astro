@@ -1,0 +1,268 @@
+---
+import type { TimelineEntry } from '@lib/interfaces.ts';
+import type { Post, GalleryItem, BookReview } from '@lib/interfaces.ts';
+import { filePath, getDateStr } from '@lib/blog-helpers.ts';
+import PostDate from './PostDate.astro';
+import PostTags from './PostTags.astro';
+import PostTitle from './PostTitle.astro';
+import BookReviewTile from './BookReviewTile.astro';
+import GalleryImage from './GalleryImage.astro';
+
+export interface Props {
+  entry: TimelineEntry;
+}
+
+const { entry } = Astro.props;
+const { post, source } = entry;
+
+const badgeLabel =
+  source === 'blog' ? 'Blog' : source === 'gallery' ? 'Gallery' : 'Books';
+
+// gallery ブランチ用の画像 URL 解決（GalleryImage と同じロジック）
+let galleryImageUrl = '';
+if (source === 'gallery') {
+  const featured = (post as GalleryItem).FeaturedImage;
+  if (featured && featured.Url) {
+    if (import.meta.env.DEV) {
+      galleryImageUrl = featured.Url;
+    } else {
+      try {
+        galleryImageUrl = filePath(new URL(featured.Url));
+      } catch {
+        galleryImageUrl = featured.Url;
+      }
+    }
+  }
+}
+---
+
+<div class:list={['timeline-card', `source-${source}`]}>
+  <span class:list={['badge', `badge-${source}`]}>{badgeLabel}</span>
+
+  {
+    source === 'blog' && (
+      <div class="card-body">
+        <PostDate post={post as Post} />
+        <PostTags post={post as Post} />
+        <PostTitle post={post as Post} enableLink={true} />
+        {(post as Post).FeaturedImage && <GalleryImage post={post as Post} />}
+      </div>
+    )
+  }
+
+  {
+    source === 'bookReview' && (
+      <div class="card-body">
+        <PostDate post={post as BookReview} />
+        <BookReviewTile post={post as BookReview} />
+      </div>
+    )
+  }
+
+  {
+    source === 'gallery' && (
+      <div
+        class:list={[
+          'card-body',
+          'card-body--gallery',
+          galleryImageUrl ? 'open-gallery-preview' : '',
+        ]}
+        data-preview-image={galleryImageUrl || undefined}
+        data-preview-title={post.Title}
+        data-preview-date={getDateStr(post.Date)}
+      >
+        {galleryImageUrl && (
+          <div class="gallery-thumb">
+            <img src={galleryImageUrl} alt={post.Title} loading="lazy" />
+          </div>
+        )}
+        <div class="gallery-text">
+          <PostDate post={post as GalleryItem} />
+          <h2 class="gallery-title">{post.Title}</h2>
+        </div>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .timeline-card {
+    position: relative;
+    margin: 0 auto 24px;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(240, 246, 252, 0.4) 100%
+    );
+    border: 1px solid rgba(184, 192, 207, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      0 1px 3px rgba(20, 40, 80, 0.06);
+    transition:
+      background 0.18s cubic-bezier(0.25, 0.8, 0.25, 1),
+      border-color 0.18s cubic-bezier(0.25, 0.8, 0.25, 1),
+      box-shadow 0.18s cubic-bezier(0.25, 0.8, 0.25, 1),
+      transform 0.18s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .timeline-card:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(236, 242, 250, 0.65) 100%
+    );
+    border-color: rgba(43, 127, 224, 0.32);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 3px 10px rgba(43, 127, 224, 0.14);
+    transform: translateY(-1px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .timeline-card {
+      background: linear-gradient(
+        180deg,
+        rgba(50, 55, 72, 0.5) 0%,
+        rgba(30, 34, 48, 0.4) 100%
+      );
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .timeline-card:hover {
+      background: linear-gradient(
+        180deg,
+        rgba(60, 66, 86, 0.7) 0%,
+        rgba(40, 44, 60, 0.55) 100%
+      );
+      border-color: rgba(130, 197, 255, 0.35);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 3px 12px rgba(59, 141, 224, 0.2);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-card {
+      transition: none;
+    }
+    .timeline-card:hover {
+      transform: none;
+    }
+  }
+
+  /* Badge */
+  .badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    border-radius: var(--radius-tight, 4px);
+    padding: 0.1rem 0.55rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+      0 1px 1px rgba(0, 0, 0, 0.04);
+  }
+
+  .badge-blog {
+    color: #fff;
+    background: linear-gradient(180deg, #6fb5ff 0%, #2b7fe0 55%, #1b5fb0 100%);
+    border: 1px solid rgba(27, 95, 176, 0.6);
+  }
+
+  .badge-gallery {
+    color: #fff;
+    background: linear-gradient(180deg, #c4a5ff 0%, #8b5cf6 55%, #6d3fd4 100%);
+    border: 1px solid rgba(109, 63, 212, 0.6);
+  }
+
+  .badge-book {
+    color: #fff;
+    background: linear-gradient(180deg, #fbbf24 0%, #d97706 55%, #b45309 100%);
+    border: 1px solid rgba(180, 83, 9, 0.6);
+  }
+
+  /* Card body */
+  .card-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Gallery: clickable card, thumbnail + date + title */
+  .card-body--gallery {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .card-body--gallery.open-gallery-preview {
+    cursor: pointer;
+  }
+
+  .gallery-thumb {
+    width: 5rem;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--chrome-border);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      0 3px 12px rgba(20, 40, 80, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    .gallery-thumb {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        0 3px 14px rgba(0, 0, 0, 0.35);
+    }
+  }
+  .gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .gallery-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .gallery-title {
+    margin: 0;
+    padding: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--fg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  @media (max-width: 640px) {
+    .card-body--gallery {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .gallery-thumb {
+      width: 100%;
+    }
+    .gallery-title {
+      font-size: 1rem;
+    }
+  }
+</style>

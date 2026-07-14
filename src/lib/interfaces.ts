@@ -29,6 +29,11 @@ export interface GalleryItem {
 
 export type ContentSource = 'blog' | 'gallery' | 'bookReview';
 
+export interface TimelineEntry {
+  post: Post | GalleryItem | BookReview;
+  source: ContentSource;
+}
+
 export interface BookReview extends Post {
   Author: string;
   Publisher: string;

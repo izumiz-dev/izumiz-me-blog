@@ -13,6 +13,7 @@ import {
   NUMBER_OF_POSTS_PER_PAGE,
   NUMBER_OF_GALLERY_PER_PAGE,
   NUMBER_OF_BOOK_REVIEWS_PER_PAGE,
+  NUMBER_OF_TIMELINE_PER_PAGE,
   REQUEST_TIMEOUT_MS,
 } from '../../server-constants';
 import type {
@@ -55,6 +56,7 @@ import type {
   TableOfContents,
   TableRow,
   Text,
+  TimelineEntry,
   ToDo,
   Toggle,
   Video,
@@ -298,6 +300,52 @@ export async function getNumberOfPages(
   return (
     Math.floor(allPosts.length / itemsPerPage) +
     (allPosts.length % itemsPerPage > 0 ? 1 : 0)
+  );
+}
+
+export async function getAllContent(): Promise<TimelineEntry[]> {
+  const [blogs, galleries, bookReviews] = await Promise.all([
+    getAllPosts('blog'),
+    getAllPosts('gallery'),
+    getAllPosts('bookReview'),
+  ]);
+
+  const entries: TimelineEntry[] = [
+    ...(blogs as Post[]).map((post) => ({ post, source: 'blog' as const })),
+    ...(galleries as GalleryItem[]).map((post) => ({
+      post,
+      source: 'gallery' as const,
+    })),
+    ...(bookReviews as BookReview[]).map((post) => ({
+      post,
+      source: 'bookReview' as const,
+    })),
+  ];
+
+  return entries.sort(
+    (a, b) => new Date(b.post.Date).getTime() - new Date(a.post.Date).getTime()
+  );
+}
+
+export async function getTimelineByPage(
+  page: number
+): Promise<TimelineEntry[]> {
+  if (page < 1) {
+    return [];
+  }
+
+  const allEntries = await getAllContent();
+  const startIndex = (page - 1) * NUMBER_OF_TIMELINE_PER_PAGE;
+  const endIndex = startIndex + NUMBER_OF_TIMELINE_PER_PAGE;
+
+  return allEntries.slice(startIndex, endIndex);
+}
+
+export async function getNumberOfTimelinePages(): Promise<number> {
+  const allEntries = await getAllContent();
+  return (
+    Math.floor(allEntries.length / NUMBER_OF_TIMELINE_PER_PAGE) +
+    (allEntries.length % NUMBER_OF_TIMELINE_PER_PAGE > 0 ? 1 : 0)
   );
 }
 
