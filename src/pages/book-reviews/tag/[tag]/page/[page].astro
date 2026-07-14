@@ -41,7 +41,10 @@ const [posts, tags, numberOfPages] = await Promise.all([
   getNumberOfPagesByTag(tag, 'bookReview'),
 ]);
 
-const currentTag = posts[0].Tags.find((t) => t.name === tag);
+const currentTag =
+  posts.length > 0
+    ? posts[0].Tags.find((t: SelectProperty) => t.name === tag)
+    : undefined;
 ---
 
 <Layout
@@ -61,7 +64,7 @@ const currentTag = posts[0].Tags.find((t) => t.name === tag);
   <div slot="main" class={styles.main}>
     <header>
       <div class="tag-container">
-        <span class={`tag ${currentTag.color}`}>{tag}</span>
+        {currentTag && <span class={`tag ${currentTag.color}`}>{tag}</span>}
         {page}/{numberOfPages}
       </div>
     </header>
