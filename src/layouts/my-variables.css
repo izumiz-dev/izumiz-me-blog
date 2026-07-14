@@ -2,7 +2,6 @@
   --my-aside-color: #ececff;
   /* 通常時のリンク背景 */
   --my-fr-color: #fcfcfc;
-  --my-bg-color: #c9c9e1;
   --my-accent-color: #6567c6;
   /* 元々のアクセントカラー */
 
@@ -73,7 +72,6 @@
   :root {
     --my-aside-color: #1f2235;
     --my-fr-color: #15192b;
-    --my-bg-color: #0f111d;
     --my-accent-color: #8f93ff;
 
     --my-fg-color: #f3f4ff;

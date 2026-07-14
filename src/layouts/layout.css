@@ -126,7 +126,6 @@ div.content {
   main {
     display: flex;
     justify-content: center;
-    background: var(--my-bg-color);
   }
 
   div.content {
@@ -554,7 +553,6 @@ body.gallery-page main footer span {
 body.gallery-page main {
   display: flex;
   justify-content: center;
-  background: var(--my-bg-color);
 }
 
 /* Gallery ページも chrome chip を維持。パレットだけ dark chrome に差し替え */
