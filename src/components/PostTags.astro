@@ -8,7 +8,7 @@ export interface Props {
   enableLink?: boolean;
 }
 
-const { post, enableLink } = Astro.props; // デフォルト値を削除
+const { post, enableLink, basePath = '/posts' } = Astro.props; // デフォルト値を削除
 ---
 
 <div class="post-tags">
@@ -18,7 +18,7 @@ const { post, enableLink } = Astro.props; // デフォルト値を削除
       post.Tags.map((tag: SelectProperty) => {
         if (enableLink) {
           return (
-            <a href={getTagLink(tag.name)} class={`tag ${tag.color}`}>
+            <a href={getTagLink(tag.name, basePath)} class={`tag ${tag.color}`}>
               {tag.name}
             </a>
           );
@@ -41,5 +41,11 @@ const { post, enableLink } = Astro.props; // デフォルト値を削除
     flex-shrink: 1;
     min-width: 0;
     text-decoration: none;
+  }
+  /* タグリンクは stretched link の ::after より手前に置き、
+     カード遷移と独立してタグ絞り込み遷移を動かす */
+  .post-tags a {
+    position: relative;
+    z-index: 2;
   }
 </style>

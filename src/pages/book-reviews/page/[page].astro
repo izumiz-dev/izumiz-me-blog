@@ -9,7 +9,7 @@ import Layout from '@layouts/Layout.astro';
 import NoContents from '@components/NoContents.astro';
 import Pagination from '@components/Pagination.astro';
 import BlogTagsLink from '@components/BlogTagsLink.astro';
-import BookReviewTile from '@components/BookReviewTile.astro';
+import BookReviewCard from '@components/BookReviewCard.astro';
 import styles from '@styles/blog.module.css';
 
 export async function getStaticPaths() {
@@ -53,11 +53,11 @@ const pageDescription = `Book reviews page ${page} of ${numberOfPages}`;
       posts.length === 0 ? (
         <NoContents contents={posts} />
       ) : (
-        <div class="book-review-grid">
-          {(posts as BookReview[]).map((post) => (
-            <BookReviewTile post={post} />
-          ))}
-        </div>
+        (posts as BookReview[]).map((post) => (
+          <div class={styles.postCard} key={post.Slug}>
+            <BookReviewCard post={post} />
+          </div>
+        ))
       )
     }
 
@@ -74,11 +74,3 @@ const pageDescription = `Book reviews page ${page} of ${numberOfPages}`;
     <BlogTagsLink heading="タグ一覧" tags={tags} basePath="/book-reviews" />
   </div>
 </Layout>
-
-<style>
-  .book-review-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1.5rem;
-  }
-</style>

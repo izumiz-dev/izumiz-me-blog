@@ -42,7 +42,7 @@ const [posts, tags, numberOfPages] = await Promise.all([
           <div class={styles.postCard} key={post.Slug}>
             <PostDate post={post} />
             <PostTags post={post} />
-            <PostTitle post={post} />
+            <PostTitle post={post} stretched />
           </div>
         ))
       )

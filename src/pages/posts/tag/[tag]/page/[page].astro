@@ -64,7 +64,7 @@ const currentTag = posts[0].Tags.find((t) => t.name === tag);
           <div class={styles.postCard} key={post.Slug}>
             <PostDate post={post} />
             <PostTags post={post} />
-            <PostTitle post={post} />
+            <PostTitle post={post} stretched />
           </div>
         ))
       )

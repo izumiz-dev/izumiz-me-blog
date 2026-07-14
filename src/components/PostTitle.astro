@@ -5,17 +5,19 @@ import { getPostLink } from '../lib/blog-helpers.ts';
 export interface Props {
   post: Post | GalleryItem;
   enableLink: boolean;
+  linkHref?: string;
 }
 
-const { post, enableLink = true } = Astro.props;
+const { post, enableLink = true, linkHref, stretched = false } = Astro.props;
 
+const href = linkHref ?? getPostLink(post.Slug);
 let title = post.Title;
 ---
 
 <h2 class="post-title">
   {
     enableLink ? (
-      <a href={getPostLink(post.Slug)}>
+      <a href={href} class:list={stretched ? 'stretched-link' : undefined}>
         {post.Icon && post.Icon.Type === 'emoji' ? (
           <>
             <span>{post.Icon.Emoji}</span>
@@ -60,9 +62,11 @@ let title = post.Title;
     color: var(--fg);
     letter-spacing: -0.01em;
     font-feature-settings: 'palt' 1;
-    position: relative;
   }
   /* Detail-page title: bigger, groove line underneath */
+  .post-title:not(:has(a)) {
+    position: relative;
+  }
   .post-title:not(:has(a)) {
     font-size: 1.9rem;
     font-weight: 800;
@@ -102,6 +106,17 @@ let title = post.Title;
     display: inline-block;
     font-size: inherit;
     color: inherit;
+  }
+  /* Stretched link: ::after でカード全体を覆い、クリックで遷移させる。
+     定位先は祖先のカード枠(.postCard / .timeline-card の position:relative)。 */
+  .post-title a.stretched-link::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
   }
   .post-title span,
   .post-title img {

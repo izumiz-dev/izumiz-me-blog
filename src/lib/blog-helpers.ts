@@ -1,6 +1,7 @@
 import { BASE_PATH, REQUEST_TIMEOUT_MS } from '../server-constants';
 import type {
   Block,
+  FileObject,
   Heading1,
   Heading2,
   Heading3,
@@ -13,6 +14,24 @@ import { pathJoin } from './utils';
 export const filePath = (url: URL): string => {
   const [dir, filename] = url.pathname.split('/').slice(-2);
   return pathJoin(BASE_PATH, `/notion/${dir}/${filename}`);
+};
+
+/**
+ * FeaturedImage の表示用 URL を解決する。
+ * GalleryImage / TimelineCard gallery 分岐で使われていたロジックの共通化。
+ * - DEV: Notion の一時 URL をそのまま返す
+ * - prod: ローカル保存済みファイルパス(filePath)に変換(失敗時は元 URL)
+ */
+export const getFeaturedImageUrl = (
+  image: FileObject | null | undefined
+): string => {
+  if (!image || !image.Url) return '';
+  if (import.meta.env.DEV) return image.Url;
+  try {
+    return filePath(new URL(image.Url));
+  } catch {
+    return image.Url;
+  }
 };
 
 export const extractTargetBlocks = (

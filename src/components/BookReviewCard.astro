@@ -1,0 +1,59 @@
+---
+import type { BookReview } from '../lib/interfaces.ts';
+import { getBookReviewLink } from '../lib/blog-helpers.ts';
+import PostDate from './PostDate.astro';
+import PostTags from './PostTags.astro';
+import PostTitle from './PostTitle.astro';
+
+export interface Props {
+  post: BookReview;
+}
+
+const { post } = Astro.props;
+const stars =
+  '★'.repeat(post.Rating) + '☆'.repeat(Math.max(0, 5 - post.Rating));
+---
+
+<div class="book-review-card">
+  <PostDate post={post} />
+  <PostTags post={post} basePath="/book-reviews" />
+  <PostTitle
+    post={post}
+    enableLink={true}
+    stretched
+    linkHref={getBookReviewLink(post.Slug)}
+  />
+  <div class="book-meta">
+    {post.Author && <span class="book-author">著: {post.Author}</span>}
+    {post.Rating > 0 && <span class="book-rating">{stars}</span>}
+    {
+      post.ReadingStatus && (
+        <span class="book-status">{post.ReadingStatus}</span>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* ブログ(/posts)のカード1件と同じ body 構造。
+     外側のカード枠(背景/枠線/影)は含まず、各ページや TimelineCard が提供する。 */
+  .book-review-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .book-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin-top: -0.3rem;
+    font-size: 0.85rem;
+    color: var(--fg-subtle);
+  }
+
+  .book-rating {
+    color: var(--aqua-mid);
+    letter-spacing: 0.05em;
+  }
+</style>
