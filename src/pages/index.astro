@@ -2,16 +2,20 @@
 import {
   getTimelineByPage,
   getNumberOfTimelinePages,
+  getAllTags,
 } from '@lib/notion/client.ts';
 import Layout from '@layouts/Layout.astro';
 import NoContents from '@components/NoContents.astro';
 import TimelineCard from '@components/TimelineCard.astro';
 import Pagination from '@components/Pagination.astro';
+import BlogTagsLink from '@components/BlogTagsLink.astro';
 import styles from '@styles/blog.module.css';
 
-const [entries, numberOfPages] = await Promise.all([
+const [entries, numberOfPages, blogTags, bookTags] = await Promise.all([
   getTimelineByPage(1),
   getNumberOfTimelinePages(),
+  getAllTags('blog'),
+  getAllTags('bookReview'),
 ]);
 ---
 
@@ -37,5 +41,10 @@ const [entries, numberOfPages] = await Promise.all([
         basePath="/timeline"
       />
     </footer>
+  </div>
+
+  <div slot="aside" class={styles.aside}>
+    <BlogTagsLink heading="ブログのタグ" tags={blogTags} basePath="/posts" />
+    <BlogTagsLink heading="本のタグ" tags={bookTags} basePath="/book-reviews" />
   </div>
 </Layout>
