@@ -1,6 +1,8 @@
 # build output
 dist/
 .output/
+.astro/
+.nx/
 
 # generated types
 .astro/

@@ -18,11 +18,11 @@ export default (): AstroIntegration => ({
             url = new URL(post.FeaturedImage.Url);
             console.log(`Download: ${url} ${post.Title}`);
           } catch {
-            console.log('Invalid FeaturedImage URL');
+            console.log('Invalid FeaturedImage URL: ', post.FeaturedImage?.Url);
             return Promise.resolve();
           }
 
-          return downloadFile(url, 'from featured');
+          return downloadFile(url);
         })
       );
     },

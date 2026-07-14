@@ -1,66 +1,66 @@
-import fs, { createWriteStream } from 'node:fs';
-import { pipeline } from 'node:stream/promises';
-import axios from 'axios';
-import type { AxiosResponse } from 'axios';
-import sharp from 'sharp';
+import { APIResponseError, Client } from '@notionhq/client';
 import retry from 'async-retry';
 import ExifTransformer from 'exif-be-gone';
+import fs, { createWriteStream } from 'node:fs';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
+import sharp from 'sharp';
 import {
-  NOTION_API_SECRET,
   DATABASE_ID,
   GALLERY_ID,
+  NOTION_API_SECRET,
   NUMBER_OF_POSTS_PER_PAGE,
   NUMBER_OF_GALLERY_PER_PAGE,
   REQUEST_TIMEOUT_MS,
 } from '../../server-constants';
-import type * as responses from './responses';
-import type * as requestParams from './request-params';
 import type {
-  Database,
-  Post,
-  GalleryItem,
+  Annotation,
   Block,
-  Paragraph,
+  Bookmark,
+  BulletedListItem,
+  Callout,
+  Code,
+  Column,
+  ColumnList,
+  Database,
+  Embed,
+  Emoji,
+  Equation,
+  File,
+  FileObject,
+  GalleryItem,
   Heading1,
   Heading2,
   Heading3,
   Heading4,
-  BulletedListItem,
-  NumberedListItem,
-  ToDo,
   Image,
-  Code,
-  Quote,
-  Equation,
-  Callout,
-  Embed,
-  Video,
-  File,
-  Bookmark,
   LinkPreview,
+  LinkToPage,
+  Mention,
+  NumberedListItem,
+  Paragraph,
+  Post,
+  Quote,
+  Reference,
+  RichText,
+  SelectProperty,
   SyncedBlock,
   SyncedFrom,
   Table,
-  TableRow,
   TableCell,
-  Toggle,
-  ColumnList,
-  Column,
   TableOfContents,
-  RichText,
+  TableRow,
   Text,
-  Annotation,
-  SelectProperty,
-  Emoji,
-  FileObject,
-  LinkToPage,
-  Mention,
-  Reference,
+  ToDo,
+  Toggle,
+  Video,
 } from '../interfaces';
-import { Client, APIResponseError } from '@notionhq/client';
+import type * as requestParams from './request-params';
+import type * as responses from './responses';
 
 const client = new Client({
   auth: NOTION_API_SECRET,
+  notionVersion: '2026-03-11',
 });
 
 let postsCache: Post[] | null = null;
@@ -81,8 +81,26 @@ export async function getAllPosts(
     return Promise.resolve(galleryPostsCache as GalleryItem[]);
   }
 
-  const params: requestParams.QueryDatabase = {
+  const dbResponse = (await client.databases.retrieve({
     database_id: isGallery ? GALLERY_ID : DATABASE_ID,
+  })) as responses.RetrieveDatabaseResponse;
+  if (!dbResponse || dbResponse.in_trash) {
+    console.error(
+      'The database either does not exist or is in trash. Please restore it to fetch posts.'
+    );
+    return [];
+  }
+
+  const dataSouceId = dbResponse.data_sources?.[0]?.id;
+  if (!dataSouceId) {
+    console.error(
+      'No data source found for the database. Please add a data source to fetch posts.'
+    );
+    return [];
+  }
+
+  const params: requestParams.QueryDataSource = {
+    data_source_id: dataSouceId,
     filter: {
       and: [
         {
@@ -113,9 +131,9 @@ export async function getAllPosts(
     const res = await retry(
       async (bail) => {
         try {
-          return (await client.databases.query(
+          return (await client.dataSources.query(
             params as any // eslint-disable-line @typescript-eslint/no-explicit-any
-          )) as responses.QueryDatabaseResponse;
+          )) as responses.QueryDataSourceResponse;
         } catch (error: unknown) {
           if (error instanceof APIResponseError) {
             if (error.status && error.status >= 400 && error.status < 500) {
@@ -439,21 +457,26 @@ export async function downloadFile(url: URL) {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  let res!: AxiosResponse;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  let res!: Response;
   try {
-    res = await axios({
-      method: 'get',
-      url: url.toString(),
-      timeout: REQUEST_TIMEOUT_MS,
-      responseType: 'stream',
+    res = await fetch(url.toString(), {
+      method: 'GET',
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    if (!res.body) {
+      throw new Error('Response body is null');
+    }
   } catch (err) {
     console.log(err);
-    return Promise.resolve();
-  }
-
-  if (!res || res.status != 200) {
-    console.log(res);
     return Promise.resolve();
   }
 
@@ -462,9 +485,9 @@ export async function downloadFile(url: URL) {
   const writeStream = createWriteStream(filepath);
   const rotate = sharp().rotate();
 
-  let stream = res.data;
+  let stream = Readable.fromWeb(res.body as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-  if (res.headers['content-type'] === 'image/jpeg') {
+  if (res.headers.get('content-type') === 'image/jpeg') {
     stream = stream.pipe(rotate);
   }
   try {
@@ -509,22 +532,27 @@ export async function getDatabase(isGallery = false): Promise<Database> {
     }
   );
 
+  const dataSource = await _getDataSource(res.data_sources?.[0]?.id || '');
+
   let icon: FileObject | Emoji | null = null;
-  if (res.icon) {
-    if (res.icon.type === 'emoji' && 'emoji' in res.icon) {
+  if (dataSource.icon) {
+    if (dataSource.icon.type === 'emoji' && 'emoji' in dataSource.icon) {
       icon = {
-        Type: res.icon.type,
-        Emoji: res.icon.emoji,
+        Type: dataSource.icon.type,
+        Emoji: dataSource.icon.emoji,
       };
-    } else if (res.icon.type === 'external' && 'external' in res.icon) {
+    } else if (
+      dataSource.icon.type === 'external' &&
+      'external' in dataSource.icon
+    ) {
       icon = {
-        Type: res.icon.type,
-        Url: res.icon.external?.url || '',
+        Type: dataSource.icon.type,
+        Url: dataSource.icon.external?.url || '',
       };
-    } else if (res.icon.type === 'file' && 'file' in res.icon) {
+    } else if (dataSource.icon.type === 'file' && 'file' in dataSource.icon) {
       icon = {
-        Type: res.icon.type,
-        Url: res.icon.file?.url || '',
+        Type: dataSource.icon.type,
+        Url: dataSource.icon.file?.url || '',
       };
       if (icon.Url) {
         try {
@@ -537,12 +565,12 @@ export async function getDatabase(isGallery = false): Promise<Database> {
   }
 
   let cover: FileObject | null = null;
-  if (res.cover) {
+  if (dataSource.cover) {
     cover = {
-      Type: res.cover.type,
-      Url: res.cover.external?.url || res.cover?.file?.url || '',
+      Type: dataSource.cover.type,
+      Url: dataSource.cover.external?.url || dataSource.cover?.file?.url || '',
     };
-    if (res.cover.type === 'file' && cover.Url) {
+    if (dataSource.cover.type === 'file' && cover.Url) {
       try {
         await downloadFile(new URL(cover.Url));
       } catch {
@@ -552,8 +580,8 @@ export async function getDatabase(isGallery = false): Promise<Database> {
   }
 
   const database: Database = {
-    Title: res.title.map((richText) => richText.plain_text).join(''),
-    Description: res.description
+    Title: dataSource.title.map((richText) => richText.plain_text).join(''),
+    Description: dataSource.description
       .map((richText) => richText.plain_text)
       .join(''),
     Icon: icon,
@@ -567,6 +595,34 @@ export async function getDatabase(isGallery = false): Promise<Database> {
 
   dbCache = database;
   return database;
+}
+
+export async function _getDataSource(
+  data_source_id: string
+): Promise<responses.DataSourceObject> {
+  const params: requestParams.RetrieveDataSource = {
+    data_source_id: data_source_id,
+  };
+
+  return await retry(
+    async (bail) => {
+      try {
+        return (await client.dataSources.retrieve(
+          params as any // eslint-disable-line @typescript-eslint/no-explicit-any
+        )) as responses.RetrieveDataSourceResponse;
+      } catch (error: unknown) {
+        if (error instanceof APIResponseError) {
+          if (error.status && error.status >= 400 && error.status < 500) {
+            bail(error);
+          }
+        }
+        throw error;
+      }
+    },
+    {
+      retries: numberOfRetry,
+    }
+  );
 }
 
 function _buildBlock(blockObject: responses.BlockObject): Block {
@@ -810,6 +866,7 @@ function _buildBlock(blockObject: responses.BlockObject): Block {
     case 'bookmark':
       if (blockObject.bookmark) {
         const bookmark: Bookmark = {
+          Caption: blockObject.bookmark.caption?.map(_buildRichText) || [],
           Url: blockObject.bookmark.url,
         };
         block.Bookmark = bookmark;

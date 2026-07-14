@@ -49,13 +49,35 @@ if (!process.env.NOTION_API_SECRET) {
   log('WARN', 'NOTION_API_SECRET is not set. Requests will fail.');
 }
 
-const notion = new Client({ auth: process.env.NOTION_API_SECRET });
+const notion = new Client({
+  auth: process.env.NOTION_API_SECRET,
+  notionVersion: '2026-03-11',
+});
 
 const GALLERY_MODE = false;
 
 const getAllPages = async (isGallery = false) => {
+  const databaseId = isGallery
+    ? process.env.GALLERY_ID
+    : process.env.DATABASE_ID;
+
+  const dbResponse = await notion.databases.retrieve({
+    database_id: databaseId,
+  });
+  if (!dbResponse) {
+    throw new Error('Failed to retrieve database information');
+  }
+
+  const dataSourceId =
+    dbResponse.data_sources && dbResponse.data_sources.length > 0
+      ? dbResponse.data_sources[0].id
+      : null;
+  if (!dataSourceId) {
+    throw new Error('Database does not have a data source ID');
+  }
+
   const params = {
-    database_id: isGallery ? process.env.GALLERY_ID : process.env.DATABASE_ID,
+    data_source_id: dataSourceId,
     filter: {
       and: [
         {
@@ -77,10 +99,10 @@ const getAllPages = async (isGallery = false) => {
   let results = [];
   while (true) {
     try {
-      log('INFO', 'Querying Notion database', {
-        databaseId: params.database_id || '<unknown>',
+      log('INFO', 'Querying Notion data source', {
+        databaseId: params.data_source_id || '<unknown>',
       });
-      const res = await notion.databases.query(params);
+      const res = await notion.dataSources.query(params);
 
       results = results.concat(res.results);
 
@@ -90,17 +112,17 @@ const getAllPages = async (isGallery = false) => {
 
       params['start_cursor'] = res.next_cursor;
     } catch (error) {
-      log('ERROR', 'Failed while querying Notion database', {
-        databaseId: params.database_id || '<unknown>',
+      log('ERROR', 'Failed while querying Notion data source', {
+        databaseId: params.data_source_id || '<unknown>',
       });
       if (error && error.body) {
         log('ERROR', `Notion response body: ${error.body}`, {
-          databaseId: params.database_id || '<unknown>',
+          databaseId: params.data_source_id || '<unknown>',
         });
       }
       if (error && error.message) {
         log('ERROR', `Error message: ${error.message}`, {
-          databaseId: params.database_id || '<unknown>',
+          databaseId: params.data_source_id || '<unknown>',
         });
       }
       throw error;

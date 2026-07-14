@@ -15,5 +15,7 @@
         "name": "astro:ts-plugin"
       }
     ]
-  }
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
 }

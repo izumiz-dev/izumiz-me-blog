@@ -6,3 +6,10 @@ onlyBuiltDependencies:
   - nx
   - re2
   - sharp
+
+overrides:
+  tar: '>=7.5.4'
+  lodash: '>=4.17.23'
+  lodash-es: '>=4.17.23'
+  brace-expansion: '>=2.0.2'
+  js-yaml: '>=4.1.1'
