@@ -148,6 +148,28 @@ if (postHttpUrl) {
     width: 100%;
     max-width: 550px;
     margin: 0.4rem auto;
+    border-radius: calc(var(--radius, 12px) + 6px);
+    padding: 8px;
+    background: linear-gradient(
+      180deg,
+      var(--chrome-mid) 0%,
+      var(--chrome-shade) 48%,
+      var(--chrome-shade) 52%,
+      var(--chrome-mid) 100%
+    );
+    border: 1px solid var(--chrome-shade);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      inset 0 -1px 0 var(--chrome-rim-bottom),
+      0 4px 16px rgba(20, 40, 80, 0.22);
+  }
+  @media (prefers-color-scheme: dark) {
+    .bluesky-embed-wrapper {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        inset 0 -1px 0 var(--chrome-rim-bottom),
+        0 4px 18px rgba(0, 0, 0, 0.45);
+    }
   }
 
   .bluesky-embed-wrapper :global(.bluesky-embed) {

@@ -37,10 +37,25 @@ try {
 <style>
   .video div:first-child {
     width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--chrome-border);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      0 3px 12px rgba(20, 40, 80, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    .video div:first-child {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        0 3px 14px rgba(0, 0, 0, 0.35);
+    }
   }
   .video div:first-child iframe {
+    display: block;
     width: 100%;
     height: 340px;
+    border: 0;
   }
   @media (max-width: 640px) {
     .video div:first-child iframe {

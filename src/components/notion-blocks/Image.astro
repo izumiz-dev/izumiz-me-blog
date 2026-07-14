@@ -64,15 +64,22 @@ const aspectRatio =
     : undefined;
 const loading = priority ? 'eager' : 'lazy';
 const fetchPriority = priority ? 'high' : undefined;
+
+// Cap tall (portrait) images so they don't dominate the viewport; wide
+// images are unaffected since 100% stays the smaller side of the min().
+const MAX_HEIGHT_PX = 640;
+const wrapperStyle =
+  intrinsicWidth && intrinsicHeight
+    ? `aspect-ratio: ${aspectRatio}; width: min(100%, calc(min(70vh, ${MAX_HEIGHT_PX}px) * ${intrinsicWidth} / ${intrinsicHeight})); max-height: min(70vh, ${MAX_HEIGHT_PX}px);`
+    : undefined;
 ---
 
 <figure class="image">
   {
     image && (
       <div
-        style={
-          aspectRatio ? `aspect-ratio: ${aspectRatio}; width: 100%;` : undefined
-        }
+        class:list={['image-frame', { 'image-frame--fallback': !wrapperStyle }]}
+        style={wrapperStyle}
       >
         <div>
           {ENABLE_LIGHTBOX ? (
@@ -113,9 +120,47 @@ const fetchPriority = priority ? 'high' : undefined;
   .image > div {
     margin: 0 auto;
   }
-  .image > div > div img {
+  .image-frame {
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--chrome-border);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      0 3px 12px rgba(20, 40, 80, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    .image-frame {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        0 3px 14px rgba(0, 0, 0, 0.35);
+    }
+  }
+  .image-frame > div {
+    height: 100%;
+  }
+  .image-frame > div a,
+  .image-frame img {
     display: block;
-    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* No intrinsic size available (metadata read failed): fall back to the
+     image's natural aspect ratio instead of forcing height:100% on a
+     wrapper with no defined height. */
+  .image-frame--fallback {
+    max-height: min(70vh, 640px);
+  }
+  .image-frame--fallback > div {
     height: auto;
+  }
+  .image-frame--fallback > div a,
+  .image-frame--fallback img {
+    height: auto;
+    max-height: min(70vh, 640px);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
   }
 </style>

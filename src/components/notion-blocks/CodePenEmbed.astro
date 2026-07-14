@@ -11,7 +11,7 @@ const id = url.pathname.split('/')[3];
   class="codepen"
   data-slug-hash={id.toString()}
   data-user={user.toString()}
-  style="box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 2px solid; margin: 1em 0; padding: 1em;"
+  style="box-sizing: border-box; display: flex; align-items: center; justify-content: center; border-radius: var(--radius); border: 1px solid var(--chrome-border); margin: 1em 0; padding: 1em; box-shadow: inset 0 1px 0 var(--chrome-rim), 0 3px 12px rgba(20, 40, 80, 0.12); overflow: hidden;"
 >
 </p>
 <script async src="https://cpwebassets.codepen.io/assets/embed/ei.js"></script>
@@ -21,8 +21,17 @@ const id = url.pathname.split('/')[3];
     width: 100%;
     aspect-ratio: 1.6 / 1;
     background-color: var(--my-fr-color);
+    border-radius: var(--radius);
+    overflow: hidden;
   }
   .cp_embed_wrapper iframe {
     height: 100% !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    p.codepen {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        0 3px 14px rgba(0, 0, 0, 0.35) !important;
+    }
   }
 </style>
