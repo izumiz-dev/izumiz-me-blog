@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "dotenv -- astro build",
-    "build:cached": "pnpm run cache:fetch && dotenv -- astro build",
+    "build": "NODE_ENV=production dotenv -- astro build",
+    "build:cached": "pnpm run cache:fetch && NODE_ENV=production dotenv -- astro build",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint src",

@@ -1,14 +1,18 @@
 import type { APIContext } from 'astro';
 import { getOgImage } from '../../components/OgImage';
 
-// In dev, render on demand so the ?text= query param actually reaches the
-// endpoint and the preview page can change the title. In a production build
-// this must stay prerendered — the site uses `output: 'static'` with no SSR
-// adapter, so `import.meta.env.DEV` (folded to a constant at build time)
-// keeps the build static while unlocking live preview during development.
+// Development-only preview endpoint. In dev it renders on demand so the
+// ?text= query param reaches the endpoint and the preview page can change the
+// title. In a production build it is prerendered to a single 404 so the tool
+// never ships publicly. `import.meta.env.DEV` folds to a constant at build
+// time, keeping the site's `output: 'static'` build adapter-free.
 export const prerender = !import.meta.env.DEV;
 
 export async function GET({ url }: APIContext) {
+  if (!import.meta.env.DEV) {
+    return new Response('Not found', { status: 404 });
+  }
+
   const text = url.searchParams.get('text')?.trim() ?? '';
   const ogText =
     text.length > 0

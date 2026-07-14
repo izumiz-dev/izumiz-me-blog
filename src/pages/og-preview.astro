@@ -1,4 +1,11 @@
 ---
+// Development-only tool: in a production build this ships as a 404 so the
+// preview UI is never publicly reachable. `import.meta.env.DEV` folds to a
+// constant at build time.
+if (!import.meta.env.DEV) {
+  return new Response('Not found', { status: 404 });
+}
+
 const defaultText = 'Preview Title';
 const basePath = import.meta.env.BASE_PATH || '';
 const defaultImageSrc = `${basePath}/og/preview.png?text=${encodeURIComponent(defaultText)}`;
