@@ -144,8 +144,12 @@ export const getGalleryLink = (slug: string) => {
   return pathJoin(BASE_PATH, `/gallery/${slug}`);
 };
 
-export const getTagLink = (tag: string) => {
-  return pathJoin(BASE_PATH, `/posts/tag/${encodeURIComponent(tag)}`);
+export const getBookReviewLink = (slug: string) => {
+  return pathJoin(BASE_PATH, `/book-reviews/${slug}`);
+};
+
+export const getTagLink = (tag: string, basePath: string = '/posts') => {
+  return pathJoin(BASE_PATH, `${basePath}/tag/${encodeURIComponent(tag)}`);
 };
 
 export const getPageLink = (
@@ -155,7 +159,7 @@ export const getPageLink = (
 ) => {
   if (page === 1) {
     if (tag) {
-      return getTagLink(tag);
+      return getTagLink(tag, basePath);
     }
     return basePath === '/gallery'
       ? pathJoin(BASE_PATH, '/gallery')
@@ -164,7 +168,7 @@ export const getPageLink = (
   if (tag) {
     return pathJoin(
       BASE_PATH,
-      `/posts/tag/${encodeURIComponent(tag)}/page/${page.toString()}`
+      `${basePath}/tag/${encodeURIComponent(tag)}/page/${page.toString()}`
     );
   }
   return pathJoin(BASE_PATH, `${basePath}/page/${page.toString()}`);

@@ -1,0 +1,118 @@
+---
+import type { SelectProperty, BookReview } from '@lib/interfaces.ts';
+import { NUMBER_OF_BOOK_REVIEWS_PER_PAGE } from '../../../server-constants.ts';
+import {
+  getPostsByTag,
+  getAllTags,
+  getNumberOfPagesByTag,
+} from '@lib/notion/client.ts';
+import Layout from '@layouts/Layout.astro';
+import NoContents from '@components/NoContents.astro';
+import Pagination from '@components/Pagination.astro';
+import BlogTagsLink from '@components/BlogTagsLink.astro';
+import BookReviewTile from '@components/BookReviewTile.astro';
+import styles from '@styles/blog.module.css';
+import '@styles/notion-color.css';
+
+export async function getStaticPaths() {
+  const allTags = await getAllTags('bookReview');
+  return allTags.map((tag: SelectProperty) => ({ params: { tag: tag.name } }));
+}
+
+const { tag } = Astro.params;
+
+const [posts, allTagsData, numberOfPages] = await Promise.all([
+  getPostsByTag(tag, NUMBER_OF_BOOK_REVIEWS_PER_PAGE, 'bookReview'),
+  getAllTags('bookReview'),
+  getNumberOfPagesByTag(tag, 'bookReview'),
+]);
+
+const currentTag =
+  posts.length > 0
+    ? posts[0].Tags.find((t: SelectProperty) => t.name === tag)
+    : undefined;
+const pageTitle = `Book Reviews in ${tag}`;
+const pageDescription = `Filtered book reviews by tag: ${tag}`;
+const defaultOgImage = new URL('/default-og-image.png', Astro.site);
+---
+
+<Layout
+  title={pageTitle}
+  path={`/book-reviews/tag/${tag}`}
+  description={pageDescription}
+  ogImage={defaultOgImage.toString()}
+  openGraph={{
+    basic: {
+      title: pageTitle,
+      type: 'website',
+      image: defaultOgImage.toString(),
+    },
+    image: {
+      alt: pageTitle,
+    },
+  }}
+>
+  <div slot="main" class={styles.main}>
+    <header>
+      {
+        currentTag && (
+          <div class="tag-container">
+            <span class={`tag ${currentTag.color}`}>{tag}</span>
+          </div>
+        )
+      }
+    </header>
+
+    {
+      posts.length === 0 ? (
+        <NoContents contents={posts} />
+      ) : (
+        <div class="book-review-grid">
+          {(posts as BookReview[]).map((post) => (
+            <BookReviewTile post={post} />
+          ))}
+        </div>
+      )
+    }
+
+    <footer>
+      <Pagination
+        tag={tag}
+        currentPage={1}
+        numberOfPages={numberOfPages}
+        basePath="/book-reviews"
+      />
+    </footer>
+  </div>
+
+  <div slot="aside" class={styles.aside}>
+    <BlogTagsLink
+      heading="タグ一覧"
+      tags={allTagsData}
+      basePath="/book-reviews"
+    />
+  </div>
+</Layout>
+
+<style>
+  .tag-container {
+    margin: 0;
+    line-height: 1.3;
+    font-size: 1.2rem;
+    font-weight: normal;
+  }
+  @media (max-width: 640px) {
+    .tag-container {
+      font-size: 1.15rem;
+    }
+  }
+  .tag-container span.tag {
+    border-radius: 12px;
+    padding: 3px 9px;
+  }
+  .book-review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

@@ -1,0 +1,67 @@
+---
+import type { BookReview } from '../lib/interfaces';
+
+export interface Props {
+  post: BookReview;
+}
+
+const { post } = Astro.props;
+const stars =
+  '★'.repeat(post.Rating) + '☆'.repeat(Math.max(0, 5 - post.Rating));
+---
+
+<div class="book-meta-detail">
+  {
+    post.Author && (
+      <span class="meta-item">
+        <span class="meta-label">著者</span>
+        {post.Author}
+      </span>
+    )
+  }
+  {
+    post.Publisher && (
+      <span class="meta-item">
+        <span class="meta-label">出版社</span>
+        {post.Publisher}
+      </span>
+    )
+  }
+  {post.Rating > 0 && <span class="meta-item book-rating">{stars}</span>}
+  {
+    post.ReadingStatus && (
+      <span class="meta-item book-status">{post.ReadingStatus}</span>
+    )
+  }
+</div>
+
+<style>
+  .book-meta-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: var(--fg-subtle);
+  }
+
+  .meta-label {
+    margin-right: 0.3em;
+    font-size: 0.8em;
+    opacity: 0.7;
+  }
+
+  .book-rating {
+    color: var(--aqua-mid);
+    letter-spacing: 0.05em;
+  }
+
+  .book-status {
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: var(--chrome-gradient);
+    border: 1px solid var(--chrome-border);
+    font-size: 0.8rem;
+  }
+</style>

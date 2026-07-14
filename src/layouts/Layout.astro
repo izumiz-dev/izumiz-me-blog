@@ -244,6 +244,14 @@ const uniquePreloadImages = preloadImages
                       : ''
                   }`}>Gallery</a
                 >
+                <a
+                  href={getNavLink('/book-reviews/')}
+                  class={`nav-link nav-book ${
+                    Astro.url.pathname.startsWith(getNavLink('/book-reviews'))
+                      ? 'active'
+                      : ''
+                  }`}>Books</a
+                >
               </nav>
             </header>
 

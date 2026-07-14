@@ -1,0 +1,84 @@
+---
+import {
+  getPostsByPage,
+  getAllTags,
+  getNumberOfPages,
+} from '@lib/notion/client.ts';
+import type { BookReview } from '@lib/interfaces.ts';
+import Layout from '@layouts/Layout.astro';
+import NoContents from '@components/NoContents.astro';
+import Pagination from '@components/Pagination.astro';
+import BlogTagsLink from '@components/BlogTagsLink.astro';
+import BookReviewTile from '@components/BookReviewTile.astro';
+import styles from '@styles/blog.module.css';
+
+export async function getStaticPaths() {
+  const numberOfPages = await getNumberOfPages('bookReview');
+
+  let params = [];
+  for (let i = 2; i <= numberOfPages; i++) {
+    params.push({ params: { page: i.toString() } });
+  }
+  return params;
+}
+
+const { page } = Astro.params;
+
+const [posts, tags, numberOfPages] = await Promise.all([
+  getPostsByPage(parseInt(page, 10), 'bookReview'),
+  getAllTags('bookReview'),
+  getNumberOfPages('bookReview'),
+]);
+
+const pageTitle = `Book Reviews Page ${page} - My Blog`;
+const pageDescription = `Book reviews page ${page} of ${numberOfPages}`;
+---
+
+<Layout
+  title={`Book Reviews ${page}/${numberOfPages}`}
+  description={pageDescription}
+  path={`/book-reviews/page/${page}`}
+  ogImage=""
+  openGraph={{
+    basic: {
+      title: pageTitle,
+      type: 'website',
+      image: '',
+    },
+    image: { alt: pageTitle },
+  }}
+>
+  <div slot="main" class={styles.main}>
+    {
+      posts.length === 0 ? (
+        <NoContents contents={posts} />
+      ) : (
+        <div class="book-review-grid">
+          {(posts as BookReview[]).map((post) => (
+            <BookReviewTile post={post} />
+          ))}
+        </div>
+      )
+    }
+
+    <footer>
+      <Pagination
+        currentPage={parseInt(page, 10)}
+        numberOfPages={numberOfPages}
+        basePath="/book-reviews"
+      />
+    </footer>
+  </div>
+
+  <div slot="aside" class={styles.aside}>
+    <BlogTagsLink heading="タグ一覧" tags={tags} basePath="/book-reviews" />
+  </div>
+</Layout>
+
+<style>
+  .book-review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

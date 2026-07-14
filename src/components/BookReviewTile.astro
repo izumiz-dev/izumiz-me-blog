@@ -1,0 +1,82 @@
+---
+import type { BookReview } from '../lib/interfaces';
+import { getBookReviewLink } from '../lib/blog-helpers';
+import GalleryImage from './GalleryImage.astro';
+
+export interface Props {
+  post: BookReview;
+}
+
+const { post } = Astro.props;
+const stars =
+  '★'.repeat(post.Rating) + '☆'.repeat(Math.max(0, 5 - post.Rating));
+---
+
+<div class="book-review-tile">
+  <a href={getBookReviewLink(post.Slug)}>
+    <GalleryImage post={post} />
+    <h2 class="book-title" title={post.Title}>
+      {post.Title}
+    </h2>
+    {post.Author && <p class="book-author">{post.Author}</p>}
+    <div class="book-meta">
+      {post.Rating > 0 && <span class="book-rating">{stars}</span>}
+      {
+        post.ReadingStatus && (
+          <span class="book-status">{post.ReadingStatus}</span>
+        )
+      }
+    </div>
+  </a>
+</div>
+
+<style>
+  .book-review-tile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .book-review-tile a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .book-title {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+
+  .book-author {
+    margin: 0.2rem 0 0;
+    font-size: 0.85rem;
+    color: var(--fg-subtle);
+  }
+
+  .book-meta {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+  }
+
+  .book-rating {
+    color: var(--aqua-mid);
+    letter-spacing: 0.05em;
+  }
+
+  .book-status {
+    color: var(--fg-subtle);
+  }
+
+  @media (max-width: 640px) {
+    .book-title {
+      font-size: 0.9rem;
+    }
+  }
+</style>

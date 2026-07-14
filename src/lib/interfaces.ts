@@ -27,6 +27,15 @@ export interface GalleryItem {
   FeaturedImage: FileObject | null;
 }
 
+export type ContentSource = 'blog' | 'gallery' | 'bookReview';
+
+export interface BookReview extends Post {
+  Author: string;
+  Publisher: string;
+  ReadingStatus: string; // '読了' | '読書中' | ''
+  Rating: number; // 0-5
+}
+
 export interface Block {
   Id: string;
   Type: string;

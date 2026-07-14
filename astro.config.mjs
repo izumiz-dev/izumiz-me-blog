@@ -5,6 +5,7 @@ import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
 import FeaturedImageDownloader from './src/integrations/featured-image-downloader';
 import GalleryImagesDownloader from './src/integrations/gallery-images-downloader';
+import BookReviewImagesDownloader from './src/integrations/book-review-images-downloader';
 import PublicNotionCopier from './src/integrations/public-notion-copier';
 import react from '@astrojs/react';
 import icon from 'astro-icon';
@@ -44,6 +45,7 @@ export default defineConfig({
     CustomIconDownloader(),
     FeaturedImageDownloader(),
     GalleryImagesDownloader(),
+    BookReviewImagesDownloader(),
     PublicNotionCopier(),
     react(),
     icon(),

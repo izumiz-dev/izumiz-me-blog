@@ -1,0 +1,69 @@
+---
+import { NUMBER_OF_BOOK_REVIEWS_PER_PAGE } from '../../server-constants.ts';
+import { getPosts, getAllTags, getNumberOfPages } from '@lib/notion/client.ts';
+import type { BookReview } from '@lib/interfaces.ts';
+import Layout from '@layouts/Layout.astro';
+import NoContents from '@components/NoContents.astro';
+import Pagination from '@components/Pagination.astro';
+import BlogTagsLink from '@components/BlogTagsLink.astro';
+import BookReviewTile from '@components/BookReviewTile.astro';
+import styles from '@styles/blog.module.css';
+
+const [posts, tags, numberOfPages] = await Promise.all([
+  getPosts(NUMBER_OF_BOOK_REVIEWS_PER_PAGE, 'bookReview'),
+  getAllTags('bookReview'),
+  getNumberOfPages('bookReview'),
+]);
+
+const pageTitle = 'Book Reviews - My Blog';
+const pageDescription = 'これまでに読んだ本の感想';
+---
+
+<Layout
+  title="Book Reviews"
+  description={pageDescription}
+  path="/book-reviews"
+  ogImage=""
+  openGraph={{
+    basic: {
+      title: pageTitle,
+      type: 'website',
+      image: '',
+    },
+    image: { alt: pageTitle },
+  }}
+>
+  <div slot="main" class={styles.main}>
+    {
+      posts.length === 0 ? (
+        <NoContents contents={posts} />
+      ) : (
+        <div class="book-review-grid">
+          {(posts as BookReview[]).map((post) => (
+            <BookReviewTile post={post} />
+          ))}
+        </div>
+      )
+    }
+
+    <footer>
+      <Pagination
+        currentPage={1}
+        numberOfPages={numberOfPages}
+        basePath="/book-reviews"
+      />
+    </footer>
+  </div>
+
+  <div slot="aside" class={styles.aside}>
+    <BlogTagsLink heading="タグ一覧" tags={tags} basePath="/book-reviews" />
+  </div>
+</Layout>
+
+<style>
+  .book-review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

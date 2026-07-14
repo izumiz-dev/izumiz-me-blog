@@ -2,7 +2,7 @@
 
 ## 概要
 
-このプロジェクトは、**Astro** と **React** を使用し、Headless CMSとして **Notion** を利用した静的ブログサイトです。Notion APIを通じてコンテンツ（記事、ギャラリーアイテム）を取得し、静的にレンダリングします。
+このプロジェクトは、**Astro** と **React** を使用し、Headless CMSとして **Notion** を利用した静的ブログサイトです。Notion APIを通じてコンテンツ（記事、ギャラリーアイテム、本の感想）を取得し、静的にレンダリングします。
 
 このプロジェクトは `astro-notion-blog` のフォーク、またはその派生です。
 
@@ -46,7 +46,31 @@
 - `NOTION_API_SECRET`: Notion インテグレーションのトークン。
 - `DATABASE_ID`: ブログ記事用の Notion データベース ID。
 - `GALLERY_ID`: （オプション）ギャラリー用の Notion データベース ID。
+- `BOOK_REVIEW_ID`: （オプション）本の感想用の Notion データベース ID。
 - `PUBLIC_GA_TRACKING_ID`: （オプション）Google Analytics ID。
+
+### コンテンツソースの抽象化
+
+`src/lib/notion/client.ts` は `ContentSource`（`'blog' | 'gallery' | 'bookReview'`）で3つの Notion DB を切り替える。DB定義は `CONTENT_SOURCES` マップで一元管理し、各取得関数は `source` 引数（デフォルト `'blog'`）を取る。
+
+### Book Review DB のプロパティ
+
+将来的に別リポジトリの読書進捗管理アプリと DB を共有する前提で設計。ブログは `Published=true` かつ `Date <= now` のレコードのみを表示する。
+
+| プロパティ名    | Notion型     | 用途                             |
+| --------------- | ------------ | -------------------------------- |
+| `Page`          | title        | 本のタイトル                     |
+| `Slug`          | rich_text    | 詳細ページURL                    |
+| `Date`          | date         | 公開日／フィルタ・ソート基準     |
+| `Published`     | checkbox     | ブログ公開制御                   |
+| `FeaturedImage` | files        | 表紙画像                         |
+| `Author`        | rich_text    | 著者                             |
+| `Publisher`     | rich_text    | 出版社                           |
+| `ReadingStatus` | select       | 読了／読書中                     |
+| `Rating`        | number       | 星評価（1〜5）                   |
+| `Tags`          | multi_select | ジャンル分類                     |
+| `Excerpt`       | rich_text    | 一覧要約／OGP description        |
+| `Rank`          | number       | 既存互換（未使用でも存在させる） |
 
 ### コマンド
 

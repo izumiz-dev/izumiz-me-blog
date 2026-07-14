@@ -92,6 +92,8 @@ Cloudflare Pages のダッシュボードから手動でデプロイするか、
 ```sh
 export NOTION_API_SECRET=<YOUR_NOTION_API_SECRET>
 export DATABASE_ID=<YOUR_DATABASE_ID>
+export GALLERY_ID=<YOUR_GALLERY_DATABASE_ID>       # ギャラリー機能を使う場合
+export BOOK_REVIEW_ID=<YOUR_BOOK_REVIEW_DATABASE_ID> # 本の感想機能を使う場合
 ```
 
 2. 依存関係をインストールしローカルサーバーを起動します

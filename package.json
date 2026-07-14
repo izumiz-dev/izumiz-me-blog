@@ -82,6 +82,9 @@
           "!{projectRoot}/**/.*/**/*",
           {
             "env": "DATABASE_ID"
+          },
+          {
+            "env": "BOOK_REVIEW_ID"
           }
         ],
         "outputs": [

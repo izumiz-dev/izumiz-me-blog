@@ -15,7 +15,7 @@ import styles from '@styles/blog.module.css';
 import GalleryTile from '@components/GalleryTile.astro';
 
 export async function getStaticPaths() {
-  const numberOfPages = await getNumberOfPages(true);
+  const numberOfPages = await getNumberOfPages('gallery');
 
   let params = [];
   for (let i = 2; i <= numberOfPages; i++) {
@@ -27,9 +27,9 @@ export async function getStaticPaths() {
 const { page } = Astro.params;
 
 const [posts, tags, numberOfPages] = await Promise.all([
-  getPostsByPage(parseInt(page, 10), true),
-  getAllTags(true),
-  getNumberOfPages(true),
+  getPostsByPage(parseInt(page, 10), 'gallery'),
+  getAllTags('gallery'),
+  getNumberOfPages('gallery'),
 ]);
 
 const pageTitle = `Gallery Page ${page} - My Blog`;

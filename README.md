@@ -85,6 +85,8 @@ Please note that the astro-notion-blog requires manual deployment every time you
 ```sh
 export NOTION_API_SECRET=<YOUR_NOTION_API_SECRET>
 export DATABASE_ID=<YOUR_DATABASE_ID>
+export GALLERY_ID=<YOUR_GALLERY_DATABASE_ID>         # for the gallery feature
+export BOOK_REVIEW_ID=<YOUR_BOOK_REVIEW_DATABASE_ID> # for the book review feature
 ```
 
 2. Install dependencies and start local server

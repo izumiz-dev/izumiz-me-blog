@@ -1,0 +1,181 @@
+---
+import type { BookReview } from '@lib/interfaces.ts';
+import {
+  getAllPosts,
+  getPostBySlug,
+  getPostsByTag,
+  getBlock,
+  getAllTags,
+  getAllBlocksByBlockId,
+  downloadFile,
+} from '@lib/notion/client.ts';
+import {
+  getBookReviewLink,
+  filePath,
+  extractTargetBlocks,
+  blocksContainEquation,
+} from '@lib/blog-helpers.ts';
+import Layout from '@layouts/Layout.astro';
+import PostDate from '@components/PostDate.astro';
+import PostBody from '@components/PostBody.astro';
+import BlogTagsLink from '@components/BlogTagsLink.astro';
+import BookMeta from '@components/BookMeta.astro';
+import BookReviewTile from '@components/BookReviewTile.astro';
+import styles from '@styles/blog.module.css';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts('bookReview');
+  return (posts as BookReview[]).map((post) => ({
+    params: { slug: post.Slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const post = (await getPostBySlug(slug, 'bookReview')) as BookReview | null;
+if (!post) {
+  throw new Error(`Book review not found. slug: ${slug}`);
+}
+
+const [blocks, tags, postsHavingSameTag] = await Promise.all([
+  getAllBlocksByBlockId(post.PageId),
+  getAllTags('bookReview'),
+  getPostsByTag(post.Tags[0]?.name, 6, 'bookReview'),
+]);
+
+const fileAtacchedBlocks = extractTargetBlocks('image', blocks)
+  .concat(extractTargetBlocks('file', blocks))
+  .filter((block) => {
+    if (!block) {
+      return false;
+    }
+    const imageOrFile = block.Image || block.File;
+    return imageOrFile && imageOrFile.File && imageOrFile.File.Url;
+  });
+
+// Download files
+await Promise.all(
+  fileAtacchedBlocks
+    .map(async (block) => {
+      const expiryTime = (block.Image || block.File).File.ExpiryTime;
+      if (Date.parse(expiryTime) > Date.now()) {
+        return Promise.resolve(block);
+      }
+      return getBlock(block.Id);
+    })
+    .map((promise) =>
+      promise.then((block) => {
+        let url!: URL;
+        try {
+          url = new URL((block.Image || block.File).File.Url);
+        } catch {
+          console.log(
+            'Invalid file URL: ',
+            (block.Image || block.File)?.File?.Url
+          );
+          return Promise.reject();
+        }
+        return Promise.resolve(url);
+      })
+    )
+    .map((promise) => promise.then(downloadFile))
+);
+
+let ogImage = '';
+if (post.FeaturedImage && post.FeaturedImage.Url) {
+  ogImage = new URL(filePath(new URL(post.FeaturedImage.Url)), Astro.site);
+}
+
+const firstImageBlock = extractTargetBlocks('image', blocks)[0];
+let heroImageURL = '';
+if (firstImageBlock?.Image) {
+  if (firstImageBlock.Image.External?.Url) {
+    heroImageURL = firstImageBlock.Image.External.Url;
+  } else if (firstImageBlock.Image.File?.Url) {
+    try {
+      heroImageURL = filePath(new URL(firstImageBlock.Image.File.Url));
+    } catch {
+      heroImageURL = '';
+    }
+  }
+}
+
+const includeKatex = blocksContainEquation(blocks);
+---
+
+<Layout
+  title={post.Title}
+  description={post.Excerpt}
+  path={getBookReviewLink(post.Slug)}
+  ogImage={ogImage}
+  openGraph={{
+    basic: {
+      title: post.Title,
+      type: 'article',
+      image: new URL(`/og/${post.Slug}.png`, Astro.url.origin).toString(),
+    },
+    image: { alt: post.Title },
+  }}
+  includeKatex={includeKatex}
+  preloadImages={heroImageURL ? [heroImageURL] : []}
+>
+  <div slot="main" class={styles.main}>
+    <div class={styles.post}>
+      <PostDate post={post} />
+      <BookMeta post={post} />
+      <h1 class="book-review-title">{post.Title}</h1>
+      <PostBody blocks={blocks} />
+    </div>
+  </div>
+
+  <div slot="aside" class="aside">
+    <div class="related-books">
+      <h2>同じジャンルの本</h2>
+      {
+        (postsHavingSameTag as BookReview[])
+          .filter((p) => p.Slug !== post.Slug)
+          .map((p) => <BookReviewTile post={p} />)
+      }
+    </div>
+    <BlogTagsLink heading="タグ一覧" tags={tags} basePath="/book-reviews" />
+  </div>
+</Layout>
+
+<style>
+  .book-review-title {
+    margin: 0.4rem 0 1.4rem;
+    padding: 0 0 0.8rem 0;
+    font-size: 1.9rem;
+    font-weight: 800;
+    line-height: 1.4;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+
+  .related-books {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .related-books h2 {
+    grid-column: 1 / -1;
+    margin: 0 0 0.6rem;
+    padding: 0 0 0.3rem 0.4rem;
+    color: var(--fg-subtle);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-left: 2px solid var(--aqua-mid);
+    border-bottom: 1px solid var(--chrome-border);
+  }
+
+  @media (max-width: 640px) {
+    .book-review-title {
+      font-size: 1.5rem;
+      padding: 0 0 0.6rem 0;
+    }
+  }
+</style>

@@ -7,9 +7,10 @@ import '../styles/notion-color.css';
 export interface Props {
   heading: string;
   tags: SelectProperty[];
+  basePath?: string;
 }
 
-const { heading, tags } = Astro.props;
+const { heading, tags, basePath = '/posts' } = Astro.props;
 ---
 
 <div class="blog-tags-link">
@@ -21,7 +22,7 @@ const { heading, tags } = Astro.props;
       <ul>
         {tags.map((tag: SelectProperty) => (
           <li>
-            <a href={getTagLink(tag.name)} class={`tag ${tag.color}`}>
+            <a href={getTagLink(tag.name, basePath)} class={`tag ${tag.color}`}>
               {tag.name}
             </a>
           </li>

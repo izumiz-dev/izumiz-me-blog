@@ -54,13 +54,12 @@ const notion = new Client({
   notionVersion: '2026-03-11',
 });
 
-const GALLERY_MODE = false;
+const DATABASE_IDS = [
+  process.env.DATABASE_ID,
+  process.env.BOOK_REVIEW_ID,
+].filter(Boolean);
 
-const getAllPages = async (isGallery = false) => {
-  const databaseId = isGallery
-    ? process.env.GALLERY_ID
-    : process.env.DATABASE_ID;
-
+const getAllPages = async (databaseId) => {
   const dbResponse = await notion.databases.retrieve({
     database_id: databaseId,
   });
@@ -143,7 +142,10 @@ const getAllPages = async (isGallery = false) => {
 };
 
 (async () => {
-  const pages = await getAllPages(GALLERY_MODE);
+  const pagesByDatabase = await Promise.all(
+    DATABASE_IDS.map((databaseId) => getAllPages(databaseId))
+  );
+  const pages = pagesByDatabase.flat();
 
   const concurrency = parseInt(process.env.CACHE_CONCURRENCY || '1', 10);
 

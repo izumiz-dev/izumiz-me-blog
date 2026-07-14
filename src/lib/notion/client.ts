@@ -8,20 +8,24 @@ import sharp from 'sharp';
 import {
   DATABASE_ID,
   GALLERY_ID,
+  BOOK_REVIEW_ID,
   NOTION_API_SECRET,
   NUMBER_OF_POSTS_PER_PAGE,
   NUMBER_OF_GALLERY_PER_PAGE,
+  NUMBER_OF_BOOK_REVIEWS_PER_PAGE,
   REQUEST_TIMEOUT_MS,
 } from '../../server-constants';
 import type {
   Annotation,
   Block,
   Bookmark,
+  BookReview,
   BulletedListItem,
   Callout,
   Code,
   Column,
   ColumnList,
+  ContentSource,
   Database,
   Embed,
   Emoji,
@@ -63,26 +67,51 @@ const client = new Client({
   notionVersion: '2026-03-11',
 });
 
-let postsCache: Post[] | null = null;
-let dbCache: Database | null = null;
-let galleryPostsCache: GalleryItem[] | null = null;
-let galleryDbCache: Database | null = null;
+interface SourceConfig {
+  databaseId: string;
+  perPage: number;
+  hasSlug: boolean;
+  hasTags: boolean;
+}
+
+const CONTENT_SOURCES: Record<ContentSource, SourceConfig> = {
+  blog: {
+    databaseId: DATABASE_ID,
+    perPage: NUMBER_OF_POSTS_PER_PAGE,
+    hasSlug: true,
+    hasTags: true,
+  },
+  gallery: {
+    databaseId: GALLERY_ID,
+    perPage: NUMBER_OF_GALLERY_PER_PAGE,
+    hasSlug: false,
+    hasTags: false,
+  },
+  bookReview: {
+    databaseId: BOOK_REVIEW_ID,
+    perPage: NUMBER_OF_BOOK_REVIEWS_PER_PAGE,
+    hasSlug: true,
+    hasTags: true,
+  },
+};
+
+const postsCacheBySource: Partial<
+  Record<ContentSource, (Post | GalleryItem | BookReview)[]>
+> = {};
+const dbCacheBySource: Partial<Record<ContentSource, Database>> = {};
 
 const numberOfRetry = 2;
 
 export async function getAllPosts(
-  isGallery = false
-): Promise<(Post | GalleryItem)[]> {
-  if (postsCache !== null && !isGallery) {
-    return Promise.resolve(postsCache as Post[]);
-  }
-
-  if (galleryPostsCache !== null && isGallery) {
-    return Promise.resolve(galleryPostsCache as GalleryItem[]);
+  source: ContentSource = 'blog'
+): Promise<(Post | GalleryItem | BookReview)[]> {
+  const cached = postsCacheBySource[source];
+  if (cached !== undefined) {
+    return Promise.resolve(cached);
   }
 
   const dbResponse = (await client.databases.retrieve({
-    database_id: isGallery ? GALLERY_ID : DATABASE_ID,
+    database_id: CONTENT_SOURCES[source].databaseId,
   })) as responses.RetrieveDatabaseResponse;
   if (!dbResponse || dbResponse.in_trash) {
     console.error(
@@ -157,29 +186,23 @@ export async function getAllPosts(
     params['start_cursor'] = res.next_cursor as string;
   }
 
-  if (isGallery) {
-    galleryPostsCache = results
-      .filter((pageObject) => _validPageObject(pageObject, true))
-      .map((pageObject) => _buildPost(pageObject, true) as GalleryItem);
-    return galleryPostsCache;
-  }
-
-  postsCache = results
-    .filter((pageObject) => _validPageObject(pageObject, false))
-    .map((pageObject) => _buildPost(pageObject, false) as Post);
-  return postsCache;
+  const posts = results
+    .filter((pageObject) => _validPageObject(pageObject, source))
+    .map((pageObject) => _buildPost(pageObject, source));
+  postsCacheBySource[source] = posts;
+  return posts;
 }
 
 export async function getPosts(
   pageSize = 10,
-  isGallery = false
-): Promise<(Post | GalleryItem)[]> {
-  const allPosts = await getAllPosts(isGallery);
+  source: ContentSource = 'blog'
+): Promise<(Post | GalleryItem | BookReview)[]> {
+  const allPosts = await getAllPosts(source);
   return allPosts.slice(0, pageSize);
 }
 
 export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
-  const allPosts = (await getAllPosts(false)) as Post[];
+  const allPosts = (await getAllPosts('blog')) as Post[];
   return allPosts
     .filter((post) => !!post.Rank)
     .sort((a, b) => {
@@ -195,13 +218,14 @@ export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
 
 export async function getPostBySlug(
   slug: string,
-  isGallery = false
-): Promise<Post | GalleryItem | null> {
-  const allPosts = await getAllPosts(isGallery);
-  // Slug is not available in GalleryItem, so this function will not work for gallery items.
-  // This needs to be handled by the caller or by removing slug-based access for gallery.
-  if (isGallery) return null;
-  return (allPosts as Post[]).find((post) => post.Slug === slug) || null;
+  source: ContentSource = 'blog'
+): Promise<Post | GalleryItem | BookReview | null> {
+  if (!CONTENT_SOURCES[source].hasSlug) return null;
+  const allPosts = await getAllPosts(source);
+  return (
+    (allPosts as (Post | BookReview)[]).find((post) => post.Slug === slug) ||
+    null
+  );
 }
 
 export async function getPostByPageId(
@@ -213,11 +237,12 @@ export async function getPostByPageId(
 
 export async function getPostsByTag(
   tagName: string,
-  pageSize = 10
+  pageSize = 10,
+  source: ContentSource = 'blog'
 ): Promise<Post[]> {
   if (!tagName) return [];
 
-  const allPosts = (await getAllPosts(false)) as Post[];
+  const allPosts = (await getAllPosts(source)) as Post[];
   return allPosts
     .filter((post) =>
       post.Tags.find((tag: SelectProperty) => tag.name === tagName)
@@ -228,16 +253,14 @@ export async function getPostsByTag(
 // page starts from 1 not 0
 export async function getPostsByPage(
   page: number,
-  isGallery = false
-): Promise<(Post | GalleryItem)[]> {
+  source: ContentSource = 'blog'
+): Promise<(Post | GalleryItem | BookReview)[]> {
   if (page < 1) {
     return [];
   }
 
-  const allPosts = await getAllPosts(isGallery);
-  const itemsPerPage = isGallery
-    ? NUMBER_OF_GALLERY_PER_PAGE
-    : NUMBER_OF_POSTS_PER_PAGE;
+  const allPosts = await getAllPosts(source);
+  const itemsPerPage = CONTENT_SOURCES[source].perPage;
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -248,42 +271,48 @@ export async function getPostsByPage(
 // page starts from 1 not 0
 export async function getPostsByTagAndPage(
   tagName: string,
-  page: number
+  page: number,
+  source: ContentSource = 'blog'
 ): Promise<Post[]> {
   if (page < 1) {
     return [];
   }
 
-  const allPosts = (await getAllPosts(false)) as Post[];
+  const allPosts = (await getAllPosts(source)) as Post[];
   const posts = allPosts.filter((post) =>
     post.Tags.find((tag: SelectProperty) => tag.name === tagName)
   );
 
-  const startIndex = (page - 1) * NUMBER_OF_POSTS_PER_PAGE;
-  const endIndex = startIndex + NUMBER_OF_POSTS_PER_PAGE;
+  const itemsPerPage = CONTENT_SOURCES[source].perPage;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
   return posts.slice(startIndex, endIndex);
 }
 
-export async function getNumberOfPages(isGallery = false): Promise<number> {
-  const allPosts = await getAllPosts(isGallery);
-  const itemsPerPage = isGallery
-    ? NUMBER_OF_GALLERY_PER_PAGE
-    : NUMBER_OF_POSTS_PER_PAGE;
+export async function getNumberOfPages(
+  source: ContentSource = 'blog'
+): Promise<number> {
+  const allPosts = await getAllPosts(source);
+  const itemsPerPage = CONTENT_SOURCES[source].perPage;
   return (
     Math.floor(allPosts.length / itemsPerPage) +
     (allPosts.length % itemsPerPage > 0 ? 1 : 0)
   );
 }
 
-export async function getNumberOfPagesByTag(tagName: string): Promise<number> {
-  const allPosts = (await getAllPosts(false)) as Post[];
+export async function getNumberOfPagesByTag(
+  tagName: string,
+  source: ContentSource = 'blog'
+): Promise<number> {
+  const allPosts = (await getAllPosts(source)) as Post[];
   const posts = allPosts.filter((post) =>
     post.Tags.find((tag: SelectProperty) => tag.name === tagName)
   );
+  const itemsPerPage = CONTENT_SOURCES[source].perPage;
   return (
-    Math.floor(posts.length / NUMBER_OF_POSTS_PER_PAGE) +
-    (posts.length % NUMBER_OF_POSTS_PER_PAGE > 0 ? 1 : 0)
+    Math.floor(posts.length / itemsPerPage) +
+    (posts.length % itemsPerPage > 0 ? 1 : 0)
   );
 }
 
@@ -423,11 +452,13 @@ export async function getBlock(blockId: string): Promise<Block> {
   return _buildBlock(res);
 }
 
-export async function getAllTags(isGallery = false): Promise<SelectProperty[]> {
-  if (isGallery) {
-    return []; // Gallery items do not have tags based on the new model
+export async function getAllTags(
+  source: ContentSource = 'blog'
+): Promise<SelectProperty[]> {
+  if (!CONTENT_SOURCES[source].hasTags) {
+    return [];
   }
-  const allPosts = (await getAllPosts(false)) as Post[];
+  const allPosts = (await getAllPosts(source)) as Post[];
 
   const tagNames: string[] = [];
   return allPosts
@@ -499,17 +530,16 @@ export async function downloadFile(url: URL) {
   }
 }
 
-export async function getDatabase(isGallery = false): Promise<Database> {
-  if (dbCache !== null && !isGallery) {
-    return Promise.resolve(dbCache);
-  }
-
-  if (galleryDbCache !== null && isGallery) {
-    return Promise.resolve(galleryDbCache);
+export async function getDatabase(
+  source: ContentSource = 'blog'
+): Promise<Database> {
+  const cached = dbCacheBySource[source];
+  if (cached !== undefined) {
+    return Promise.resolve(cached);
   }
 
   const params: requestParams.RetrieveDatabase = {
-    database_id: isGallery ? GALLERY_ID : DATABASE_ID,
+    database_id: CONTENT_SOURCES[source].databaseId,
   };
 
   const res = await retry(
@@ -588,12 +618,7 @@ export async function getDatabase(isGallery = false): Promise<Database> {
     Cover: cover,
   };
 
-  if (isGallery) {
-    galleryDbCache = database;
-    return database;
-  }
-
-  dbCache = database;
+  dbCacheBySource[source] = database;
   return database;
 }
 
@@ -1064,14 +1089,14 @@ async function _getSyncedBlockChildren(block: Block): Promise<Block[]> {
 
 function _validPageObject(
   pageObject: responses.PageObject,
-  isGallery = false
+  source: ContentSource = 'blog'
 ): boolean {
   const prop = pageObject.properties;
   const commonConditions =
     !!prop.Page.title && prop.Page.title.length > 0 && !!prop.Date.date;
 
-  if (isGallery) {
-    return commonConditions; // Slug is not required for gallery items
+  if (!CONTENT_SOURCES[source].hasSlug) {
+    return commonConditions; // Slug is not required for this source
   }
 
   return (
@@ -1081,8 +1106,8 @@ function _validPageObject(
 
 function _buildPost(
   pageObject: responses.PageObject,
-  isGallery = false
-): Post | GalleryItem {
+  source: ContentSource = 'blog'
+): Post | GalleryItem | BookReview {
   const prop = pageObject.properties;
 
   let icon: FileObject | Emoji | null = null;
@@ -1127,7 +1152,7 @@ function _buildPost(
     }
   }
 
-  if (isGallery) {
+  if (source === 'gallery') {
     const galleryItem: GalleryItem = {
       PageId: pageObject.id,
       Title: prop.Page.title
@@ -1139,30 +1164,50 @@ function _buildPost(
       FeaturedImage: featuredImage,
     };
     return galleryItem;
-  } else {
-    const post: Post = {
-      PageId: pageObject.id,
-      Title: prop.Page.title
-        ? prop.Page.title.map((richText) => richText.plain_text).join('')
+  }
+
+  const post: Post = {
+    PageId: pageObject.id,
+    Title: prop.Page.title
+      ? prop.Page.title.map((richText) => richText.plain_text).join('')
+      : '',
+    Icon: icon,
+    Cover: cover,
+    Slug: prop.Slug.rich_text
+      ? prop.Slug.rich_text.map((richText) => richText.plain_text).join('')
+      : '',
+    Date: prop.Date.date ? prop.Date.date.start : '',
+    Tags: prop.Tags.multi_select ? prop.Tags.multi_select : [],
+    Excerpt:
+      prop.Excerpt.rich_text && prop.Excerpt.rich_text.length > 0
+        ? prop.Excerpt.rich_text.map((richText) => richText.plain_text).join('')
         : '',
-      Icon: icon,
-      Cover: cover,
-      Slug: prop.Slug.rich_text
-        ? prop.Slug.rich_text.map((richText) => richText.plain_text).join('')
-        : '',
-      Date: prop.Date.date ? prop.Date.date.start : '',
-      Tags: prop.Tags.multi_select ? prop.Tags.multi_select : [],
-      Excerpt:
-        prop.Excerpt.rich_text && prop.Excerpt.rich_text.length > 0
-          ? prop.Excerpt.rich_text
+    FeaturedImage: featuredImage,
+    Rank: prop.Rank.number ? prop.Rank.number : 0,
+  };
+
+  if (source === 'bookReview') {
+    const bookReview: BookReview = {
+      ...post,
+      Author:
+        prop.Author?.rich_text && prop.Author.rich_text.length > 0
+          ? prop.Author.rich_text
               .map((richText) => richText.plain_text)
               .join('')
           : '',
-      FeaturedImage: featuredImage,
-      Rank: prop.Rank.number ? prop.Rank.number : 0,
+      Publisher:
+        prop.Publisher?.rich_text && prop.Publisher.rich_text.length > 0
+          ? prop.Publisher.rich_text
+              .map((richText) => richText.plain_text)
+              .join('')
+          : '',
+      ReadingStatus: prop.ReadingStatus?.select?.name ?? '',
+      Rating: prop.Rating?.number ?? 0,
     };
-    return post;
+    return bookReview;
   }
+
+  return post;
 }
 
 function _buildRichText(richTextObject: responses.RichTextObject): RichText {
