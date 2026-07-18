@@ -18,14 +18,16 @@ const {
   rootPath = basePath,
 } = Astro.props;
 
+// numberOfPages が 0（コンテンツなし）の場合も 1 ページ目を最終ページとして扱う
+const totalPages = Math.max(1, numberOfPages);
+
 const isFirstPage = currentPage === 1;
-const isLastPage = currentPage === numberOfPages;
+const isLastPage = currentPage >= totalPages;
 const previousPage = currentPage - 1;
 const nextPage = currentPage + 1;
 
 const startPage = currentPage - 2 < 1 ? 1 : currentPage - 2;
-const endPage =
-  currentPage + 2 > numberOfPages ? numberOfPages : currentPage + 2;
+const endPage = currentPage + 2 > totalPages ? totalPages : currentPage + 2;
 
 let pages = [];
 for (let i = startPage; i <= endPage; i++) {
