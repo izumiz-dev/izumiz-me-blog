@@ -68,9 +68,17 @@ const fetchPriority = priority ? 'high' : undefined;
 // Cap tall (portrait) images so they don't dominate the viewport; wide
 // images are unaffected since 100% stays the smaller side of the min().
 const MAX_HEIGHT_PX = 640;
-const wrapperStyle =
+// The width sits on the outer figure column so the caption matches the
+// rendered image width; aspect-ratio / max-height stay on the (clipped)
+// image frame itself.
+const columnWidth =
   intrinsicWidth && intrinsicHeight
-    ? `aspect-ratio: ${aspectRatio}; width: min(100%, calc(min(70vh, ${MAX_HEIGHT_PX}px) * ${intrinsicWidth} / ${intrinsicHeight})); max-height: min(70vh, ${MAX_HEIGHT_PX}px);`
+    ? `min(100%, calc(min(70vh, ${MAX_HEIGHT_PX}px) * ${intrinsicWidth} / ${intrinsicHeight}))`
+    : undefined;
+const columnStyle = columnWidth ? `width: ${columnWidth};` : undefined;
+const frameStyle =
+  intrinsicWidth && intrinsicHeight
+    ? `aspect-ratio: ${aspectRatio}; max-height: min(70vh, ${MAX_HEIGHT_PX}px);`
     : undefined;
 ---
 
@@ -78,12 +86,27 @@ const wrapperStyle =
   {
     image && (
       <div
-        class:list={['image-frame', { 'image-frame--fallback': !wrapperStyle }]}
-        style={wrapperStyle}
+        class:list={['image-column', { 'image-column--fallback': !frameStyle }]}
+        style={columnStyle}
       >
-        <div>
-          {ENABLE_LIGHTBOX ? (
-            <a data-fslightbox href={image} data-type="image">
+        <div
+          class:list={['image-frame', { 'image-frame--fallback': !frameStyle }]}
+          style={frameStyle}
+        >
+          <div>
+            {ENABLE_LIGHTBOX ? (
+              <a data-fslightbox href={image} data-type="image">
+                <img
+                  src={image}
+                  alt="Image in a image block"
+                  loading={loading}
+                  fetchpriority={fetchPriority}
+                  decoding="async"
+                  width={intrinsicWidth}
+                  height={intrinsicHeight}
+                />
+              </a>
+            ) : (
               <img
                 src={image}
                 alt="Image in a image block"
@@ -93,18 +116,8 @@ const wrapperStyle =
                 width={intrinsicWidth}
                 height={intrinsicHeight}
               />
-            </a>
-          ) : (
-            <img
-              src={image}
-              alt="Image in a image block"
-              loading={loading}
-              fetchpriority={fetchPriority}
-              decoding="async"
-              width={intrinsicWidth}
-              height={intrinsicHeight}
-            />
-          )}
+            )}
+          </div>
         </div>
         <Caption richTexts={block.Image.Caption} />
       </div>
@@ -115,10 +128,22 @@ const wrapperStyle =
 <style>
   .image {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     margin: 0.2rem auto 0;
   }
-  .image > div {
+  /* Column carries the rendered image width so the caption below lines up
+     with the image edges; it holds the frame + caption stacked. */
+  .image-column {
+    display: flex;
+    flex-direction: column;
     margin: 0 auto;
+    max-width: 100%;
+  }
+  /* Without intrinsic dimensions the column has no explicit width, so keep
+     the caption from stretching past a comfortable measure. */
+  .image-column--fallback {
+    max-width: min(100%, 640px);
   }
   .image-frame {
     overflow: hidden;

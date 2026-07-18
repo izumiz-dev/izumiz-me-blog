@@ -30,7 +30,12 @@ const { blocks } = Astro.props;
   .post-body :global(li a:hover) {
     text-decoration-color: currentColor;
   }
-  /* Narrow the measure for text-only blocks, keep media/code wide */
+  /* Text blocks fill the 840px .post-body column (52.5rem cap), media/code
+     stay wide too. The old clamp(32rem, 62ch, 44rem) capped text at ~668px:
+     `ch` keys off the half-width "0" glyph, so 62ch collapsed to ~20
+     full-width chars/line and left a large right-hand gutter on wide
+     viewports while forcing awkward mid-phrase wraps. Using the full column
+     removes that gutter; kinsoku (below) keeps the longer lines readable. */
   .post-body :global(p),
   .post-body :global(ul),
   .post-body :global(ol),
@@ -40,7 +45,13 @@ const { blocks } = Astro.props;
   .post-body :global(blockquote),
   .post-body :global(.table-of-contents),
   .post-body :global(hr) {
-    max-width: clamp(32rem, 62ch, 44rem);
+    max-width: min(52.5rem, 100%);
+    /* Respect Japanese kinsoku; the body sets overflow-wrap: anywhere,
+       which breaks mid-phrase. Restrict breaks to long unbreakable runs
+       (URLs, long ASCII tokens) so words/phrases stay intact. */
+    word-break: normal;
+    overflow-wrap: break-word;
+    line-break: strict;
   }
   @media (max-width: 640px) {
     .post-body :global(p),
