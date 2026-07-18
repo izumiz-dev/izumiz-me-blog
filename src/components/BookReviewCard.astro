@@ -4,14 +4,13 @@ import { getBookReviewLink } from '../lib/blog-helpers.ts';
 import PostDate from './PostDate.astro';
 import PostTags from './PostTags.astro';
 import PostTitle from './PostTitle.astro';
+import BookMetaInline from './BookMetaInline.astro';
 
 export interface Props {
   post: BookReview;
 }
 
 const { post } = Astro.props;
-const stars =
-  '★'.repeat(post.Rating) + '☆'.repeat(Math.max(0, 5 - post.Rating));
 ---
 
 <div class="book-review-card">
@@ -23,15 +22,7 @@ const stars =
     stretched
     linkHref={getBookReviewLink(post.Slug)}
   />
-  <div class="book-meta">
-    {post.Author && <span class="book-author">著: {post.Author}</span>}
-    {post.Rating > 0 && <span class="book-rating">{stars}</span>}
-    {
-      post.ReadingStatus && (
-        <span class="book-status">{post.ReadingStatus}</span>
-      )
-    }
-  </div>
+  <BookMetaInline post={post} />
 </div>
 
 <style>
@@ -40,20 +31,5 @@ const stars =
   .book-review-card {
     display: flex;
     flex-direction: column;
-  }
-
-  .book-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    align-items: center;
-    margin-top: -0.3rem;
-    font-size: 0.85rem;
-    color: var(--fg-subtle);
-  }
-
-  .book-rating {
-    color: var(--aqua-mid);
-    letter-spacing: 0.05em;
   }
 </style>

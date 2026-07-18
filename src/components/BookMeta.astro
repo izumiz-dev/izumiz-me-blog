@@ -1,13 +1,13 @@
 ---
 import type { BookReview } from '../lib/interfaces';
+import { renderStars } from '../lib/blog-helpers';
 
 export interface Props {
   post: BookReview;
 }
 
 const { post } = Astro.props;
-const stars =
-  '★'.repeat(post.Rating) + '☆'.repeat(Math.max(0, 5 - post.Rating));
+const stars = renderStars(post.Rating);
 ---
 
 <div class="book-meta-detail">
@@ -59,7 +59,7 @@ const stars =
 
   .book-status {
     padding: 0.15rem 0.6rem;
-    border-radius: 999px;
+    border-radius: var(--radius-tight, 4px);
     background: var(--chrome-gradient);
     border: 1px solid var(--chrome-border);
     font-size: 0.8rem;

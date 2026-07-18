@@ -1,0 +1,34 @@
+---
+import type { BookReview } from '../lib/interfaces';
+import { renderStars } from '../lib/blog-helpers';
+
+export interface Props {
+  post: BookReview;
+}
+
+const { post } = Astro.props;
+const stars = renderStars(post.Rating);
+---
+
+<div class="book-meta">
+  {post.Author && <span class="book-author">著: {post.Author}</span>}
+  {post.Rating > 0 && <span class="book-rating">{stars}</span>}
+  {post.ReadingStatus && <span class="book-status">{post.ReadingStatus}</span>}
+</div>
+
+<style>
+  .book-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+    margin-top: -0.3rem;
+    font-size: 0.85rem;
+    color: var(--fg-subtle);
+  }
+
+  .book-rating {
+    color: var(--aqua-mid);
+    letter-spacing: 0.05em;
+  }
+</style>

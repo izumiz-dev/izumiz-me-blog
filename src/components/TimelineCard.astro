@@ -5,11 +5,13 @@ import {
   getFeaturedImageUrl,
   getDateStr,
   getBookReviewLink,
+  TIMELINE_BADGES,
 } from '@lib/blog-helpers.ts';
 import PostDate from './PostDate.astro';
 import PostTags from './PostTags.astro';
 import PostTitle from './PostTitle.astro';
 import GalleryImage from './GalleryImage.astro';
+import BookMetaInline from './BookMetaInline.astro';
 
 export interface Props {
   entry: TimelineEntry;
@@ -18,8 +20,7 @@ export interface Props {
 const { entry } = Astro.props;
 const { post, source } = entry;
 
-const badgeLabel =
-  source === 'blog' ? 'Blog' : source === 'gallery' ? 'Gallery' : 'Books';
+const badge = TIMELINE_BADGES[source];
 
 const galleryImageUrl =
   source === 'gallery'
@@ -27,8 +28,8 @@ const galleryImageUrl =
     : '';
 ---
 
-<div class:list={['timeline-card', `source-${source}`]}>
-  <span class:list={['badge', `badge-${source}`]}>{badgeLabel}</span>
+<div class="timeline-card">
+  <span class:list={['badge', badge.className]}>{badge.label}</span>
 
   {
     source === 'blog' && (
@@ -52,22 +53,7 @@ const galleryImageUrl =
           stretched
           linkHref={getBookReviewLink((post as BookReview).Slug)}
         />
-        <div class="book-meta">
-          {(post as BookReview).Author && (
-            <span class="book-author">著: {(post as BookReview).Author}</span>
-          )}
-          {(post as BookReview).Rating > 0 && (
-            <span class="book-rating">
-              {'★'.repeat((post as BookReview).Rating) +
-                '☆'.repeat(Math.max(0, 5 - (post as BookReview).Rating))}
-            </span>
-          )}
-          {(post as BookReview).ReadingStatus && (
-            <span class="book-status">
-              {(post as BookReview).ReadingStatus}
-            </span>
-          )}
-        </div>
+        <BookMetaInline post={post as BookReview} />
       </div>
     )
   }
@@ -199,7 +185,7 @@ const galleryImageUrl =
     border: 1px solid rgba(109, 63, 212, 0.6);
   }
 
-  .badge-book {
+  .badge-bookReview {
     color: #fff;
     background: linear-gradient(180deg, #fbbf24 0%, #d97706 55%, #b45309 100%);
     border: 1px solid rgba(180, 83, 9, 0.6);
@@ -209,22 +195,6 @@ const galleryImageUrl =
   .card-body {
     display: flex;
     flex-direction: column;
-  }
-
-  /* 書籍メタ(著者/★/状態) — ブログカードのタイトル下に置く小さな1行 */
-  .book-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    align-items: center;
-    margin-top: -0.3rem;
-    font-size: 0.85rem;
-    color: var(--fg-subtle);
-  }
-
-  .book-rating {
-    color: var(--aqua-mid);
-    letter-spacing: 0.05em;
   }
 
   /* Gallery: clickable card, thumbnail + date + title */

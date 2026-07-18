@@ -1,6 +1,7 @@
 import { BASE_PATH, REQUEST_TIMEOUT_MS } from '../server-constants';
 import type {
   Block,
+  ContentSource,
   FileObject,
   Heading1,
   Heading2,
@@ -10,6 +11,17 @@ import type {
   Column,
 } from './interfaces';
 import { pathJoin } from './utils';
+
+// TimelineCard のバッジ表示。ContentSource を網羅しないとコンパイルエラーになるため、
+// 新しい source を追加した際にラベル/クラス名の追加漏れを型で検出できる。
+export const TIMELINE_BADGES: Record<
+  ContentSource,
+  { label: string; className: string }
+> = {
+  blog: { label: 'Blog', className: 'badge-blog' },
+  gallery: { label: 'Gallery', className: 'badge-gallery' },
+  bookReview: { label: 'Books', className: 'badge-bookReview' },
+};
 
 export const filePath = (url: URL): string => {
   const [dir, filename] = url.pathname.split('/').slice(-2);
@@ -32,6 +44,12 @@ export const getFeaturedImageUrl = (
   } catch {
     return image.Url;
   }
+};
+
+// clamp to 0-5 to avoid String.prototype.repeat RangeError on bad input
+export const renderStars = (rating: number): string => {
+  const n = Math.max(0, Math.min(5, Math.round(rating || 0)));
+  return '★'.repeat(n) + '☆'.repeat(5 - n);
 };
 
 export const extractTargetBlocks = (
@@ -174,19 +192,14 @@ export const getTagLink = (tag: string, basePath: string = '/posts') => {
 export const getPageLink = (
   page: number,
   tag: string,
-  basePath: string = '/posts'
+  basePath: string = '/posts',
+  rootPath: string = basePath
 ) => {
   if (page === 1) {
     if (tag) {
       return getTagLink(tag, basePath);
     }
-    if (basePath === '/gallery') {
-      return pathJoin(BASE_PATH, '/gallery');
-    }
-    if (basePath === '/posts') {
-      return pathJoin(BASE_PATH, '/posts');
-    }
-    return pathJoin(BASE_PATH, '/');
+    return pathJoin(BASE_PATH, rootPath);
   }
   if (tag) {
     return pathJoin(

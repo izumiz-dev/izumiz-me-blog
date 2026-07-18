@@ -1,7 +1,7 @@
 ---
-import { Post } from '../../lib/interfaces.ts';
+import type { Post, BookReview } from '../../lib/interfaces.ts';
 import { getPostByPageId } from '../../lib/notion/client';
-import { getPostLink } from '../../lib/blog-helpers.ts';
+import { getPostLink, getBookReviewLink } from '../../lib/blog-helpers.ts';
 import '../../styles/notion-color.css';
 import arrow from '../../images/icon-arrow-link.svg';
 
@@ -11,15 +11,24 @@ export interface Props {
 
 const { pageId } = Astro.props;
 
-let post: Post = null;
+let post: Post | BookReview | null = null;
+let href = '';
 if (pageId) {
-  post = await getPostByPageId(pageId);
+  const entry = await getPostByPageId(pageId);
+  // gallery items have no slug, so they can't be linked to from a Mention
+  if (entry && entry.source !== 'gallery') {
+    post = entry.post as Post | BookReview;
+    href =
+      entry.source === 'bookReview'
+        ? getBookReviewLink(post.Slug)
+        : getPostLink(post.Slug);
+  }
 }
 ---
 
 {
   post ? (
-    <a href={getPostLink(post.Slug)} class="link">
+    <a href={href} class="link">
       <>
         <span class="icon">
           {post.Icon && post.Icon.Type === 'emoji' ? (

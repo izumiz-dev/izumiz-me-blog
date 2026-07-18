@@ -6,9 +6,10 @@ import '../styles/notion-color.css';
 export interface Props {
   post: Post;
   enableLink?: boolean;
+  basePath?: string;
 }
 
-const { post, enableLink, basePath = '/posts' } = Astro.props; // デフォルト値を削除
+const { post, enableLink, basePath = '/posts' } = Astro.props;
 ---
 
 <div class="post-tags">

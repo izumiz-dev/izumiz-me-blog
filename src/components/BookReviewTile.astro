@@ -1,20 +1,34 @@
 ---
 import type { BookReview } from '../lib/interfaces';
-import { getBookReviewLink } from '../lib/blog-helpers';
-import GalleryImage from './GalleryImage.astro';
+import {
+  getBookReviewLink,
+  renderStars,
+  getFeaturedImageUrl,
+} from '../lib/blog-helpers';
 
 export interface Props {
   post: BookReview;
 }
 
 const { post } = Astro.props;
-const stars =
-  '★'.repeat(post.Rating) + '☆'.repeat(Math.max(0, 5 - post.Rating));
+const stars = renderStars(post.Rating);
+const imageUrl = getFeaturedImageUrl(post.FeaturedImage);
 ---
 
 <div class="book-review-tile">
   <a href={getBookReviewLink(post.Slug)}>
-    <GalleryImage post={post} />
+    {
+      imageUrl && (
+        <div class="book-cover-wrap">
+          <img
+            class="book-cover"
+            src={imageUrl}
+            alt={post.Title}
+            loading="lazy"
+          />
+        </div>
+      )
+    }
     <h2 class="book-title" title={post.Title}>
       {post.Title}
     </h2>
@@ -39,6 +53,30 @@ const stars =
   .book-review-tile a {
     color: inherit;
     text-decoration: none;
+  }
+
+  .book-cover-wrap {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--chrome-border);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      0 3px 12px rgba(20, 40, 80, 0.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    .book-cover-wrap {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        0 3px 14px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .book-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
 
   .book-title {

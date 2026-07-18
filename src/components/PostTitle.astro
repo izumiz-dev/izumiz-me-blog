@@ -6,6 +6,7 @@ export interface Props {
   post: Post | GalleryItem;
   enableLink: boolean;
   linkHref?: string;
+  stretched?: boolean;
 }
 
 const { post, enableLink = true, linkHref, stretched = false } = Astro.props;

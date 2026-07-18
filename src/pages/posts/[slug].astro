@@ -119,7 +119,7 @@ const includeKatex = blocksContainEquation(blocks);
     basic: {
       title: post.Title,
       type: 'article',
-      image: new URL(`/og/${post.Slug}.png`, Astro.url.origin).toString(),
+      image: new URL(`/og/blog/${post.Slug}.png`, Astro.url.origin).toString(),
     },
     image: { alt: post.Title },
   }}

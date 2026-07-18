@@ -4,8 +4,10 @@ import { getPageLink } from '../lib/blog-helpers.ts';
 export interface Props {
   currentPage: number;
   numberOfPages: number;
-  tag?: string; // tag をオプショナルに変更
+  tag?: string;
   basePath?: string;
+  // page 1 の URL。省略時は basePath と同じ(例: /timeline は "/" を渡す)
+  rootPath?: string;
 }
 
 const {
@@ -13,6 +15,7 @@ const {
   numberOfPages,
   tag,
   basePath = Astro.url.pathname.startsWith('/gallery') ? '/gallery' : '/posts',
+  rootPath = basePath,
 } = Astro.props;
 
 const isFirstPage = currentPage === 1;
@@ -33,13 +36,15 @@ for (let i = startPage; i <= endPage; i++) {
 <div class="pagination">
   {
     !isFirstPage && (
-      <a href={getPageLink(previousPage, tag || '', basePath)}>{'<'}</a>
+      <a href={getPageLink(previousPage, tag || '', basePath, rootPath)}>
+        {'<'}
+      </a>
     )
   }
   {
     pages.map((p: number) => (
       <a
-        href={getPageLink(p, tag || '', basePath)}
+        href={getPageLink(p, tag || '', basePath, rootPath)}
         class={`${p === currentPage ? 'is-current' : ''} ${p === currentPage && basePath.startsWith('/posts') ? 'active-blog' : ''} ${p === currentPage && basePath.startsWith('/gallery') ? 'active-gallery' : ''}`}
       >
         {p}
@@ -48,7 +53,7 @@ for (let i = startPage; i <= endPage; i++) {
   }
   {
     !isLastPage && (
-      <a href={getPageLink(nextPage, tag || '', basePath)}>{'>'}</a>
+      <a href={getPageLink(nextPage, tag || '', basePath, rootPath)}>{'>'}</a>
     )
   }
 </div>

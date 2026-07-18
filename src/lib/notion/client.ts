@@ -102,6 +102,8 @@ const postsCacheBySource: Partial<
 > = {};
 const dbCacheBySource: Partial<Record<ContentSource, Database>> = {};
 
+const TIMELINE_SOURCES: ContentSource[] = ['blog', 'gallery', 'bookReview'];
+
 const numberOfRetry = 2;
 
 export async function getAllPosts(
@@ -110,6 +112,11 @@ export async function getAllPosts(
   const cached = postsCacheBySource[source];
   if (cached !== undefined) {
     return Promise.resolve(cached);
+  }
+
+  if (!CONTENT_SOURCES[source].databaseId) {
+    postsCacheBySource[source] = [];
+    return [];
   }
 
   const dbResponse = (await client.databases.retrieve({
@@ -232,9 +239,15 @@ export async function getPostBySlug(
 
 export async function getPostByPageId(
   pageId: string
-): Promise<Post | GalleryItem | null> {
-  const allPosts = await getAllPosts();
-  return allPosts.find((post) => post.PageId === pageId) || null;
+): Promise<TimelineEntry | null> {
+  for (const source of TIMELINE_SOURCES) {
+    const allPosts = await getAllPosts(source);
+    const post = allPosts.find((p) => p.PageId === pageId);
+    if (post) {
+      return { post, source };
+    }
+  }
+  return null;
 }
 
 export async function getPostsByTag(
@@ -304,23 +317,19 @@ export async function getNumberOfPages(
 }
 
 export async function getAllContent(): Promise<TimelineEntry[]> {
-  const [blogs, galleries, bookReviews] = await Promise.all([
-    getAllPosts('blog'),
-    getAllPosts('gallery'),
-    getAllPosts('bookReview'),
-  ]);
+  const results = await Promise.allSettled(
+    TIMELINE_SOURCES.map((source) => getAllPosts(source))
+  );
 
-  const entries: TimelineEntry[] = [
-    ...(blogs as Post[]).map((post) => ({ post, source: 'blog' as const })),
-    ...(galleries as GalleryItem[]).map((post) => ({
-      post,
-      source: 'gallery' as const,
-    })),
-    ...(bookReviews as BookReview[]).map((post) => ({
-      post,
-      source: 'bookReview' as const,
-    })),
-  ];
+  const entries: TimelineEntry[] = [];
+  results.forEach((result, i) => {
+    const source = TIMELINE_SOURCES[i];
+    if (result.status === 'fulfilled') {
+      result.value.forEach((post) => entries.push({ post, source }));
+    } else {
+      console.error(`Failed to fetch "${source}" content:`, result.reason);
+    }
+  });
 
   return entries.sort(
     (a, b) => new Date(b.post.Date).getTime() - new Date(a.post.Date).getTime()
@@ -1148,7 +1157,7 @@ function _validPageObject(
   }
 
   return (
-    commonConditions && !!prop.Slug.rich_text && prop.Slug.rich_text.length > 0
+    commonConditions && !!prop.Slug?.rich_text && prop.Slug.rich_text.length > 0
   );
 }
 
@@ -1221,17 +1230,17 @@ function _buildPost(
       : '',
     Icon: icon,
     Cover: cover,
-    Slug: prop.Slug.rich_text
+    Slug: prop.Slug?.rich_text
       ? prop.Slug.rich_text.map((richText) => richText.plain_text).join('')
       : '',
     Date: prop.Date.date ? prop.Date.date.start : '',
-    Tags: prop.Tags.multi_select ? prop.Tags.multi_select : [],
+    Tags: prop.Tags?.multi_select ? prop.Tags.multi_select : [],
     Excerpt:
-      prop.Excerpt.rich_text && prop.Excerpt.rich_text.length > 0
+      prop.Excerpt?.rich_text && prop.Excerpt.rich_text.length > 0
         ? prop.Excerpt.rich_text.map((richText) => richText.plain_text).join('')
         : '',
     FeaturedImage: featuredImage,
-    Rank: prop.Rank.number ? prop.Rank.number : 0,
+    Rank: prop.Rank?.number ? prop.Rank.number : 0,
   };
 
   if (source === 'bookReview') {
