@@ -12,71 +12,266 @@ export interface Props {
 const { block, headings } = Astro.props;
 ---
 
-<div class="table-of-contents">
-  {
-    headings.map((headingBlock: interfaces.Block) => {
-      const heading =
-        headingBlock.Heading1 ||
-        headingBlock.Heading2 ||
-        headingBlock.Heading3 ||
-        headingBlock.Heading4;
+<nav
+  class={`table-of-contents ${snakeToKebab(block.TableOfContents.Color)}`}
+  aria-label="目次"
+>
+  <p class="toc-label">
+    <span class="toc-chip">
+      <span class="toc-rivet" aria-hidden="true"></span>
+      Contents
+    </span>
+  </p>
+  <ul class="toc-list">
+    {
+      headings.map((headingBlock: interfaces.Block) => {
+        const heading =
+          headingBlock.Heading1 ||
+          headingBlock.Heading2 ||
+          headingBlock.Heading3 ||
+          headingBlock.Heading4;
 
-      let indentClass = '';
-      if (headingBlock.Type === 'heading_2') {
-        indentClass = 'indent-1';
-      } else if (headingBlock.Type === 'heading_3') {
-        indentClass = 'indent-2';
-      } else if (headingBlock.Type === 'heading_4') {
-        indentClass = 'indent-3';
-      }
+        let indentClass = '';
+        if (headingBlock.Type === 'heading_2') {
+          indentClass = 'indent-1';
+        } else if (headingBlock.Type === 'heading_3') {
+          indentClass = 'indent-2';
+        } else if (headingBlock.Type === 'heading_4') {
+          indentClass = 'indent-3';
+        }
 
-      return (
-        <a
-          href={`#${buildHeadingId(heading!)}`}
-          class={`table-of-contents ${snakeToKebab(
-            block.TableOfContents.Color
-          )} ${indentClass}`}
-        >
-          {heading.RichTexts.map(
-            (richText: interfaces.RichText) => richText.PlainText
-          ).join('')}
-        </a>
-      );
-    })
-  }
-</div>
+        return (
+          <li class={indentClass}>
+            <a href={`#${buildHeadingId(heading!)}`}>
+              {heading.RichTexts.map(
+                (richText: interfaces.RichText) => richText.PlainText
+              ).join('')}
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</nav>
 
 <style>
+  /* Framed glass card per DESIGN.md recipe, pushed glossier: a vertical
+     bright→dim gradient + a layered inner shadow (top rim highlight, lower
+     inset shade for depth) gives the panel the same wet-glass sheen as the
+     tag chips / callouts instead of reading flat. */
   .table-of-contents {
-    margin: 0.6rem 0 1rem;
-    padding: 0.4rem 0.2rem;
+    position: relative;
+    margin: 1.1em auto 1.4em;
+    padding: 0.7rem 0.95rem 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--chrome-border);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(244, 249, 254, 0.5) 42%,
+      rgba(226, 236, 247, 0.42) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -14px 20px rgba(20, 40, 80, 0.04),
+      0 3px 12px rgba(20, 40, 80, 0.12);
+    overflow: hidden;
   }
-  .table-of-contents > a {
+  /* Glossy top sheen: a soft radial bloom in the upper area plus the
+     industrial hairline (matches Callout), so light appears to catch the
+     top edge of the glass. */
+  .table-of-contents::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 55%;
+    background:
+      radial-gradient(
+        120% 100% at 50% -30%,
+        rgba(255, 255, 255, 0.55),
+        rgba(255, 255, 255, 0) 70%
+      ),
+      linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    background-size:
+      100% 100%,
+      84% 1px;
+    background-position:
+      center top,
+      center top;
+    background-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  .toc-label {
+    display: flex;
+    align-items: center;
+    margin: 0 0 0.55rem;
+    padding: 0 0.1rem 0.5rem;
+    border-bottom: 1px solid var(--chrome-border);
+  }
+  /* Glossy chrome chip for the label — same vertical-gradient + inset sheen
+     recipe as the tag chips, so the heading reads as a lit metal badge. */
+  .toc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-tight);
+    border: 1px solid var(--chrome-border);
+    background: linear-gradient(
+      180deg,
+      var(--chrome-bright) 0%,
+      var(--chrome-mid) 55%,
+      var(--chrome-shade) 100%
+    );
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      inset 0 -1px 0 var(--chrome-rim-bottom),
+      0 1px 2px rgba(20, 40, 80, 0.14);
+    font-family: var(--font-round);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+  /* A single rivet dot — a quiet nod to the industrial detailing. */
+  .toc-rivet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 35% 30%,
+      #fff,
+      var(--aqua-bright) 45%,
+      var(--aqua-shade)
+    );
+    box-shadow:
+      inset 0 0.5px 0.5px rgba(255, 255, 255, 0.8),
+      0 0.5px 1.5px rgba(20, 40, 80, 0.4);
+  }
+
+  .toc-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .toc-list li {
+    margin: 0;
+  }
+  .toc-list a {
+    position: relative;
     display: block;
-    line-height: 1.5;
-    padding: 0.1rem 0.5rem;
-    border-radius: calc(var(--radius) / 2);
-    font-size: 0.9rem;
+    line-height: 1.35;
+    padding: 0.24rem 0.55rem;
+    border-radius: var(--radius-tight);
+    border: 1px solid transparent;
+    font-size: 0.88rem;
     font-weight: 500;
     text-decoration: none;
     color: var(--fg);
-    transition: background-color 0.15s ease;
+    transition:
+      background 0.16s ease,
+      color 0.16s ease,
+      border-color 0.16s ease,
+      box-shadow 0.16s ease;
   }
-  .table-of-contents > a:hover {
-    background: var(--my-hover-color);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-    text-decoration-thickness: 0.06em;
+  /* Glossy Aqua hover: vertical aqua gradient + inset top highlight, echoing
+     the active nav tab / pagination key so the whole set feels lit, not flat. */
+  .toc-list a:hover {
+    border-color: color-mix(
+      in oklab,
+      var(--aqua-mid) 55%,
+      var(--chrome-border)
+    );
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--aqua-bright) 34%, white) 0%,
+      color-mix(in oklab, var(--aqua-bright) 22%, white) 100%
+    );
+    color: var(--aqua-shade);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.85),
+      0 1px 3px rgba(20, 60, 120, 0.16);
   }
-  .table-of-contents > a.indent-1 {
-    padding-left: 1.5rem;
+  .toc-list a:focus-visible {
+    outline: 2px solid var(--aqua-mid);
+    outline-offset: 1px;
   }
-  .table-of-contents > a.indent-2 {
-    padding-left: 3rem;
+  .toc-list li.indent-1 a {
+    padding-left: 1.35rem;
   }
-  .table-of-contents > a.indent-3 {
-    padding-left: 4.5rem;
+  .toc-list li.indent-2 a {
+    padding-left: 2.4rem;
     font-size: 0.85rem;
+  }
+  .toc-list li.indent-3 a {
+    padding-left: 3.45rem;
+    font-size: 0.83rem;
     color: var(--fg-muted);
+  }
+  .toc-list li.indent-2 a:hover,
+  .toc-list li.indent-3 a:hover {
+    color: var(--aqua-shade);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .table-of-contents {
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.09) 0%,
+        rgba(255, 255, 255, 0.035) 42%,
+        rgba(255, 255, 255, 0.015) 100%
+      );
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        inset 0 -14px 20px rgba(0, 0, 0, 0.18),
+        0 3px 14px rgba(0, 0, 0, 0.35);
+    }
+    .table-of-contents::before {
+      background:
+        radial-gradient(
+          120% 100% at 50% -30%,
+          rgba(255, 255, 255, 0.14),
+          rgba(255, 255, 255, 0) 70%
+        ),
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.22),
+          transparent
+        );
+      background-size:
+        100% 100%,
+        84% 1px;
+      background-position:
+        center top,
+        center top;
+      background-repeat: no-repeat;
+    }
+    /* Chip already reads on gunmetal via chrome tokens, but lift its text. */
+    .toc-chip {
+      color: var(--fg);
+    }
+    .toc-list a:hover {
+      border-color: color-mix(
+        in oklab,
+        var(--aqua-mid) 50%,
+        var(--chrome-border)
+      );
+      background: linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--aqua-mid) 34%, transparent) 0%,
+        color-mix(in oklab, var(--aqua-mid) 18%, transparent) 100%
+      );
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    .toc-list a:hover,
+    .toc-list li.indent-2 a:hover,
+    .toc-list li.indent-3 a:hover {
+      color: var(--aqua-bright);
+    }
   }
 </style>
