@@ -145,11 +145,12 @@ if (postHttpUrl) {
 
 <style>
   .bluesky-embed-wrapper {
+    position: relative;
     width: 100%;
     max-width: 550px;
-    margin: 0.4rem auto;
+    margin: 1.6rem auto;
     border-radius: calc(var(--radius, 12px) + 6px);
-    padding: 8px;
+    padding: 8px 8px 15px;
     background: linear-gradient(
       180deg,
       var(--chrome-mid) 0%,
@@ -172,13 +173,34 @@ if (postHttpUrl) {
     }
   }
 
-  /* Bluesky カード本体。
-     iframe 内の白カードは角丸を持たない矩形なので、ここで角丸クリップすると
-     コーナーに「白い耳」が残ってしまう。角丸は外側のクローム枠側で表現し、
-     カード自体は直角(radius 0)にして耳を構造的に消す。 */
+  .bluesky-embed-wrapper::after {
+    content: 'BSKY';
+    position: absolute;
+    right: 12px;
+    bottom: 2px;
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    line-height: 1;
+    color: rgba(70, 82, 104, 0.6);
+    text-shadow: 0 1px 0 var(--chrome-rim);
+    pointer-events: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    .bluesky-embed-wrapper::after {
+      color: rgba(0, 0, 0, 0.55);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  /* embed 内カードの角丸は 32px（embed.bsky.app の rounded-[32px]）。
+     カードの角丸の外側は embed ページの body が白のまま（ダークモードでも）
+     塗られるため、同じ 32px でクリップして白い角を切り落とす。
+     半径がズレると白い耳が残るので --radius は使わないこと。 */
   .bluesky-embed-wrapper :global(.bluesky-embed) {
     margin: 0 !important;
-    border-radius: 0;
+    border-radius: 32px;
     overflow: hidden;
     background: transparent;
   }
@@ -186,7 +208,13 @@ if (postHttpUrl) {
   .bluesky-embed-wrapper :global(.bluesky-embed iframe) {
     display: block;
     width: 100%;
-    border-radius: 0;
+    border-radius: inherit;
     background: transparent;
+  }
+
+  @media (max-width: 640px) {
+    .bluesky-embed-wrapper {
+      margin: 1.1rem auto;
+    }
   }
 </style>
