@@ -217,11 +217,13 @@ const { block, headings } = Astro.props;
 
   @media (prefers-color-scheme: dark) {
     .table-of-contents {
+      /* Keep the dark panel gunmetal, not milky: much lower white mix than
+         light mode so it sits at the same value as the other dark cards. */
       background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.09) 0%,
-        rgba(255, 255, 255, 0.035) 42%,
-        rgba(255, 255, 255, 0.015) 100%
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.025) 42%,
+        rgba(255, 255, 255, 0.012) 100%
       );
       box-shadow:
         inset 0 1px 0 var(--chrome-rim),
@@ -229,16 +231,19 @@ const { block, headings } = Astro.props;
         0 3px 14px rgba(0, 0, 0, 0.35);
     }
     .table-of-contents::before {
+      /* Dim the top bloom hard in dark mode — the bright radial washed the
+         card out. Keep only a faint sheen near the very top + the hairline. */
+      height: 34%;
       background:
         radial-gradient(
-          120% 100% at 50% -30%,
-          rgba(255, 255, 255, 0.14),
+          120% 100% at 50% -60%,
+          rgba(255, 255, 255, 0.06),
           rgba(255, 255, 255, 0) 70%
         ),
         linear-gradient(
           90deg,
           transparent,
-          rgba(255, 255, 255, 0.22),
+          rgba(255, 255, 255, 0.18),
           transparent
         );
       background-size:
