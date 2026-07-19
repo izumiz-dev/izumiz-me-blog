@@ -172,9 +172,13 @@ if (postHttpUrl) {
     }
   }
 
+  /* Bluesky カード本体。
+     iframe 内の白カードは角丸を持たない矩形なので、ここで角丸クリップすると
+     コーナーに「白い耳」が残ってしまう。角丸は外側のクローム枠側で表現し、
+     カード自体は直角(radius 0)にして耳を構造的に消す。 */
   .bluesky-embed-wrapper :global(.bluesky-embed) {
     margin: 0 !important;
-    border-radius: var(--radius, 12px);
+    border-radius: 0;
     overflow: hidden;
     background: transparent;
   }
@@ -182,7 +186,7 @@ if (postHttpUrl) {
   .bluesky-embed-wrapper :global(.bluesky-embed iframe) {
     display: block;
     width: 100%;
-    border-radius: inherit;
+    border-radius: 0;
     background: transparent;
   }
 </style>
