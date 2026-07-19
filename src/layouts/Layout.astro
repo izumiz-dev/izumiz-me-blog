@@ -31,6 +31,7 @@ export interface Props {
   openGraph: OpenGraph;
   includeKatex?: boolean;
   preloadImages?: string[];
+  robots?: string;
 }
 
 const {
@@ -41,6 +42,7 @@ const {
   openGraph,
   includeKatex = false,
   preloadImages = [],
+  robots = 'max-image-preview:large',
 } = Astro.props;
 
 const database = await getDatabase();
@@ -85,7 +87,7 @@ const uniquePreloadImages = preloadImages
 <html lang="ja" prefix="og: https://ogp.me/ns#">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="max-image-preview:large" />
+    <meta name="robots" content={robots} />
     <meta charset="UTF-8" />
     <meta name="color-scheme" content="light dark" />
     <meta

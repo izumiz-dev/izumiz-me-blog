@@ -1,0 +1,405 @@
+---
+import { getNavLink } from '@lib/blog-helpers.ts';
+import Layout from '@layouts/Layout.astro';
+
+const title = 'ページが見つかりません';
+const description = '指定されたページは見つかりませんでした。';
+const openGraph = {
+  basic: {
+    title,
+    type: 'website' as const,
+    image: '',
+  },
+  image: {
+    alt: title,
+  },
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  path="/404"
+  ogImage=""
+  openGraph={openGraph}
+  robots="noindex, nofollow"
+>
+  <section slot="main" class="not-found" aria-labelledby="not-found-title">
+    <div class="route-monitor">
+      <div class="monitor-bar">
+        <span class="monitor-lights" aria-hidden="true">
+          <i></i><i></i><i></i>
+        </span>
+        <span class="monitor-label">ROUTE MONITOR</span>
+        <span class="monitor-status">
+          <i aria-hidden="true"></i>
+          NO SIGNAL
+        </span>
+      </div>
+
+      <div class="monitor-screen">
+        <div class="error-code" aria-hidden="true">404</div>
+        <div class="message">
+          <p class="eyebrow">LINK STATUS / LOST</p>
+          <h2 id="not-found-title">ページが見つかりません</h2>
+          <p>
+            URLが変わったか、ページが移動したようです。トップページからもう一度たどってください。
+          </p>
+          <nav class="actions" aria-label="404ページの移動先">
+            <a class="primary-action" href={getNavLink('/')}>トップへ戻る</a>
+            <a class="secondary-action" href={getNavLink('/posts')}
+              >記事一覧を見る</a
+            >
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .not-found {
+    display: grid;
+    min-height: clamp(28rem, 62vh, 42rem);
+    place-items: center;
+    padding: 2rem 0 3rem;
+  }
+
+  .route-monitor {
+    width: min(100%, 46rem);
+    overflow: hidden;
+    padding: 4px;
+    border: 1px solid var(--chrome-border);
+    border-radius: var(--radius);
+    background: var(--chrome-gradient);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      inset 0 -1px 0 var(--chrome-rim-bottom),
+      0 8px 24px rgba(20, 40, 80, 0.16);
+  }
+
+  .monitor-bar {
+    display: flex;
+    align-items: center;
+    min-height: 2.35rem;
+    gap: 0.65rem;
+    padding: 0.35rem 0.65rem;
+    overflow: hidden;
+    border-radius: calc(var(--radius) - 2px) calc(var(--radius) - 2px) 0 0;
+    background: linear-gradient(
+      180deg,
+      #4a5063,
+      #2b3040 48%,
+      #13161f 52%,
+      #252a38
+    );
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+    color: rgba(255, 255, 255, 0.74);
+    font-family: var(--font-mono);
+  }
+
+  .monitor-lights {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.35rem;
+  }
+
+  .monitor-lights i,
+  .monitor-status i {
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgba(0, 0, 0, 0.45);
+    border-radius: 50%;
+    background: var(--chrome-shade);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+
+  .monitor-lights i:nth-child(2) {
+    background: var(--aqua-mid);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 0 6px color-mix(in srgb, var(--aqua-bright) 55%, transparent);
+  }
+
+  .monitor-lights i:nth-child(3) {
+    background: var(--lime-deep);
+  }
+
+  .monitor-label,
+  .monitor-status {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+
+  .monitor-status {
+    display: flex;
+    align-items: center;
+    gap: 0.38rem;
+    margin-left: auto;
+    color: var(--aqua-bright);
+  }
+
+  .monitor-status i {
+    background: var(--aqua-mid);
+    animation: signal-blink 1.8s steps(1, end) infinite;
+  }
+
+  .monitor-screen {
+    position: relative;
+    display: grid;
+    min-height: 27rem;
+    overflow: hidden;
+    place-items: center;
+    border-radius: 0 0 calc(var(--radius) - 2px) calc(var(--radius) - 2px);
+    background:
+      radial-gradient(
+        ellipse at 50% 38%,
+        rgba(59, 141, 224, 0.12),
+        transparent 64%
+      ),
+      linear-gradient(180deg, #0f1424, #05070f);
+    box-shadow:
+      inset 0 0 42px rgba(0, 0, 0, 0.72),
+      inset 0 0 2px rgba(130, 197, 255, 0.34);
+    isolation: isolate;
+  }
+
+  .monitor-screen::before,
+  .monitor-screen::after {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+  }
+
+  .monitor-screen::before {
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0,
+      transparent 3px,
+      rgba(111, 181, 255, 0.04) 3px,
+      rgba(111, 181, 255, 0.04) 4px
+    );
+  }
+
+  .monitor-screen::after {
+    background:
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(111, 181, 255, 0.12) 49%,
+        rgba(111, 181, 255, 0.22) 50%,
+        transparent 51%
+      ),
+      radial-gradient(ellipse at center, transparent 52%, rgba(0, 0, 0, 0.3));
+    background-size:
+      100% 220%,
+      100% 100%;
+    animation: signal-scan 7s linear infinite;
+  }
+
+  .error-code {
+    position: absolute;
+    z-index: 0;
+    color: color-mix(in srgb, var(--aqua-bright) 9%, transparent);
+    font-family: var(--font-mono);
+    font-size: clamp(9rem, 30vw, 17rem);
+    font-weight: 800;
+    letter-spacing: -0.1em;
+    line-height: 1;
+    transform: translateX(-0.05em);
+    user-select: none;
+  }
+
+  .message {
+    position: relative;
+    z-index: 1;
+    width: min(86%, 32rem);
+    padding: 2rem;
+    border: 1px solid rgba(130, 197, 255, 0.24);
+    border-radius: var(--radius);
+    background: rgba(5, 7, 15, 0.72);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 12px 32px rgba(0, 0, 0, 0.28);
+    color: #e8ecf8;
+    backdrop-filter: blur(5px);
+  }
+
+  .eyebrow {
+    margin: 0 0 0.6rem;
+    color: var(--aqua-bright);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .message h2 {
+    margin: 0 0 0.8rem;
+    color: #fdfefe;
+    font-size: clamp(1.55rem, 5vw, 2.25rem);
+    line-height: 1.25;
+    text-shadow: 0 0 14px rgba(111, 181, 255, 0.2);
+  }
+
+  .message > p:not(.eyebrow) {
+    margin: 0;
+    color: #cbd5f5;
+    line-height: 1.8;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 1.5rem;
+  }
+
+  .actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.55rem;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--chrome-border);
+    border-radius: var(--radius);
+    box-shadow:
+      inset 0 1px 0 var(--chrome-rim),
+      inset 0 -1px 0 var(--chrome-rim-bottom);
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+      filter 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .primary-action {
+    background: var(--aqua-gradient);
+    color: white;
+  }
+
+  .secondary-action {
+    background: var(--chrome-gradient);
+    color: var(--fg);
+  }
+
+  .actions a:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+  }
+
+  .actions a:focus-visible {
+    outline: 2px solid var(--aqua-bright);
+    outline-offset: 2px;
+  }
+
+  @keyframes signal-blink {
+    0%,
+    74%,
+    100% {
+      opacity: 1;
+    }
+    75%,
+    88% {
+      opacity: 0.24;
+    }
+  }
+
+  @keyframes signal-scan {
+    from {
+      background-position:
+        0 -110%,
+        center;
+    }
+    to {
+      background-position:
+        0 110%,
+        center;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .route-monitor {
+      box-shadow:
+        inset 0 1px 0 var(--chrome-rim),
+        inset 0 -1px 0 var(--chrome-rim-bottom),
+        0 8px 26px rgba(0, 0, 0, 0.4);
+    }
+
+    .monitor-bar {
+      background: linear-gradient(
+        180deg,
+        #5a6178,
+        #353a4c 48%,
+        #1a1d28 52%,
+        #2e3343
+      );
+    }
+  }
+
+  @media (max-width: 480px) {
+    .not-found {
+      min-height: 31rem;
+      padding: 1.2rem 0 2rem;
+    }
+
+    .monitor-bar {
+      gap: 0.45rem;
+      padding-inline: 0.5rem;
+    }
+
+    .monitor-lights {
+      gap: 0.25rem;
+    }
+
+    .monitor-lights i,
+    .monitor-status i {
+      width: 6px;
+      height: 6px;
+    }
+
+    .monitor-label,
+    .monitor-status {
+      font-size: 0.58rem;
+    }
+
+    .monitor-screen {
+      min-height: 29rem;
+    }
+
+    .message {
+      width: calc(100% - 1.5rem);
+      padding: 1.35rem;
+    }
+
+    .message > p:not(.eyebrow) {
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: grid;
+    }
+
+    .actions a {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .monitor-status i,
+    .monitor-screen::after {
+      animation: none;
+    }
+
+    .actions a {
+      transition: none;
+    }
+  }
+</style>
