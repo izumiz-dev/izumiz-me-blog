@@ -2,6 +2,7 @@
 import type { Post, BookReview } from '../../lib/interfaces.ts';
 import { getPostByPageId } from '../../lib/notion/client';
 import { getPostLink, getBookReviewLink } from '../../lib/blog-helpers.ts';
+import { BOOKS_PUBLIC } from '../../server-constants.ts';
 import '../../styles/notion-color.css';
 import arrow from '../../images/icon-arrow-link.svg';
 
@@ -18,18 +19,19 @@ if (pageId) {
   // gallery items have no slug, so they can't be linked to from a Mention
   if (entry && entry.source !== 'gallery') {
     post = entry.post as Post | BookReview;
-    href =
-      entry.source === 'bookReview'
-        ? getBookReviewLink(post.Slug)
-        : getPostLink(post.Slug);
+    if (entry.source === 'bookReview' && BOOKS_PUBLIC) {
+      href = getBookReviewLink(post.Slug);
+    } else if (entry.source !== 'bookReview') {
+      href = getPostLink(post.Slug);
+    }
   }
 }
 ---
 
 {
   post ? (
-    <a href={href} class="link">
-      <>
+    href ? (
+      <a href={href} class="link">
         <span class="icon">
           {post.Icon && post.Icon.Type === 'emoji' ? (
             post.Icon.Emoji
@@ -49,8 +51,12 @@ if (pageId) {
           />
         </span>
         <span class="text">{post.Title}</span>
-      </>
-    </a>
+      </a>
+    ) : (
+      <span class="link">
+        <span class="text not-found">{post.Title}</span>
+      </span>
+    )
   ) : (
     <a class="link">
       <span class="icon">
@@ -67,7 +73,8 @@ if (pageId) {
 }
 
 <style>
-  a.link {
+  a.link,
+  span.link {
     display: inline-flex;
     font-weight: 600;
     gap: 4px;

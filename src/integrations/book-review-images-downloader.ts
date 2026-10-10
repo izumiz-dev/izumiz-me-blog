@@ -1,10 +1,17 @@
+import { rm } from 'node:fs/promises';
 import type { AstroIntegration } from 'astro';
 import { getAllPosts, downloadFile } from '../lib/notion/client';
+import { BOOKS_PUBLIC } from '../server-constants';
 
 export default (): AstroIntegration => ({
   name: 'book-review-images-downloader',
   hooks: {
     'astro:build:start': async () => {
+      if (!BOOKS_PUBLIC) {
+        console.log('Book reviews are unpublished; skipping cover downloads');
+        return;
+      }
+
       console.log('Book review images downloader integration started');
       const posts = await getAllPosts('bookReview');
 
@@ -26,6 +33,12 @@ export default (): AstroIntegration => ({
           return downloadFile(url);
         })
       );
+    },
+    'astro:build:done': async ({ dir }) => {
+      if (BOOKS_PUBLIC) return;
+
+      await rm(new URL('book-reviews/', dir), { recursive: true, force: true });
+      await rm(new URL('book-reviews.html', dir), { force: true });
     },
   },
 });

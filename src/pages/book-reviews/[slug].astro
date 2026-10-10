@@ -1,5 +1,6 @@
 ---
 import type { BookReview } from '@lib/interfaces.ts';
+import { BOOKS_PUBLIC } from '../../server-constants.ts';
 import {
   getAllPosts,
   getPostBySlug,
@@ -24,6 +25,7 @@ import BookReviewTile from '@components/BookReviewTile.astro';
 import styles from '@styles/blog.module.css';
 
 export async function getStaticPaths() {
+  if (!BOOKS_PUBLIC) return [];
   const posts = await getAllPosts('bookReview');
   return (posts as BookReview[]).map((post) => ({
     params: { slug: post.Slug },

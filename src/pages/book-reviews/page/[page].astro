@@ -1,4 +1,5 @@
 ---
+import { BOOKS_PUBLIC } from '../../../server-constants.ts';
 import {
   getPostsByPage,
   getAllTags,
@@ -13,6 +14,7 @@ import BookReviewCard from '@components/BookReviewCard.astro';
 import styles from '@styles/blog.module.css';
 
 export async function getStaticPaths() {
+  if (!BOOKS_PUBLIC) return [];
   const numberOfPages = await getNumberOfPages('bookReview');
 
   let params = [];

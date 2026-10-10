@@ -1,6 +1,10 @@
 ---
 import { SEO } from 'astro-seo';
-import { PUBLIC_GA_TRACKING_ID, ENABLE_LIGHTBOX } from '../server-constants.ts';
+import {
+  PUBLIC_GA_TRACKING_ID,
+  ENABLE_LIGHTBOX,
+  BOOKS_PUBLIC,
+} from '../server-constants.ts';
 import { getDatabase } from '@lib/notion/client.ts';
 import { getNavLink, getStaticFilePath, filePath } from '@lib/blog-helpers.ts';
 import '@styles/syntax-coloring.css';
@@ -246,14 +250,22 @@ const uniquePreloadImages = preloadImages
                       : ''
                   }`}>Gallery</a
                 >
-                <a
-                  href={getNavLink('/book-reviews/')}
-                  class={`nav-link nav-book ${
-                    Astro.url.pathname.startsWith(getNavLink('/book-reviews'))
-                      ? 'active'
-                      : ''
-                  }`}>Books</a
-                >
+                {
+                  BOOKS_PUBLIC && (
+                    <a
+                      href={getNavLink('/book-reviews/')}
+                      class={`nav-link nav-book ${
+                        Astro.url.pathname.startsWith(
+                          getNavLink('/book-reviews')
+                        )
+                          ? 'active'
+                          : ''
+                      }`}
+                    >
+                      Books
+                    </a>
+                  )
+                }
               </nav>
             </header>
 

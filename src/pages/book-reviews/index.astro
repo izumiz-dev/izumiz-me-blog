@@ -1,5 +1,8 @@
 ---
-import { NUMBER_OF_BOOK_REVIEWS_PER_PAGE } from '../../server-constants.ts';
+import {
+  BOOKS_PUBLIC,
+  NUMBER_OF_BOOK_REVIEWS_PER_PAGE,
+} from '../../server-constants.ts';
 import { getPosts, getAllTags, getNumberOfPages } from '@lib/notion/client.ts';
 import type { BookReview } from '@lib/interfaces.ts';
 import Layout from '@layouts/Layout.astro';
@@ -9,11 +12,13 @@ import BlogTagsLink from '@components/BlogTagsLink.astro';
 import BookReviewCard from '@components/BookReviewCard.astro';
 import styles from '@styles/blog.module.css';
 
-const [posts, tags, numberOfPages] = await Promise.all([
-  getPosts(NUMBER_OF_BOOK_REVIEWS_PER_PAGE, 'bookReview'),
-  getAllTags('bookReview'),
-  getNumberOfPages('bookReview'),
-]);
+const [posts, tags, numberOfPages] = BOOKS_PUBLIC
+  ? await Promise.all([
+      getPosts(NUMBER_OF_BOOK_REVIEWS_PER_PAGE, 'bookReview'),
+      getAllTags('bookReview'),
+      getNumberOfPages('bookReview'),
+    ])
+  : [[], [], 0];
 
 const pageTitle = 'Book Reviews - My Blog';
 const pageDescription = 'これまでに読んだ本の感想';

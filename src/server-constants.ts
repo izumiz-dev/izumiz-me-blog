@@ -24,3 +24,18 @@ export const REQUEST_TIMEOUT_MS = parseInt(
   10
 );
 export const ENABLE_LIGHTBOX = import.meta.env.ENABLE_LIGHTBOX;
+
+function envFlag(value: string | boolean | undefined): boolean | undefined {
+  if (value === true || value === 'true' || value === '1') return true;
+  if (value === false || value === 'false' || value === '0') return false;
+  return undefined;
+}
+
+// Books stay implemented. Production builds hide them until ENABLE_BOOKS=true.
+const booksFlag = envFlag(
+  import.meta.env.ENABLE_BOOKS || process.env.ENABLE_BOOKS
+);
+const productionBuild =
+  process.env.NODE_ENV === 'production' || import.meta.env.PROD === true;
+
+export const BOOKS_PUBLIC = booksFlag ?? !productionBuild;

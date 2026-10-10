@@ -2,9 +2,10 @@ import type { APIContext } from 'astro';
 import { getOgImage } from '../../../components/OgImage';
 import { getAllPosts, getPostBySlug } from '../../../lib/notion/client';
 import type { Post, BookReview } from '../../../lib/interfaces';
+import { BOOKS_PUBLIC } from '../../../server-constants';
 
 type OgSource = 'blog' | 'bookReview';
-const OG_SOURCES: OgSource[] = ['blog', 'bookReview'];
+const OG_SOURCES: OgSource[] = BOOKS_PUBLIC ? ['blog', 'bookReview'] : ['blog'];
 
 export async function getStaticPaths() {
   const postsBySource = await Promise.all(

@@ -1,6 +1,9 @@
 ---
 import type { SelectProperty, BookReview } from '@lib/interfaces.ts';
-import { NUMBER_OF_BOOK_REVIEWS_PER_PAGE } from '../../../server-constants.ts';
+import {
+  BOOKS_PUBLIC,
+  NUMBER_OF_BOOK_REVIEWS_PER_PAGE,
+} from '../../../server-constants.ts';
 import {
   getPostsByTag,
   getAllTags,
@@ -15,6 +18,7 @@ import styles from '@styles/blog.module.css';
 import '@styles/notion-color.css';
 
 export async function getStaticPaths() {
+  if (!BOOKS_PUBLIC) return [];
   const allTags = await getAllTags('bookReview');
   return allTags.map((tag: SelectProperty) => ({ params: { tag: tag.name } }));
 }

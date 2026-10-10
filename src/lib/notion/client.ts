@@ -15,6 +15,7 @@ import {
   NUMBER_OF_BOOK_REVIEWS_PER_PAGE,
   NUMBER_OF_TIMELINE_PER_PAGE,
   REQUEST_TIMEOUT_MS,
+  BOOKS_PUBLIC,
 } from '../../server-constants';
 import type {
   Annotation,
@@ -103,6 +104,11 @@ const postsCacheBySource: Partial<
 const dbCacheBySource: Partial<Record<ContentSource, Database>> = {};
 
 const TIMELINE_SOURCES: ContentSource[] = ['blog', 'gallery', 'bookReview'];
+
+function publicTimelineSources(): ContentSource[] {
+  if (BOOKS_PUBLIC) return TIMELINE_SOURCES;
+  return TIMELINE_SOURCES.filter((source) => source !== 'bookReview');
+}
 
 const numberOfRetry = 2;
 
@@ -317,13 +323,14 @@ export async function getNumberOfPages(
 }
 
 export async function getAllContent(): Promise<TimelineEntry[]> {
+  const sources = publicTimelineSources();
   const results = await Promise.allSettled(
-    TIMELINE_SOURCES.map((source) => getAllPosts(source))
+    sources.map((source) => getAllPosts(source))
   );
 
   const entries: TimelineEntry[] = [];
   results.forEach((result, i) => {
-    const source = TIMELINE_SOURCES[i];
+    const source = sources[i];
     if (result.status === 'fulfilled') {
       result.value.forEach((post) => entries.push({ post, source }));
     } else {
