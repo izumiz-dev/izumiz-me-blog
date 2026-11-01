@@ -12,4 +12,4 @@ overrides:
   lodash: '>=4.17.23'
   lodash-es: '>=4.17.23'
   brace-expansion: '>=2.0.2'
-  js-yaml: '>=4.1.1'
+  js-yaml: '>=4.1.1 <5'
