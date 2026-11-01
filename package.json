@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "NODE_ENV=production dotenv -- astro build",
+    "build": "NODE_ENV=production dotenv -- astro build && node scripts/webp-convert.mjs",
     "build:cached": "pnpm run cache:fetch && NODE_ENV=production dotenv -- astro build",
     "preview": "astro preview",
     "astro": "astro",
