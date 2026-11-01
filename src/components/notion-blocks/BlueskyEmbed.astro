@@ -17,6 +17,14 @@ if (postHttpUrl) {
       const data = await response.json();
       if (data && typeof data.html === 'string') {
         embedHtml = data.html;
+        // oEmbed の HTML には embed.js の script タグが含まれており、埋め込みの
+        // 数だけ重複して読み込まれる。2回目以降は先頭の const 宣言が
+        // "Identifier 'IS_DEV' has already been declared" で失敗するため取り除き、
+        // スクリプト自体は下部のローダーでページに1回だけ読み込む。
+        embedHtml = embedHtml.replace(
+          /<script\b[^>]*\bsrc=["']https:\/\/embed\.bsky\.app\/static\/embed\.js["'][^>]*>\s*<\/script>/gi,
+          ''
+        );
         if (embedHtml.includes('bluesky-embed')) {
           embedHtml = embedHtml.replace(
             /(<blockquote\b[^>]*class=(['"]).*?bluesky-embed.*?\2[^>]*)(>)/i,
@@ -56,6 +64,10 @@ if (postHttpUrl) {
 } else {
   embedHtml = '<p>Error: No URL provided for Bluesky embed.</p>';
 }
+
+// oEmbed が正常に返った埋め込みがあるか（ローダーの描画条件に使う）。
+// data-bluesky-id は現在の oEmbed 応答に含まれないため、条件には使えない。
+const hasBlueskyEmbed = embedHtml.includes('bluesky-embed');
 ---
 
 <div
@@ -63,6 +75,21 @@ if (postHttpUrl) {
   data-bluesky-id={blueskyEmbedId || undefined}
   set:html={embedHtml}
 />
+{
+  hasBlueskyEmbed && (
+    <script
+      is:inline
+      set:html={`if (!window.__bskyEmbedLoaderInjected) {
+        window.__bskyEmbedLoaderInjected = true;
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://embed.bsky.app/static/embed.js';
+        script.charset = 'utf-8';
+        document.head.appendChild(script);
+      }`}
+    />
+  )
+}
 {
   blueskyEmbedId && (
     <script
