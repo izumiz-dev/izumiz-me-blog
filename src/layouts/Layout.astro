@@ -25,6 +25,9 @@ export type OpenGraph = {
   image: {
     alt: string;
   };
+  optional?: {
+    description?: string;
+  };
 };
 
 export interface Props {
@@ -40,8 +43,7 @@ export interface Props {
 
 const {
   title = '',
-  // description = '',
-  path = '/',
+  description = '',
   // ogImage = '',
   openGraph,
   includeKatex = false,
@@ -54,11 +56,28 @@ const database = await getDatabase();
 const isGalleryPage = Astro.url.pathname.startsWith(getNavLink('/gallery'));
 
 const siteTitle = title ? `${title} - ${database.Title}` : database.Title;
-const siteURL = new URL(getNavLink(path), Astro.site).toString();
-// const siteOGImage = new URL(
-//   getStaticFilePath('/default-og-image.png'),
-//   Astro.site
-// );
+// ページ固有の description がない場合はサイトの説明文（Notion DB の
+// Description）にフォールバックする
+const pageDescription = description || database.Description;
+const siteOGImage = new URL(
+  getStaticFilePath('/default-og-image.png'),
+  Astro.site
+).toString();
+// openGraph 未指定のページ向けにデフォルトを補完し、og:description として
+// pageDescription を必ず含める
+const resolvedOpenGraph: OpenGraph = {
+  basic: {
+    title: siteTitle,
+    type: 'website',
+    image: siteOGImage,
+  },
+  image: { alt: siteTitle },
+  ...openGraph,
+  optional: {
+    description: pageDescription,
+    ...openGraph?.optional,
+  },
+};
 
 let coverImageURL: string = '';
 if (database.Cover) {
@@ -109,7 +128,6 @@ const uniquePreloadImages = preloadImages
     />
     <meta name="generator" content={Astro.generator} />
     <title>{siteTitle}</title>
-    <link rel="canonical" href={siteURL} />
     {
       includeKatex && (
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -143,9 +161,11 @@ const uniquePreloadImages = preloadImages
     <SEO
       charset="UTF-8"
       title={siteTitle}
-      openGraph={openGraph}
+      description={pageDescription}
+      openGraph={resolvedOpenGraph}
       twitter={{
         card: 'summary_large_image',
+        description: pageDescription,
       }}
     />
     {
