@@ -83,6 +83,7 @@ export interface Heading1 {
   Color: string;
   IsToggleable: boolean;
   Children?: Block[];
+  AnchorId?: string;
 }
 
 export interface Heading2 {
@@ -90,6 +91,7 @@ export interface Heading2 {
   Color: string;
   IsToggleable: boolean;
   Children?: Block[];
+  AnchorId?: string;
 }
 
 export interface Heading3 {
@@ -97,6 +99,7 @@ export interface Heading3 {
   Color: string;
   IsToggleable: boolean;
   Children?: Block[];
+  AnchorId?: string;
 }
 
 export interface Heading4 {
@@ -104,6 +107,7 @@ export interface Heading4 {
   Color: string;
   IsToggleable: boolean;
   Children?: Block[];
+  AnchorId?: string;
 }
 
 export interface BulletedListItem {
