@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  '@notionhq/client': 5.16.0
   tar: '>=7.5.4'
   lodash: '>=4.17.23'
   lodash-es: '>=4.17.23'
@@ -22,8 +23,8 @@ importers:
         specifier: ^4.0.15
         version: 4.0.19
       '@notionhq/client':
-        specifier: ^5.16.0
-        version: 5.30.0
+        specifier: 5.16.0
+        version: 5.16.0
       '@supercharge/promise-pool':
         specifier: ^3.2.0
         version: 3.3.0
@@ -990,9 +991,9 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@notionhq/client@5.30.0':
-    resolution: {integrity: sha512-SZpwkns/zScc7P7MA1LC144VT6AlKhy3NRAHa1rSxr/FVBGnmgMI2n81Y89X0UPgnKNSLyoEbzsod8KZsSGLSg==}
-    engines: {node: '>=22'}
+  '@notionhq/client@5.16.0':
+    resolution: {integrity: sha512-0mxHJNQBLbcG2Y4+oM+XNySr/3zKtK7FKjWhrUo8TB3WCdwtUMhvuooNmEjOo8NLL9qmKm7cCR4GtEsuTD+SNg==}
+    engines: {node: '>=18'}
 
   '@nrwl/nx-cloud@19.1.5':
     resolution: {integrity: sha512-3Sia+33HHEm8iT2I38z2Aq4RHbAZarbhzIWdRbVVo9cJlce3MnBUVMitA8zvr+A++2c6nRytRg1i08BoFeK8jg==}
@@ -4990,7 +4991,7 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.3
 
-  '@notionhq/client@5.30.0': {}
+  '@notionhq/client@5.16.0': {}
 
   '@nrwl/nx-cloud@19.1.5(debug@4.4.3)':
     dependencies:
