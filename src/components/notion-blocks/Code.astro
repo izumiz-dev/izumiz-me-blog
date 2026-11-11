@@ -45,7 +45,7 @@ const grammer =
         <>
           <div class="terminal-toolbar">
             <span class="terminal-lights" aria-hidden="true">
-              <><i /><i /><i /></>
+              <><><i /><i /><i /></></>
             </span>
             <span class="terminal-title">{language || 'plain text'}</span>
             <button type="button" class="copy" data-code={code} data-done-text="Copied!" aria-label="Copy code">
@@ -266,20 +266,26 @@ const grammer =
     line-height: 1.55;
     white-space: pre;
     text-shadow: 0 0 7px rgba(111, 181, 255, 0.12);
+    /* Standard scrollbar styling (same colors as the WebKit fallback below) */
+    scrollbar-color: var(--chrome-shade) #0f1424;
+    scrollbar-width: thin;
   }
 
-  .code pre::-webkit-scrollbar {
-    height: 10px;
-  }
+  /* Legacy fallback for browsers without scrollbar-color support */
+  @supports not (scrollbar-color: auto) {
+    .code pre::-webkit-scrollbar {
+      height: 10px;
+    }
 
-  .code pre::-webkit-scrollbar-thumb {
-    border: 2px solid #0f1424;
-    border-radius: var(--radius-tight);
-    background: var(--chrome-shade);
-  }
+    .code pre::-webkit-scrollbar-thumb {
+      border: 2px solid #0f1424;
+      border-radius: var(--radius-tight);
+      background: var(--chrome-shade);
+    }
 
-  .code pre::-webkit-scrollbar-track {
-    background: #0f1424;
+    .code pre::-webkit-scrollbar-track {
+      background: #0f1424;
+    }
   }
 
   .code pre code {
